@@ -1,0 +1,2510 @@
+<title>ERP Full Pack Services</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+  /* Une commande au centre, qui avance de l'étape 1 à l'étape 10 du document
+     « Notre processus de fabrication ». Couleurs reprises du document :
+     orange Full Pack, anthracite des en-têtes, fond chaud des encadrés. */
+  :root {
+    --fond: #f6f4f1;
+    --carte: #ffffff;
+    --encadre: #fbf4ee;
+    --bandeau: #2f2e2c;
+    --bandeau-actif: #44423f;
+    --bandeau-texte: #f3f0ec;
+    --bandeau-doux: #aaa49c;
+
+    --texte: #262422;
+    --doux: #6f6962;
+    --bord: #e3ded7;
+    --bord-fort: #cbc4ba;
+
+    --orange: #e8772e;
+    --bouton: #b4540f;
+    --sur-bouton: #ffffff;
+    --orange-pale: #fcece0;
+    --orange-texte: #9a4610;
+
+    --ok: #2e7d4f;
+    --ok-pale: #e6f4ec;
+    --ok-bord: #bfe0cc;
+    --alerte: #b3261e;
+    --alerte-pale: #fbe9e7;
+    --alerte-bord: #f0c4bf;
+    --neutre-pale: #efedea;
+
+    --titre: "Jost", ui-sans-serif, system-ui, sans-serif;
+    --corps: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fond: #171513;
+      --carte: #211e1b;
+      --encadre: #2a221b;
+      --bandeau: #0f0e0d;
+      --bandeau-actif: #2b2825;
+      --bandeau-texte: #f3f0ec;
+      --bandeau-doux: #9d968e;
+      --texte: #eeeae4;
+      --doux: #aba39a;
+      --bord: #36312b;
+      --bord-fort: #4b443c;
+      --orange: #f08a45;
+      --bouton: #f08a45;
+      --sur-bouton: #1a1512;
+      --orange-pale: #3a2616;
+      --orange-texte: #f6ad78;
+      --ok: #7cc79a;
+      --ok-pale: #17291e;
+      --ok-bord: #2b4a37;
+      --alerte: #f08c80;
+      --alerte-pale: #3a1c19;
+      --alerte-bord: #5e2a24;
+      --neutre-pale: #2a2724;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --fond: #171513;
+    --carte: #211e1b;
+    --encadre: #2a221b;
+    --bandeau: #0f0e0d;
+    --bandeau-actif: #2b2825;
+    --bandeau-texte: #f3f0ec;
+    --bandeau-doux: #9d968e;
+    --texte: #eeeae4;
+    --doux: #aba39a;
+    --bord: #36312b;
+    --bord-fort: #4b443c;
+    --orange: #f08a45;
+    --bouton: #f08a45;
+    --sur-bouton: #1a1512;
+    --orange-pale: #3a2616;
+    --orange-texte: #f6ad78;
+    --ok: #7cc79a;
+    --ok-pale: #17291e;
+    --ok-bord: #2b4a37;
+    --alerte: #f08c80;
+    --alerte-pale: #3a1c19;
+    --alerte-bord: #5e2a24;
+    --neutre-pale: #2a2724;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--fond);
+    color: var(--texte);
+    font-family: var(--corps);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ------------------------------------------------------------ Bandeau */
+
+  .bandeau {
+    background: var(--bandeau);
+    color: var(--bandeau-texte);
+    padding-block: 12px 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .bandeau-ligne {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo .mot { font-family: var(--titre); font-weight: 300; font-size: 21px; letter-spacing: 0.06em; line-height: 1; }
+  .logo .mot b { font-weight: 400; color: var(--orange); }
+  .logo .sous { font-family: var(--titre); font-size: 11px; letter-spacing: 0.32em; color: var(--orange); text-transform: lowercase; }
+  .logo .barre { width: 4px; height: 30px; background: var(--orange); border-radius: 2px; }
+
+  .onglets { display: flex; gap: 2px; flex-wrap: wrap; max-width: 1240px; margin: 10px auto 0; }
+
+  .onglets a {
+    color: var(--bandeau-texte);
+    text-decoration: none;
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 3px solid transparent;
+    opacity: 0.85;
+  }
+
+  .onglets a:hover { background: var(--bandeau-actif); opacity: 1; }
+  .onglets a[aria-current="page"] { background: var(--fond); color: var(--texte); border-bottom-color: var(--orange); opacity: 1; }
+
+  /* ------------------------------------------------------------ Contenu */
+
+  main {
+    padding-block: 22px 72px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .page { max-width: 1240px; margin: 0 auto; min-width: 0; }
+
+  h1 { font-family: var(--titre); font-weight: 500; font-size: 27px; letter-spacing: -0.005em; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--titre); font-weight: 500; font-size: 19px; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--titre); font-weight: 500; font-size: 16px; margin: 0; }
+  h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--doux); margin: 0; }
+
+  .titre-page { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .sous-titre { color: var(--doux); margin: 4px 0 0; }
+  .retour { display: inline-block; color: var(--doux); text-decoration: none; font-size: 13.5px; margin-bottom: 8px; }
+  .retour:hover { color: var(--texte); }
+
+  .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: 10px; min-width: 0; }
+  .carte + .carte, .bloc + .bloc { margin-top: 16px; }
+  .carte-corps { padding: 18px; }
+  .carte-tete { padding: 14px 18px; border-bottom: 1px solid var(--bord); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  /* ---------------------------------------------------------- Boutons */
+
+  button, .bouton {
+    font: inherit;
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 7px;
+    border: 1px solid var(--bord-fort);
+    background: var(--carte);
+    color: var(--texte);
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 40px;
+  }
+
+  button:hover, .bouton:hover { border-color: var(--doux); }
+  button:focus-visible, .bouton:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+    outline: 3px solid var(--orange);
+    outline-offset: 2px;
+  }
+
+  .principal { background: var(--bouton); border-color: var(--bouton); color: var(--sur-bouton); font-weight: 600; }
+  .principal:hover { filter: brightness(1.07); border-color: var(--bouton); }
+  .grand { font-size: 16px; padding: 12px 22px; min-height: 50px; border-radius: 9px; white-space: normal; text-align: center; justify-content: center; max-width: 100%; }
+  .discret { border-color: transparent; background: transparent; color: var(--doux); padding-inline: 8px; }
+  .discret:hover { color: var(--texte); background: var(--neutre-pale); border-color: transparent; }
+  .danger { color: var(--alerte); }
+  .succes { background: var(--ok); border-color: var(--ok); color: #fff; font-weight: 600; }
+  button[disabled] { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+  .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  /* ------------------------------------------------------ Formulaires */
+
+  label.champ { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: var(--doux); min-width: 0; }
+  label.champ .requis { color: var(--orange-texte); }
+
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    font: inherit;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--texte);
+    background: var(--carte);
+    border: 1px solid var(--bord-fort);
+    border-radius: 7px;
+    padding: 9px 11px;
+    width: 100%;
+    min-height: 42px;
+  }
+
+  textarea { min-height: 76px; resize: vertical; }
+  input.nombre { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+  .grille .large { grid-column: 1 / -1; }
+  .dims { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+
+  .choix-cartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+  .choix-cartes button { justify-content: flex-start; min-height: 52px; white-space: normal; text-align: left; }
+  .choix-cartes button[aria-pressed="true"] { border: 2px solid var(--orange); background: var(--orange-pale); color: var(--texte); }
+
+  .aide { font-size: 13px; color: var(--doux); margin: 0; font-weight: 400; }
+
+  /* ----------------------------------------------- Bandeau des étapes */
+
+  .etapes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .etapes button {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 9px 9px 10px;
+    min-height: 74px;
+    border-radius: 8px;
+    white-space: normal;
+    text-align: left;
+    border: 1px solid var(--bord);
+    border-top: 4px solid var(--bord-fort);
+    background: var(--carte);
+  }
+
+  .etapes .num { font-family: var(--titre); font-size: 20px; font-weight: 500; line-height: 1; color: var(--doux); }
+  .etapes .nom { font-size: 12.5px; font-weight: 600; line-height: 1.25; color: var(--texte); }
+  .etapes .quand { font-size: 11.5px; color: var(--doux); font-weight: 400; }
+
+  .etapes .faite button { border-top-color: var(--orange); }
+  .etapes .faite .num { color: var(--orange-texte); }
+  .etapes .courante button { border-top-color: var(--orange); background: var(--orange-pale); border-color: var(--orange); }
+  .etapes .courante .num { color: var(--orange-texte); }
+  .etapes .avenir button { background: transparent; }
+  .etapes .avenir .nom { color: var(--doux); font-weight: 500; }
+  .etapes button[aria-current="step"] { outline: 2px solid var(--texte); outline-offset: 1px; }
+
+  /* ---------------------------------------------------- Panneau d'étape */
+
+  .panneau { margin-top: 16px; }
+
+  .citation {
+    background: var(--encadre);
+    border-left: 4px solid var(--orange);
+    border-radius: 0 7px 7px 0;
+    padding: 10px 14px;
+    margin: 12px 0 18px;
+    font-size: 14px;
+    color: var(--texte);
+  }
+
+  .citation small { display: block; color: var(--doux); font-size: 12px; margin-top: 3px; }
+
+  .pied-etape {
+    border-top: 1px solid var(--bord);
+    margin-top: 20px;
+    padding-top: 16px;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .pied-etape > * { min-width: 0; max-width: 100%; }
+
+  .manques { margin: 0; padding: 10px 14px; border-radius: 7px; background: var(--neutre-pale); font-size: 13.5px; color: var(--doux); }
+  .manques ul { margin: 4px 0 0; padding-left: 18px; }
+
+  /* -------------------------------------------------------- Indicateurs */
+
+  .tuiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .tuile { background: var(--carte); border: 1px solid var(--bord); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+  .tuile .valeur { font-family: var(--titre); font-size: 28px; font-weight: 500; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .tuile .quoi { font-size: 13px; color: var(--doux); margin-top: 3px; }
+  .tuile.alerte .valeur { color: var(--alerte); }
+  .tuile.bon .valeur { color: var(--ok); }
+  .tuile.forte { background: var(--encadre); border-color: var(--orange); }
+
+  .pastille { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 20px; border: 1px solid transparent; white-space: nowrap; }
+  .pastille.ok { background: var(--ok-pale); border-color: var(--ok-bord); color: var(--ok); }
+  .pastille.attente { background: var(--orange-pale); border-color: var(--orange); color: var(--orange-texte); }
+  .pastille.alerte { background: var(--alerte-pale); border-color: var(--alerte-bord); color: var(--alerte); }
+  .pastille.neutre { background: var(--neutre-pale); border-color: var(--bord); color: var(--doux); }
+
+  /* ------------------------------------------------- Liste de commandes */
+
+  .filtres { display: flex; gap: 6px; flex-wrap: wrap; margin: 18px 0 12px; }
+  .filtres button { min-height: 34px; padding: 5px 11px; font-size: 13px; border-radius: 20px; }
+  .filtres button[aria-pressed="true"] { background: var(--texte); border-color: var(--texte); color: var(--fond); }
+  .filtres .compte { font-variant-numeric: tabular-nums; opacity: 0.75; }
+
+  .liste-commandes { display: grid; gap: 10px; }
+
+  .fiche {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 15px 18px;
+    background: var(--carte);
+    border: 1px solid var(--bord);
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .fiche:hover { border-color: var(--orange); }
+  .fiche .numero { font-size: 12.5px; color: var(--doux); font-variant-numeric: tabular-nums; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .fiche .client { font-weight: 600; font-size: 16px; margin-top: 2px; }
+  .fiche .produit { color: var(--doux); font-size: 14px; }
+  .fiche .droite { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+
+  .progression { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; margin-bottom: 6px; }
+  .progression span { height: 7px; border-radius: 3px; background: var(--neutre-pale); }
+  .progression .fait { background: var(--orange); }
+  .progression .encours { background: var(--orange); opacity: 0.45; }
+  .ou { font-size: 13.5px; }
+  .ou strong { font-weight: 600; }
+
+  .vide { padding: 34px 18px; text-align: center; color: var(--doux); }
+
+  /* ---------------------------------------------------- Opérations (OF) */
+
+  .groupe-cat + .groupe-cat { margin-top: 18px; }
+  .groupe-cat h4 { margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+  .groupe-cat h4 .rang { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: #fff; font-size: 12px; letter-spacing: 0; }
+
+  .op {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1px solid var(--bord);
+    border-radius: 9px;
+    background: var(--carte);
+  }
+
+  .op + .op { margin-top: 8px; }
+  .op.encours { border-color: var(--orange); background: var(--orange-pale); }
+  .op.terminee { background: var(--ok-pale); border-color: var(--ok-bord); }
+  .op .nom-op { font-weight: 600; font-size: 15.5px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .op .details { font-size: 13px; color: var(--doux); margin-top: 2px; }
+  .op .jauge { height: 8px; background: var(--neutre-pale); border-radius: 4px; overflow: hidden; margin-top: 8px; max-width: 420px; }
+  .op .jauge span { display: block; height: 100%; background: var(--orange); }
+  .op.terminee .jauge span { background: var(--ok); }
+  .op .qui { font-size: 13px; color: var(--orange-texte); font-weight: 600; margin-top: 5px; }
+
+  .compteur-qte { display: flex; align-items: center; gap: 6px; }
+  .compteur-qte button { min-width: 46px; justify-content: center; font-size: 20px; padding: 6px; }
+  .compteur-qte input { width: 96px; text-align: center; font-size: 18px; font-weight: 600; }
+
+  .qui-suis-je { display: flex; gap: 8px; flex-wrap: wrap; }
+  .qui-suis-je button { min-height: 52px; font-size: 16px; padding-inline: 20px; }
+  .qui-suis-je button[aria-pressed="true"] { background: var(--bouton); border-color: var(--bouton); color: var(--sur-bouton); }
+
+  /* ------------------------------------------------------------ Tableaux */
+
+  .defile { overflow-x: auto; max-width: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--doux); padding: 8px 10px; border-bottom: 1px solid var(--bord); white-space: nowrap; }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--bord); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .nb { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tfoot td { font-weight: 600; border-top: 2px solid var(--bord-fort); border-bottom: none; }
+  .ecart-plus { color: var(--alerte); }
+  .ecart-moins { color: var(--ok); }
+
+  /* --------------------------------------------------- Chiffrage, gamme */
+
+  .deux-colonnes { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .colle { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+
+  .cases { display: grid; gap: 4px; }
+  .case {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid var(--bord);
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14.5px;
+  }
+
+  .case:hover { border-color: var(--bord-fort); }
+  .case.coche { border-color: var(--orange); background: var(--orange-pale); }
+  .case input { width: 18px; height: 18px; accent-color: var(--orange); margin: 0; }
+  .case .temps { font-size: 13px; color: var(--doux); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .resume dl { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; font-size: 14.5px; }
+  .resume dt { color: var(--doux); }
+  .resume dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .resume .total dt, .resume .total dd { font-weight: 700; color: var(--texte); border-top: 1px solid var(--bord); padding-top: 8px; }
+
+  .grand-chiffre { font-family: var(--titre); font-size: 34px; font-weight: 500; line-height: 1.05; font-variant-numeric: tabular-nums; }
+
+  .fleche-qte { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .fleche-qte .sep { font-size: 24px; color: var(--orange); }
+
+  .controles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .controle { border: 1px solid var(--bord); border-radius: 9px; padding: 14px; display: grid; gap: 10px; align-content: start; }
+  .controle.ok { border-color: var(--ok-bord); background: var(--ok-pale); }
+  .controle.ko { border-color: var(--alerte-bord); background: var(--alerte-pale); }
+  .controle.so { opacity: 0.7; }
+
+  .validation { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .valide-carte { border: 1px solid var(--bord); border-radius: 9px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .valide-carte.ok { border-color: var(--ok-bord); background: var(--ok-pale); }
+
+  .sous-onglets { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px; }
+  .sous-onglets button { min-height: 36px; padding: 6px 14px; font-size: 14px; }
+  .sous-onglets button[aria-pressed="true"] { background: var(--texte); border-color: var(--texte); color: var(--fond); }
+
+  .sortie { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.55; white-space: pre; overflow: auto; max-height: 420px; background: var(--neutre-pale); border: 1px solid var(--bord); border-radius: 7px; padding: 12px; margin: 0; }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    background: var(--texte);
+    color: var(--fond);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: calc(100vw - 32px);
+    z-index: 20;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  .toast.erreur { background: var(--alerte); color: #fff; }
+
+  @media (max-width: 980px) {
+    .deux-colonnes { grid-template-columns: 1fr; }
+    .colle { position: static; }
+    .etapes { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .fiche { grid-template-columns: minmax(0, 1fr); }
+    .fiche .droite { align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; }
+  }
+
+  @media (max-width: 520px) {
+    .pied-etape > div, .pied-etape .grand { width: 100%; }
+    .op { grid-template-columns: 1fr; }
+    .etapes .nom { font-size: 11.5px; }
+    .etapes .quand { display: none; }
+    h1 { font-size: 23px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<header class="bandeau">
+  <div class="bandeau-ligne">
+    <a class="logo" href="#commandes" aria-label="Full Pack Services, accueil">
+      <span class="barre" aria-hidden="true"></span>
+      <span>
+        <span class="mot">FULL PAC<b>K</b></span><br>
+        <span class="sous">services</span>
+      </span>
+    </a>
+  </div>
+  <nav class="onglets" id="onglets" aria-label="Sections"></nav>
+</header>
+
+<main><div class="page" id="vue"><p class="vide">Chargement…</p></div></main>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ===================================================================
+  // Construction du DOM. Tout texte passe par createTextNode : une donnée
+  // saisie n'est jamais interprétée comme du HTML.
+  // ===================================================================
+
+  function h(balise, props) {
+    var n = document.createElement(balise);
+    var differes = [];
+    if (props) {
+      Object.keys(props).forEach(function (k) {
+        var v = props[k];
+        if (v === null || v === undefined || v === false) return;
+        if (k === "class") n.className = v;
+        else if (k === "style") Object.assign(n.style, v);
+        else if (k === "dataset") Object.assign(n.dataset, v);
+        else if (k.indexOf("on") === 0) n.addEventListener(k.slice(2), v);
+        else if (k === "value" || k === "checked") differes.push([k, v]);
+        else if (k === "disabled") n.disabled = !!v;
+        else n.setAttribute(k, v === true ? "" : String(v));
+      });
+    }
+    for (var i = 2; i < arguments.length; i++) ajouter(n, arguments[i]);
+    differes.forEach(function (p) { n[p[0]] = p[0] === "checked" ? !!p[1] : p[1]; });
+    return n;
+  }
+
+  function ajouter(n, e) {
+    if (e === null || e === undefined || e === false) return;
+    if (Array.isArray(e)) { e.forEach(function (x) { ajouter(n, x); }); return; }
+    n.appendChild(e instanceof Node ? e : document.createTextNode(String(e)));
+  }
+
+  // ===================================================================
+  // Arithmétique exacte : entiers d'unités fines, jamais de flottant.
+  // Centièmes de minute pour les temps, centimes pour les euros.
+  // ===================================================================
+
+  var FINE = " ";
+
+  function versEchelle(texte, decimales) {
+    var t = String(texte === null || texte === undefined ? "" : texte).trim().replace(",", ".");
+    if (!/^\d+(\.\d+)?$/.test(t)) return null;
+    var p = t.split(".");
+    var frac = ((p[1] || "") + "0000000000").slice(0, decimales);
+    return Number(p[0]) * Math.pow(10, decimales) + Number(frac || "0");
+  }
+
+  function grouper(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, FINE); }
+
+  function formater(valeur, echelle, decMin) {
+    if (valeur === null || valeur === undefined || isNaN(valeur)) return "—";
+    var f = Math.pow(10, echelle);
+    var neg = valeur < 0;
+    var abs = Math.abs(valeur);
+    var ent = Math.floor(abs / f);
+    var frac = String(abs % f).padStart(echelle, "0").replace(/0+$/, "");
+    while (frac.length < (decMin || 0)) frac += "0";
+    return (neg ? "-" : "") + grouper(ent) + (frac ? "," + frac : "");
+  }
+
+  function minutes(c) { return c === null ? "—" : formater(c, 2, 0) + FINE + "min"; }
+
+  function duree(c) {
+    if (c === null || c === undefined) return "—";
+    if (c < 6000) return minutes(c);
+    var tot = Math.round(c / 100);
+    var hrs = Math.floor(tot / 60);
+    return grouper(hrs) + FINE + "h" + FINE + String(tot - hrs * 60).padStart(2, "0");
+  }
+
+  function euros(c) { return c === null || c === undefined ? "—" : formater(c, 2, 2) + FINE + "€"; }
+  function pourMille(pm) { return pm === null ? "—" : formater(pm, 1, 0) + FINE + "%"; }
+
+  function quantiteLancee(qte, majDixMill) {
+    return Math.ceil((qte * (10000 + majDixMill)) / 10000);
+  }
+
+  // temps prévu = réglage + unitaire × quantité lancée.
+  // Le réglage s'ajoute une fois par opération, jamais par pièce.
+  function tempsPrevu(op, lancee) {
+    var u = versEchelle(op.tempsUnitaireMin, 2);
+    var r = versEchelle(op.tempsReglageMin, 2);
+    if (u === null || r === null) return null;
+    return r + u * lancee;
+  }
+
+  // coût de main-d'œuvre en centimes : minutes_c × taux_c / 6000.
+  function coutMO(minutesC, tauxC) {
+    if (tauxC === null) return null;
+    return Math.round((minutesC * tauxC) / 6000);
+  }
+
+  // ===================================================================
+  // Le processus, tel que décrit dans le document.
+  // ===================================================================
+
+  var ETAPES = [
+    { n: 1, court: "Demande", nom: "Demande client",
+      doc: "Le client nous contacte avec un besoin : un coffret pour une cuvée spécifique, avec des contraintes de dimensions, de matière, de finition, de marquage et de quantité." },
+    { n: 2, court: "Chiffrage", nom: "Étude et chiffrage",
+      doc: "Nous étudions la faisabilité, calculons la consommation de matière, estimons les temps de production par opération, et établissons un devis." },
+    { n: 3, court: "BAT et prototype", nom: "Validation et prototypage",
+      doc: "Si le devis est accepté, nous réalisons un BAT pour validation visuelle par le client, puis un prototype pour validation technique." },
+    { n: 4, court: "Lancement", nom: "Lancement en production",
+      doc: "La quantité produite est la quantité commandée majorée de 5 % pour absorber les rebuts éventuels." },
+    { n: 5, court: "Fabrication", nom: "Fabrication",
+      doc: "La production passe par un enchaînement d'opérations réparties en 6 catégories. Chaque opération est réalisée sur un centre de travail spécifique." },
+    { n: 6, court: "Suivi", nom: "Suivi de production",
+      doc: "Chaque opérateur renseigne son nom, la quantité réalisée, l'heure de début et l'heure de fin." },
+    { n: 7, court: "Contrôle", nom: "Contrôle qualité",
+      doc: "Des points de contrôle sont réalisés après usinage, après assemblage et après finition, avant conditionnement." },
+    { n: 8, court: "Livraison", nom: "Conditionnement et livraison",
+      doc: "Les produits finis sont conditionnés selon les exigences du client, puis expédiés." },
+    { n: 9, court: "Facturation", nom: "Facturation",
+      doc: "La commande est facturée après livraison." },
+    { n: 10, court: "Marge", nom: "Bilan de marge",
+      doc: "Nous comparons le coût réel (matière + temps de main-d'œuvre) au prix de vente pour évaluer la rentabilité de chaque commande." }
+  ];
+
+  var CATEGORIES = [
+    { code: "PREPARATION_DEBIT", n: 1, nom: "Préparation et débit" },
+    { code: "USINAGE", n: 2, nom: "Usinage" },
+    { code: "PONCAGE", n: 3, nom: "Ponçage" },
+    { code: "ASSEMBLAGE", n: 4, nom: "Assemblage" },
+    { code: "FINITION", n: 5, nom: "Finition" },
+    { code: "CONDITIONNEMENT", n: 6, nom: "Conditionnement" }
+  ];
+
+  var CONTROLES = [
+    { cle: "usinage", nom: "Après usinage", categories: ["PREPARATION_DEBIT", "USINAGE"] },
+    { cle: "assemblage", nom: "Après assemblage", categories: ["ASSEMBLAGE"] },
+    { cle: "finition", nom: "Après finition", categories: ["FINITION"] }
+  ];
+
+  var ESSENCES = ["Chêne", "Peuplier massif", "Pin Radiata", "Contreplaqué peuplier"];
+  var FAMILLES = ["Coffret 1 bouteille", "Coffret magnum", "Coffret multi-bouteilles", "Couvercle"];
+  var FINITIONS = ["Brut", "Teinte", "Vernis", "Lasure", "Teinte + vernis"];
+  var MARQUAGES = [
+    ["aucun", "Aucun"], ["laser", "Gravure laser"], ["serigraphie", "Sérigraphie"],
+    ["feu", "Marquage à feu"], ["chaud", "Marquage à chaud"]
+  ];
+  var TYPOLOGIES = [["standard", "Coffret bois standard"], ["charniere", "Coffret à charnière"]];
+
+  var CLE_MAJ = "majoration_lancement";
+  var CLE_TAUX = "taux_horaire_atelier_eur";
+  var CLE_REGLAGE = "temps_reglage_defaut_min";
+
+  // ===================================================================
+  // État
+  // ===================================================================
+
+  function lireLocal(cle) { try { return window.localStorage.getItem(cle); } catch (e) { return null; } }
+  function ecrireLocal(cle, v) { try { window.localStorage.setItem(cle, v); } catch (e) { /* stockage indisponible */ } }
+
+  var etat = {
+    route: { vue: "commandes" },
+    etapeVue: {},
+    filtre: "encours",
+    pret: { ops: false, cmd: false, pt: false },
+    lent: false,
+    erreur: null,
+    operations: [], opParId: {},
+    centres: [], operateurs: [], parametres: {},
+    commandes: [], cmdParId: {},
+    pointages: [],
+    brouillons: {},
+    engages: {},
+    nouvelle: { typologie: "standard", essence: "Chêne", marquage: "aucun" },
+    operateur: lireLocal("fps-operateur") || "",
+    fin: null,
+    confirmation: null,
+    sousOnglet: "operations",
+    vueRendue: null
+  };
+
+  var magasin = null;
+  var peutEcrire = true;
+
+  function maintenant() { return new Date().toISOString(); }
+
+  function aujourdhui() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  var fmtJour = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+  var fmtJourAn = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+  var fmtHeure = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+  function jourDe(iso) { if (!iso) return "—"; var d = new Date(iso); return isNaN(d) ? "—" : fmtJour.format(d); }
+  function heureDe(iso) { if (!iso) return "—"; var d = new Date(iso); return isNaN(d) ? "—" : fmtHeure.format(d); }
+
+  function echeanceTexte(ymd) {
+    if (!ymd) return null;
+    var p = ymd.split("-").map(Number);
+    if (p.length !== 3 || p.some(isNaN)) return null;
+    return fmtJourAn.format(new Date(p[0], p[1] - 1, p[2]));
+  }
+
+  function nouvelId(prefixe) {
+    return prefixe + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  // ===================================================================
+  // Lectures dérivées
+  // ===================================================================
+
+  function parametreDecimal(cle, dec) { return versEchelle(etat.parametres[cle], dec); }
+  function majoration() { var v = parametreDecimal(CLE_MAJ, 4); return v === null ? 500 : v; }
+  function tauxC() { return parametreDecimal(CLE_TAUX, 2); }
+
+  function categorie(code) {
+    for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].code === code) return CATEGORIES[i];
+    return null;
+  }
+
+  function rangCat(code) { var c = categorie(code); return c ? c.n : 99; }
+
+  function opsDeGamme(cmd) {
+    return (cmd.gamme || [])
+      .map(function (id) { return etat.opParId[id]; })
+      .filter(Boolean)
+      .sort(function (a, b) { return rangCat(a.categorie) - rangCat(b.categorie) || a.ordre - b.ordre; });
+  }
+
+  function lanceeDe(cmd) {
+    if (cmd.quantiteLancee) return cmd.quantiteLancee;
+    return quantiteLancee(Math.max(0, Math.floor(Number(valeur(cmd, "quantite")))) || 0, majoration());
+  }
+
+  function pointagesDe(cmd) {
+    return etat.pointages.filter(function (p) { return p.commandeId === cmd.id; });
+  }
+
+  function dureePointage(p) {
+    if (!p.fin) return null;
+    var ms = Date.parse(p.fin) - Date.parse(p.debut);
+    return isNaN(ms) ? 0 : Math.max(0, Math.round(ms / 600));
+  }
+
+  function suiviOp(cmd, op) {
+    var lancee = lanceeDe(cmd);
+    var pts = etat.pointages.filter(function (p) { return p.commandeId === cmd.id && p.operationId === op.id; });
+    var realisee = 0, reel = 0, ouverts = [];
+    pts.forEach(function (p) {
+      if (p.fin) { realisee += Number(p.quantite) || 0; reel += dureePointage(p) || 0; }
+      else ouverts.push(p);
+    });
+    var statut = ouverts.length ? "encours" : realisee >= lancee && lancee > 0 ? "terminee" : realisee > 0 ? "partielle" : "afaire";
+    return { pointages: pts, realisee: realisee, reel: reel, ouverts: ouverts, statut: statut, lancee: lancee };
+  }
+
+  function valeur(cmd, cle) {
+    var b = etat.brouillons[cmd.id + ":" + cle];
+    return b !== undefined ? b : cmd[cle];
+  }
+
+  function chiffrage(cmd) {
+    var lancee = lanceeDe(cmd);
+    var ops = opsDeGamme(cmd);
+    var prevu = 0, prevuMO = 0;
+    ops.forEach(function (op) {
+      var t = tempsPrevu(op, lancee) || 0;
+      prevu += t;
+      prevuMO += t * (op.nbOperateurs || 1);
+    });
+    var taux = tauxC();
+    var pu = versEchelle(valeur(cmd, "prixUnitaireHT"), 2);
+    var qte = Math.max(0, Math.floor(Number(valeur(cmd, "quantite")))) || 0;
+    var prix = pu === null ? null : pu * qte;
+    var mo = coutMO(prevuMO, taux);
+    var matiere = versEchelle(valeur(cmd, "coutMatiereEstime"), 2);
+    var cout = mo === null ? null : mo + (matiere || 0);
+    var marge = prix === null || cout === null ? null : prix - cout;
+    return {
+      lancee: lancee, ops: ops, prevu: prevu, prevuMO: prevuMO, taux: taux,
+      pu: pu, prix: prix, mo: mo, matiere: matiere, cout: cout, marge: marge,
+      margePm: marge === null || !prix ? null : Math.round((marge * 1000) / prix)
+    };
+  }
+
+  function bilan(cmd) {
+    var c = chiffrage(cmd);
+    var reel = 0;
+    pointagesDe(cmd).forEach(function (p) { reel += dureePointage(p) || 0; });
+    var livree = Number(cmd.quantiteLivree) || Number(cmd.quantite) || 0;
+    var prixFacture = c.pu === null ? null : c.pu * livree;
+    var moReel = coutMO(reel, c.taux);
+    var matReel = versEchelle(valeur(cmd, "coutMatiereReel"), 2);
+    if (matReel === null) matReel = c.matiere;
+    var coutReel = moReel === null ? null : moReel + (matReel || 0);
+    var marge = prixFacture === null || coutReel === null ? null : prixFacture - coutReel;
+    return {
+      c: c, reel: reel, livree: livree, prixFacture: prixFacture, moReel: moReel,
+      matReel: matReel, coutReel: coutReel, marge: marge,
+      margePm: marge === null || !prixFacture ? null : Math.round((marge * 1000) / prixFacture)
+    };
+  }
+
+  function rebuts(cmd) {
+    var total = 0;
+    CONTROLES.forEach(function (k) {
+      var r = (cmd.controles || {})[k.cle];
+      if (r && r.rebut) total += Number(r.rebut) || 0;
+    });
+    return total;
+  }
+
+  function controlePertinent(cmd, k) {
+    return opsDeGamme(cmd).some(function (op) { return k.categories.indexOf(op.categorie) !== -1; });
+  }
+
+  function statutEtape(cmd, n) {
+    if (cmd.clos) return "faite";
+    if (cmd.etape === 5 && n === 6) return "courante";
+    if (n < cmd.etape) return "faite";
+    if (n === cmd.etape) return "courante";
+    return "avenir";
+  }
+
+  function enRetard(cmd) {
+    return !cmd.clos && cmd.echeance && cmd.echeance < aujourdhui() && cmd.etape < 9;
+  }
+
+  // ===================================================================
+  // Écritures : une à la fois par document, les modifications rapprochées
+  // sont fusionnées en une seule.
+  // ===================================================================
+
+  function estObjet(v) { return v && typeof v === "object" && !Array.isArray(v); }
+
+  function fusion(a, b) {
+    var r = Object.assign({}, a);
+    Object.keys(b).forEach(function (k) { r[k] = estObjet(r[k]) && estObjet(b[k]) ? fusion(r[k], b[k]) : b[k]; });
+    return r;
+  }
+
+  var files = {};
+
+  function texteErreur(e) {
+    var code = e && e.code;
+    if (code === "invalid_argument") return "Enregistrement refusé : vous n'avez pas les droits de modification.";
+    if (code === "resource_exhausted") return "Trop de modifications d'un coup. Réessayez dans un instant.";
+    if (code === "quota_exceeded") return "L'espace de stockage est plein.";
+    if (code === "revoked" || code === "not_granted") return "L'accès aux données a été retiré.";
+    return "L'enregistrement n'a pas abouti. Réessayez.";
+  }
+
+  function ecrire(chemin, patch, message) {
+    if (!magasin) return;
+    if (!peutEcrire) { signaler("Lecture seule : vous ne pouvez pas modifier.", true); return; }
+    var f = files[chemin] || (files[chemin] = { encours: false, patch: null, message: null });
+    f.patch = f.patch ? fusion(f.patch, patch) : patch;
+    if (message) f.message = message;
+    if (!f.encours) vider(chemin, f);
+  }
+
+  function vider(chemin, f) {
+    f.encours = true;
+    var patch = f.patch, message = f.message;
+    f.patch = null; f.message = null;
+    magasin.doc(chemin).update(patch).then(function () {
+      if (message) signaler(message);
+    }).catch(function (e) {
+      if (e && e.code === "invalid_argument") peutEcrire = false;
+      signaler(texteErreur(e), true);
+    }).then(function () {
+      if (f.patch) vider(chemin, f); else f.encours = false;
+    });
+  }
+
+  function creer(chemin, corps, message) {
+    if (!magasin) return Promise.reject(new Error("indisponible"));
+    if (!peutEcrire) { signaler("Lecture seule : vous ne pouvez pas modifier.", true); return Promise.reject(new Error("lecture")); }
+    return magasin.doc(chemin).set(corps).then(function () {
+      if (message) signaler(message);
+    }).catch(function (e) { signaler(texteErreur(e), true); throw e; });
+  }
+
+  function supprimer(chemin, message) {
+    if (!magasin || !peutEcrire) return Promise.resolve();
+    return magasin.doc(chemin).delete().then(function () {
+      if (message) signaler(message);
+    }).catch(function (e) { signaler(texteErreur(e), true); });
+  }
+
+  // ===================================================================
+  // Message furtif
+  // ===================================================================
+
+  var minuteurToast = null;
+
+  function signaler(texte, erreur) {
+    var t = document.getElementById("toast");
+    t.textContent = texte;
+    t.className = erreur ? "toast erreur" : "toast";
+    t.hidden = false;
+    window.clearTimeout(minuteurToast);
+    minuteurToast = window.setTimeout(function () { t.hidden = true; }, erreur ? 5200 : 2400);
+  }
+
+  // ===================================================================
+  // Petits composants
+  // ===================================================================
+
+  function pastille(genre, texte) { return h("span", { class: "pastille " + genre }, texte); }
+
+  function bouton(texte, action, options) {
+    var o = options || {};
+    return h("button", {
+      type: "button",
+      class: o.classe || null,
+      disabled: o.disabled || (o.ecriture !== false && !peutEcrire),
+      id: o.id || null,
+      "aria-pressed": o.presse === undefined ? null : String(o.presse),
+      onclick: function (ev) { ev.preventDefault(); action(ev); }
+    }, texte);
+  }
+
+  function lien(texte, href, classe) { return h("a", { href: href, class: classe || "bouton" }, texte); }
+
+  function listeSuggestions(id, valeurs) {
+    var l = h("datalist", { id: id });
+    valeurs.forEach(function (v) { l.appendChild(h("option", { value: v })); });
+    return l;
+  }
+
+  function selectHtml(id, options, valeurActuelle, onchange, desactive) {
+    return h("select", { id: id, onchange: onchange, disabled: desactive, value: valeurActuelle || "" },
+      options.map(function (o) { return h("option", { value: o[0] }, o[1]); }));
+  }
+
+  // Relie un champ à un brouillon. La frappe reste locale (les calculs
+  // suivent en direct) et l'enregistrement part quand on quitte le champ.
+  // Un rafraîchissement peut remplacer le champ pendant la frappe — un
+  // pointage arrivé d'une tablette, par exemple : le brouillon garde la
+  // saisie, et la sortie du champ l'enregistre même sans nouvelle frappe.
+  //
+  // enregistrer(v) rend false (saisie refusée, on garde ce qui a été tapé),
+  // null (rien n'a changé) ou la valeur normalisée réellement écrite, qu'on
+  // garde affichée jusqu'à ce que la base la renvoie.
+  function brouillon(cle, enregistrer, direct) {
+    var valider = function () {
+      if (enRendu || !Object.prototype.hasOwnProperty.call(etat.brouillons, cle)) return;
+      if (etat.engages[cle]) return;
+      var resultat = enregistrer(etat.brouillons[cle]);
+      if (resultat === false) return;
+      if (resultat === null) { delete etat.brouillons[cle]; return; }
+      etat.brouillons[cle] = String(resultat);
+      etat.engages[cle] = true;
+    };
+    return {
+      oninput: function (ev) {
+        etat.brouillons[cle] = ev.target.value;
+        delete etat.engages[cle];
+        if (direct) planifierRendu();
+      },
+      onchange: valider,
+      onblur: valider
+    };
+  }
+
+  function valeurBase(cle) {
+    if (cle.indexOf("param:") === 0) return etat.parametres[cle.slice(6)];
+    var i = cle.indexOf(":");
+    var cmd = etat.cmdParId[cle.slice(0, i)];
+    if (!cmd) return undefined;
+    var champ = cle.slice(i + 1);
+    if (champ.indexOf("rebut.") === 0) {
+      var r = (cmd.controles || {})[champ.slice(6)];
+      return r && r.rebut !== undefined ? r.rebut : 0;
+    }
+    return cmd[champ] === null || cmd[champ] === undefined ? "" : cmd[champ];
+  }
+
+  // Retire les brouillons que la base a confirmés.
+  function purgerBrouillons() {
+    Object.keys(etat.engages).forEach(function (cle) {
+      var actuel = valeurBase(cle);
+      if (actuel !== undefined && String(actuel) === String(etat.brouillons[cle])) {
+        delete etat.brouillons[cle];
+        delete etat.engages[cle];
+      }
+    });
+  }
+
+  // Un champ relié à une commande.
+  function champCommande(cmd, cle, libelle, opts) {
+    var o = opts || {};
+    var id = "f-" + cmd.id + "-" + cle;
+    var cleB = cmd.id + ":" + cle;
+    var v = valeur(cmd, cle);
+    var liaison = brouillon(cleB, function (saisie) {
+      var brut = String(saisie).trim();
+      var final = brut;
+      if (o.decimal && brut !== "") {
+        if (versEchelle(brut, 2) === null) {
+          signaler("« " + brut + " » n'est pas un montant valide.", true);
+          return false;
+        }
+        final = brut.replace(",", ".");
+      }
+      if (o.type === "number") final = brut === "" ? 0 : Math.max(0, Math.floor(Number(brut)) || 0);
+      var actuel = cmd[cle] === null || cmd[cle] === undefined ? "" : String(cmd[cle]);
+      if (String(final) === actuel) return null;
+      var patch = {};
+      patch[cle] = final;
+      ecrire("commandes/" + cmd.id, patch, "Enregistré");
+      return final;
+    }, o.direct);
+    var entree = h(o.multiligne ? "textarea" : "input", {
+      id: id,
+      type: o.multiligne ? null : o.type || "text",
+      inputmode: o.decimal ? "decimal" : null,
+      class: o.decimal || o.type === "number" ? "nombre" : null,
+      list: o.liste || null,
+      placeholder: o.indice || null,
+      min: o.type === "number" ? "0" : null,
+      disabled: o.desactive || !peutEcrire,
+      value: v === null || v === undefined ? "" : String(v),
+      oninput: liaison.oninput,
+      onchange: liaison.onchange,
+      onblur: liaison.onblur
+    });
+    return h("label", { class: "champ" + (o.large ? " large" : ""), for: id },
+      h("span", null, libelle, o.requis ? h("span", { class: "requis" }, " *") : null),
+      entree,
+      o.aide ? h("span", { class: "aide" }, o.aide) : null);
+  }
+
+  // ===================================================================
+  // Rendu
+  // ===================================================================
+
+  var renduPlanifie = false;
+  var enRendu = false;
+
+  function planifierRendu() {
+    if (renduPlanifie) return;
+    renduPlanifie = true;
+    window.requestAnimationFrame(function () { renduPlanifie = false; rendre(); });
+  }
+
+  function rendreOnglets() {
+    var nav = document.getElementById("onglets");
+    nav.textContent = "";
+    var v = etat.route.vue;
+    var actif = v === "atelier" ? "atelier" : v === "reglages" ? "reglages" : "commandes";
+    [["commandes", "Commandes"], ["atelier", "Atelier"], ["reglages", "Réglages"]].forEach(function (o) {
+      nav.appendChild(h("a", { href: "#" + o[0], "aria-current": actif === o[0] ? "page" : null }, o[1]));
+    });
+  }
+
+  function rendre() {
+    var actif = document.activeElement;
+    var idActif = actif && actif.id ? actif.id : null;
+    var selection = null;
+    try {
+      if (idActif && typeof actif.selectionStart === "number") selection = [actif.selectionStart, actif.selectionEnd];
+    } catch (e) { selection = null; }
+
+    var cleVue = JSON.stringify(etat.route);
+    var memeVue = cleVue === etat.vueRendue;
+    var defilement = window.scrollY;
+
+    rendreOnglets();
+    var racine = document.getElementById("vue");
+    var contenu = document.createDocumentFragment();
+
+    if (etat.erreur) {
+      contenu.appendChild(h("div", { class: "carte carte-corps" }, h("h2", null, "Données indisponibles"), h("p", { class: "aide" }, etat.erreur)));
+    } else if (!etat.pret.ops || !etat.pret.cmd) {
+      contenu.appendChild(h("div", { class: "carte vide" }, etat.lent
+        ? "Les données n'ont pas encore répondu. L'écran se remplira dès qu'elles arrivent."
+        : "Chargement des commandes…"));
+    } else {
+      var v = etat.route.vue;
+      if (v === "atelier") vueAtelier(contenu);
+      else if (v === "reglages") vueReglages(contenu);
+      else if (v === "nouvelle") vueNouvelle(contenu);
+      else if (v === "commande") vueCommande(contenu, etat.route.id);
+      else vueCommandes(contenu);
+    }
+
+    enRendu = true;
+    racine.textContent = "";
+    racine.appendChild(contenu);
+    etat.vueRendue = cleVue;
+
+    if (memeVue) window.scrollTo(0, defilement);
+    else window.scrollTo(0, 0);
+
+    if (idActif && memeVue) {
+      var n = document.getElementById(idActif);
+      if (n) {
+        try { n.focus({ preventScroll: true }); } catch (e) { n.focus(); }
+        if (selection && typeof n.setSelectionRange === "function") {
+          try { n.setSelectionRange(selection[0], selection[1]); } catch (e) { /* type sans sélection */ }
+        }
+      }
+    }
+    enRendu = false;
+    rafraichirChronos();
+  }
+
+  // ===================================================================
+  // Vue : commandes (accueil)
+  // ===================================================================
+
+  function compteEtape(n) {
+    return etat.commandes.filter(function (c) {
+      if (c.clos) return false;
+      if (n === 6) return c.etape === 5 && pointagesDe(c).length > 0;
+      return c.etape === n;
+    }).length;
+  }
+
+  function vueCommandes(racine) {
+    var cmds = etat.commandes;
+    var encours = cmds.filter(function (c) { return !c.clos; });
+    var fab = encours.filter(function (c) { return c.etape === 5; });
+    var retard = encours.filter(enRetard);
+    var closes = cmds.filter(function (c) { return c.clos; });
+
+    var margeMoy = null;
+    var margesPm = closes.map(function (c) { return bilan(c).margePm; }).filter(function (x) { return x !== null; });
+    if (margesPm.length) margeMoy = Math.round(margesPm.reduce(function (a, b) { return a + b; }, 0) / margesPm.length);
+
+    var lancees = 0, rebutees = 0;
+    cmds.forEach(function (c) {
+      if (c.etape >= 8 || c.clos) { lancees += lanceeDe(c); rebutees += rebuts(c); }
+    });
+    var tauxRebut = lancees ? Math.round((rebutees * 1000) / lancees) : null;
+
+    racine.appendChild(h("div", { class: "titre-page" },
+      h("div", null, h("h1", null, "Commandes"),
+        h("p", { class: "sous-titre" }, "De la demande client au bilan de marge, en 10 étapes.")),
+      lien("+ Nouvelle commande", "#nouvelle", "bouton principal grand")));
+
+    racine.appendChild(h("div", { class: "tuiles" },
+      tuile(String(encours.length), "Commandes en cours"),
+      tuile(String(fab.length), "En fabrication à l'atelier"),
+      tuile(String(retard.length), "En retard sur l'échéance", retard.length ? "alerte" : null),
+      tuile(pourMille(margeMoy), "Marge moyenne des commandes clôturées", margeMoy !== null && margeMoy >= 0 ? "bon" : null),
+      tuile(pourMille(tauxRebut), "Taux de rebut constaté")));
+
+    var filtres = h("div", { class: "filtres", role: "group", "aria-label": "Filtrer par étape" });
+    filtres.appendChild(bouton(["Toutes en cours ", h("span", { class: "compte" }, encours.length)], function () { etat.filtre = "encours"; rendre(); }, { presse: etat.filtre === "encours", ecriture: false }));
+    ETAPES.forEach(function (e) {
+      var n = compteEtape(e.n);
+      filtres.appendChild(bouton([e.n + " · " + e.court + " ", h("span", { class: "compte" }, n)], function () { etat.filtre = e.n; rendre(); }, { presse: etat.filtre === e.n, ecriture: false }));
+    });
+    filtres.appendChild(bouton(["Clôturées ", h("span", { class: "compte" }, closes.length)], function () { etat.filtre = "clos"; rendre(); }, { presse: etat.filtre === "clos", ecriture: false }));
+    racine.appendChild(filtres);
+
+    var visibles = cmds.filter(function (c) {
+      if (etat.filtre === "clos") return c.clos;
+      if (c.clos) return false;
+      if (etat.filtre === "encours") return true;
+      if (etat.filtre === 6) return c.etape === 5 && pointagesDe(c).length > 0;
+      return c.etape === etat.filtre;
+    }).sort(function (a, b) {
+      var ea = a.echeance || "9999", eb = b.echeance || "9999";
+      return ea < eb ? -1 : ea > eb ? 1 : (a.numero < b.numero ? -1 : 1);
+    });
+
+    if (!visibles.length) {
+      racine.appendChild(h("div", { class: "carte vide" },
+        cmds.length ? "Aucune commande à cette étape." : h("div", null,
+          h("p", null, "Aucune commande pour l'instant."),
+          lien("Créer la première commande", "#nouvelle", "bouton principal"))));
+      return;
+    }
+
+    var liste = h("div", { class: "liste-commandes" });
+    visibles.forEach(function (c) { liste.appendChild(ficheCommande(c)); });
+    racine.appendChild(liste);
+  }
+
+  function tuile(valeurTexte, quoi, genre) {
+    return h("div", { class: "tuile" + (genre ? " " + genre : "") },
+      h("div", { class: "valeur" }, valeurTexte), h("div", { class: "quoi" }, quoi));
+  }
+
+  function ficheCommande(c) {
+    var barres = h("div", { class: "progression", "aria-hidden": "true" });
+    ETAPES.forEach(function (e) {
+      var s = statutEtape(c, e.n);
+      barres.appendChild(h("span", { class: s === "faite" ? "fait" : s === "courante" ? "encours" : null }));
+    });
+
+    var etape = ETAPES[Math.min(c.etape, 10) - 1];
+    var detail = "";
+    if (c.etape === 5 && !c.clos) {
+      var ops = opsDeGamme(c);
+      var finies = ops.filter(function (op) { return suiviOp(c, op).statut === "terminee"; }).length;
+      detail = " — " + finies + "/" + ops.length + " opérations terminées";
+    }
+
+    var ech = echeanceTexte(c.echeance);
+    return h("a", { class: "fiche", href: "#commande-" + c.id },
+      h("div", null,
+        h("div", { class: "numero" }, c.numero, c.exemple ? pastille("neutre", "Exemple") : null),
+        h("div", { class: "client" }, c.client || "Client à renseigner"),
+        h("div", { class: "produit" }, c.produit || "")),
+      h("div", null,
+        barres,
+        h("div", { class: "ou" }, c.clos ? h("strong", null, "Clôturée") : [h("strong", null, "Étape " + c.etape + " · " + etape.nom), detail])),
+      h("div", { class: "droite" },
+        h("span", null, grouper(Number(c.quantite) || 0) + " coffrets"),
+        ech ? pastille(enRetard(c) ? "alerte" : "neutre", (enRetard(c) ? "En retard · " : "Pour le ") + ech) : null));
+  }
+
+  // ===================================================================
+  // Vue : nouvelle commande (étape 1)
+  // ===================================================================
+
+  function clientsConnus() {
+    var s = {};
+    etat.commandes.forEach(function (c) { if (c.client) s[c.client] = true; });
+    return Object.keys(s).sort();
+  }
+
+  function champNouvelle(cle, libelle, opts) {
+    var o = opts || {};
+    var id = "n-" + cle;
+    var entree = h(o.multiligne ? "textarea" : "input", {
+      id: id,
+      type: o.multiligne ? null : o.type || "text",
+      class: o.type === "number" ? "nombre" : null,
+      list: o.liste || null,
+      placeholder: o.indice || null,
+      min: o.type === "number" ? "1" : null,
+      value: etat.nouvelle[cle] === undefined ? "" : String(etat.nouvelle[cle]),
+      oninput: function (ev) { etat.nouvelle[cle] = ev.target.value; }
+    });
+    return h("label", { class: "champ" + (o.large ? " large" : ""), for: id },
+      h("span", null, libelle, o.requis ? h("span", { class: "requis" }, " *") : null),
+      entree,
+      o.aide ? h("span", { class: "aide" }, o.aide) : null);
+  }
+
+  function choixCartes(options, actuel, surChoix, desactive) {
+    return h("div", { class: "choix-cartes", role: "group" }, options.map(function (o) {
+      return bouton(o[1], function () { surChoix(o[0]); }, { presse: actuel === o[0], disabled: desactive, ecriture: false });
+    }));
+  }
+
+  function vueNouvelle(racine) {
+    var n = etat.nouvelle;
+    racine.appendChild(h("a", { class: "retour", href: "#commandes" }, "← Commandes"));
+    racine.appendChild(h("div", { class: "titre-page" },
+      h("div", null, h("h1", null, "Nouvelle commande"),
+        h("p", { class: "sous-titre" }, "Étape 1 — Demande client"))));
+
+    var carte = h("div", { class: "carte carte-corps" });
+    carte.appendChild(h("div", { class: "citation" }, ETAPES[0].doc, h("small", null, "Extrait de « Notre processus de fabrication »")));
+
+    carte.appendChild(h("div", { class: "grille" },
+      champNouvelle("client", "Client", { requis: true, liste: "liste-clients", indice: "Maison de Champagne…" }),
+      champNouvelle("produit", "Produit ou cuvée", { requis: true, indice: "Coffret cuvée Prestige 2019" }),
+      champNouvelle("quantite", "Quantité commandée", { requis: true, type: "number", indice: "150" }),
+      champNouvelle("echeance", "Livraison souhaitée", { type: "date" })));
+
+    carte.appendChild(h("h3", { style: { marginTop: "20px", marginBottom: "8px" } }, "Typologie"));
+    carte.appendChild(choixCartes(TYPOLOGIES, n.typologie, function (v) { n.typologie = v; rendre(); }));
+
+    carte.appendChild(h("div", { class: "grille", style: { marginTop: "16px" } },
+      champNouvelle("famille", "Famille de produit", { liste: "liste-familles", indice: "Coffret 1 bouteille" }),
+      h("label", { class: "champ", for: "n-essence" }, "Essence de bois",
+        selectHtml("n-essence", ESSENCES.map(function (e) { return [e, e]; }), n.essence, function (ev) { n.essence = ev.target.value; })),
+      champNouvelle("finition", "Finition", { liste: "liste-finitions", indice: "Teinte + vernis" }),
+      h("label", { class: "champ", for: "n-marquage" }, "Marquage",
+        selectHtml("n-marquage", MARQUAGES, n.marquage, function (ev) { n.marquage = ev.target.value; })),
+      h("div", { class: "champ" }, h("span", null, "Dimensions (mm) : longueur × largeur × hauteur"),
+        h("div", { class: "dims" },
+          dimNouvelle("longueurMm", "L"), dimNouvelle("largeurMm", "l"), dimNouvelle("hauteurMm", "h"))),
+      champNouvelle("notes", "Contraintes et remarques", { multiligne: true, large: true })));
+
+    carte.appendChild(listeSuggestions("liste-clients", clientsConnus()));
+    carte.appendChild(listeSuggestions("liste-familles", FAMILLES));
+    carte.appendChild(listeSuggestions("liste-finitions", FINITIONS));
+
+    carte.appendChild(h("div", { class: "pied-etape" },
+      lien("Annuler", "#commandes", "bouton discret"),
+      bouton("Créer la commande et passer au chiffrage →", creerCommande, { classe: "principal grand", id: "creer" })));
+
+    racine.appendChild(carte);
+  }
+
+  function dimNouvelle(cle, court) {
+    return h("input", {
+      id: "n-" + cle, type: "number", min: "0", class: "nombre", placeholder: court,
+      "aria-label": court === "L" ? "Longueur en mm" : court === "l" ? "Largeur en mm" : "Hauteur en mm",
+      value: etat.nouvelle[cle] || "",
+      oninput: function (ev) { etat.nouvelle[cle] = ev.target.value; }
+    });
+  }
+
+  function prochainNumero() {
+    var an = new Date().getFullYear();
+    var max = 0;
+    etat.commandes.forEach(function (c) {
+      var m = /^CMD-(\d{4})-(\d+)$/.exec(c.numero || "");
+      if (m && Number(m[1]) === an) max = Math.max(max, Number(m[2]));
+    });
+    return "CMD-" + an + "-" + String(max + 1).padStart(3, "0");
+  }
+
+  function creerCommande() {
+    var n = etat.nouvelle;
+    var manque = [];
+    if (!String(n.client || "").trim()) manque.push("le client");
+    if (!String(n.produit || "").trim()) manque.push("le produit");
+    var qte = Math.floor(Number(n.quantite));
+    if (!(qte > 0)) manque.push("la quantité");
+    if (manque.length) { signaler("Il manque " + manque.join(", ") + ".", true); return; }
+
+    var id = nouvelId("c");
+    var corps = {
+      numero: prochainNumero(),
+      client: String(n.client).trim(),
+      produit: String(n.produit).trim(),
+      quantite: qte,
+      echeance: n.echeance || "",
+      typologie: n.typologie || "standard",
+      famille: String(n.famille || "").trim(),
+      essence: n.essence || "",
+      finition: String(n.finition || "").trim(),
+      marquage: n.marquage || "aucun",
+      longueurMm: n.longueurMm || "", largeurMm: n.largeurMm || "", hauteurMm: n.hauteurMm || "",
+      notes: String(n.notes || "").trim(),
+      etape: 2,
+      historique: { "1": maintenant() },
+      gamme: [],
+      prixUnitaireHT: "",
+      coutMatiereEstime: "",
+      prototypeRequis: true,
+      controles: {},
+      creeLe: maintenant()
+    };
+    creer("commandes/" + id, corps, "Commande " + corps.numero + " créée").then(function () {
+      etat.nouvelle = { typologie: "standard", essence: "Chêne", marquage: "aucun" };
+      etat.etapeVue[id] = 2;
+      window.location.hash = "commande-" + id;
+    }).catch(function () { /* message déjà affiché */ });
+  }
+
+  // ===================================================================
+  // Vue : une commande et ses 10 étapes
+  // ===================================================================
+
+  function etapeAffichee(cmd) {
+    var choisie = etat.etapeVue[cmd.id];
+    if (choisie) return choisie;
+    if (cmd.clos) return 10;
+    return cmd.etape;
+  }
+
+  function vueCommande(racine, id) {
+    var cmd = etat.cmdParId[id];
+    racine.appendChild(h("a", { class: "retour", href: "#commandes" }, "← Commandes"));
+    if (!cmd) {
+      racine.appendChild(h("div", { class: "carte vide" }, "Cette commande n'existe pas ou a été supprimée."));
+      return;
+    }
+
+    var ech = echeanceTexte(cmd.echeance);
+    var typo = TYPOLOGIES.filter(function (t) { return t[0] === cmd.typologie; })[0];
+    racine.appendChild(h("div", { class: "titre-page" },
+      h("div", null,
+        h("div", { class: "numero aide" }, cmd.numero, " ", cmd.exemple ? pastille("neutre", "Exemple") : null),
+        h("h1", null, cmd.client || "Client à renseigner"),
+        h("p", { class: "sous-titre" },
+          [cmd.produit, grouper(Number(cmd.quantite) || 0) + " coffrets", typo ? typo[1] : null, cmd.essence]
+            .filter(Boolean).join(" · "))),
+      ech ? pastille(enRetard(cmd) ? "alerte" : "neutre", (enRetard(cmd) ? "En retard · " : "Livraison le ") + ech) : null));
+
+    var vue = etapeAffichee(cmd);
+    var liste = h("ol", { class: "etapes", "aria-label": "Les 10 étapes de la commande" });
+    ETAPES.forEach(function (e) {
+      var s = statutEtape(cmd, e.n);
+      var quand = (cmd.historique || {})[String(e.n)];
+      liste.appendChild(h("li", { class: s },
+        h("button", {
+          type: "button",
+          id: "etape-" + e.n,
+          "aria-current": vue === e.n ? "step" : null,
+          onclick: function () { etat.etapeVue[cmd.id] = e.n; etat.confirmation = null; rendre(); }
+        },
+          h("span", { class: "num" }, String(e.n)),
+          h("span", { class: "nom" }, e.court),
+          h("span", { class: "quand" }, s === "faite" && quand ? "✓ " + jourDe(quand) : s === "courante" ? "en cours" : " "))));
+    });
+    racine.appendChild(liste);
+
+    var e = ETAPES[vue - 1];
+    var s = statutEtape(cmd, vue);
+    var panneau = h("section", { class: "carte carte-corps panneau", "aria-labelledby": "titre-etape" });
+    panneau.appendChild(h("div", { class: "titre-page", style: { marginBottom: "0" } },
+      h("h2", { id: "titre-etape" }, "Étape " + e.n + " — " + e.nom),
+      s === "faite" ? pastille("ok", "Validée" + ((cmd.historique || {})[String(e.n)] ? " le " + jourDe(cmd.historique[String(e.n)]) : ""))
+        : s === "courante" ? pastille("attente", "À faire maintenant") : pastille("neutre", "À venir")));
+    panneau.appendChild(h("div", { class: "citation" }, e.doc, h("small", null, "Extrait de « Notre processus de fabrication »")));
+
+    if (s === "avenir") {
+      panneau.appendChild(h("p", { class: "aide" }, "Cette étape viendra après l'étape " + (cmd.etape === 5 ? "6" : cmd.etape) + ". Voici ce qu'elle contiendra :"));
+    }
+
+    var contenu = [null, panneau1, panneau2, panneau3, panneau4, panneau5, panneau6, panneau7, panneau8, panneau9, panneau10][vue];
+    contenu(panneau, cmd, s);
+    panneau.appendChild(piedEtape(cmd, vue, s));
+    racine.appendChild(panneau);
+  }
+
+  function modifiableAvantLancement(cmd) { return !cmd.clos && cmd.etape < 5; }
+
+  // --- Étape 1 ---------------------------------------------------------
+
+  function panneau1(p, cmd) {
+    var verrou = !modifiableAvantLancement(cmd);
+    if (verrou) p.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } }, "La commande est lancée : la demande ne se modifie plus."));
+    p.appendChild(h("div", { class: "grille" },
+      champCommande(cmd, "client", "Client", { requis: true, desactive: verrou, direct: true }),
+      champCommande(cmd, "produit", "Produit ou cuvée", { requis: true, desactive: verrou, direct: true }),
+      champCommande(cmd, "quantite", "Quantité commandée", { requis: true, type: "number", desactive: verrou, direct: true }),
+      champCommande(cmd, "echeance", "Livraison souhaitée", { type: "date", desactive: verrou })));
+
+    p.appendChild(h("h3", { style: { marginTop: "18px", marginBottom: "8px" } }, "Typologie"));
+    p.appendChild(choixCartes(TYPOLOGIES, cmd.typologie, function (v) {
+      ecrire("commandes/" + cmd.id, { typologie: v }, "Enregistré");
+    }, verrou || !peutEcrire));
+
+    p.appendChild(h("div", { class: "grille", style: { marginTop: "16px" } },
+      champCommande(cmd, "famille", "Famille de produit", { liste: "liste-familles", desactive: verrou }),
+      h("label", { class: "champ", for: "s-essence" }, "Essence de bois",
+        selectHtml("s-essence", ESSENCES.map(function (x) { return [x, x]; }), cmd.essence,
+          function (ev) { ecrire("commandes/" + cmd.id, { essence: ev.target.value }, "Enregistré"); }, verrou || !peutEcrire)),
+      champCommande(cmd, "finition", "Finition", { liste: "liste-finitions", desactive: verrou }),
+      h("label", { class: "champ", for: "s-marquage" }, "Marquage",
+        selectHtml("s-marquage", MARQUAGES, cmd.marquage,
+          function (ev) { ecrire("commandes/" + cmd.id, { marquage: ev.target.value }, "Enregistré"); }, verrou || !peutEcrire)),
+      h("div", { class: "champ" }, h("span", null, "Dimensions (mm) : L × l × h"),
+        h("div", { class: "dims" },
+          champDim(cmd, "longueurMm", "Longueur", verrou), champDim(cmd, "largeurMm", "Largeur", verrou), champDim(cmd, "hauteurMm", "Hauteur", verrou))),
+      champCommande(cmd, "notes", "Contraintes et remarques", { multiligne: true, large: true, desactive: verrou })));
+    p.appendChild(listeSuggestions("liste-familles", FAMILLES));
+    p.appendChild(listeSuggestions("liste-finitions", FINITIONS));
+
+    p.appendChild(zoneSuppression(cmd));
+  }
+
+  function champDim(cmd, cle, nom, verrou) {
+    var id = "f-" + cmd.id + "-" + cle;
+    var liaison = brouillon(cmd.id + ":" + cle, function (saisie) {
+      var v = String(saisie).trim();
+      if (v === String(cmd[cle] || "")) return null;
+      var patch = {}; patch[cle] = v;
+      ecrire("commandes/" + cmd.id, patch, "Enregistré");
+      return v;
+    });
+    return h("input", {
+      id: id, type: "number", min: "0", class: "nombre", "aria-label": nom + " en mm", placeholder: nom.charAt(0),
+      disabled: verrou || !peutEcrire,
+      value: valeur(cmd, cle) || "",
+      oninput: liaison.oninput, onchange: liaison.onchange, onblur: liaison.onblur
+    });
+  }
+
+  function zoneSuppression(cmd) {
+    var cle = "suppr-" + cmd.id;
+    if (etat.confirmation === cle) {
+      return h("div", { class: "manques", style: { marginTop: "18px" } },
+        h("p", { style: { margin: "0 0 10px" } }, "Supprimer " + cmd.numero + " et tous ses pointages ? C'est définitif."),
+        h("div", { class: "actions" },
+          bouton("Oui, supprimer", function () {
+            etat.confirmation = null;
+            pointagesDe(cmd).forEach(function (pt) { supprimer("pointages/" + pt.id); });
+            supprimer("commandes/" + cmd.id, "Commande supprimée").then(function () { window.location.hash = "commandes"; });
+          }, { classe: "danger" }),
+          bouton("Annuler", function () { etat.confirmation = null; rendre(); }, { ecriture: false })));
+    }
+    return h("div", { style: { marginTop: "18px" } },
+      bouton("Supprimer cette commande", function () { etat.confirmation = cle; rendre(); }, { classe: "discret danger" }));
+  }
+
+  // --- Étape 2 ---------------------------------------------------------
+
+  function panneau2(p, cmd) {
+    var verrou = !modifiableAvantLancement(cmd);
+    var c = chiffrage(cmd);
+    var coches = {};
+    (cmd.gamme || []).forEach(function (id) { coches[id] = true; });
+
+    var gauche = h("div", null);
+    gauche.appendChild(h("div", { class: "titre-page", style: { marginBottom: "10px" } },
+      h("h3", null, "Gamme : les opérations de cette commande"),
+      verrou ? null : reprendreGamme(cmd)));
+    gauche.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } },
+      "Cochez les opérations, catégorie par catégorie. La gamme se choisit à la main pour chaque commande."));
+
+    CATEGORIES.concat([{ code: null, n: 0, nom: "Non classées" }]).forEach(function (cat) {
+      var ops = etat.operations.filter(function (op) {
+        return op.actif !== false && (cat.code === null ? !categorie(op.categorie) : op.categorie === cat.code);
+      });
+      if (!ops.length) return;
+      var nbCoches = ops.filter(function (op) { return coches[op.id]; }).length;
+      var groupe = h("div", { class: "groupe-cat" },
+        h("h4", null, cat.n ? h("span", { class: "rang" }, String(cat.n)) : null, cat.nom,
+          nbCoches ? h("span", { class: "pastille attente" }, nbCoches + " choisie" + (nbCoches > 1 ? "s" : "")) : null));
+      var cases = h("div", { class: "cases" });
+      ops.forEach(function (op) {
+        var coche = !!coches[op.id];
+        var id = "g-" + cmd.id + "-" + op.id;
+        cases.appendChild(h("label", { class: "case" + (coche ? " coche" : ""), for: id },
+          h("input", {
+            type: "checkbox", id: id, checked: coche, disabled: verrou || !peutEcrire,
+            onchange: function (ev) {
+              var g = (cmd.gamme || []).filter(function (x) { return x !== op.id; });
+              if (ev.target.checked) g.push(op.id);
+              ecrire("commandes/" + cmd.id, { gamme: g });
+            }
+          }),
+          h("span", null, op.nom, op.centreTravail ? h("span", { class: "aide" }, " · " + op.centreTravail) : null),
+          h("span", { class: "temps" }, formater(versEchelle(op.tempsUnitaireMin, 2), 2, 0) + " min/pièce")));
+      });
+      groupe.appendChild(cases);
+      gauche.appendChild(groupe);
+    });
+
+    var droite = h("div", { class: "colle" });
+    var resume = h("div", { class: "carte carte-corps resume", style: { background: "var(--encadre)" } });
+    resume.appendChild(h("h3", { style: { marginBottom: "12px" } }, "Chiffrage"));
+    resume.appendChild(h("dl", null,
+      h("dt", null, "Quantité commandée"), h("dd", null, grouper(Number(cmd.quantite) || 0)),
+      h("dt", null, "Quantité lancée (+5 %)"), h("dd", null, grouper(c.lancee)),
+      h("dt", null, "Opérations"), h("dd", null, String(c.ops.length)),
+      h("dt", null, "Temps prévu"), h("dd", null, duree(c.prevu)),
+      h("dt", null, "Main-d'œuvre à " + euros(c.taux) + "/h"), h("dd", null, euros(c.mo))));
+
+    resume.appendChild(h("div", { class: "grille", style: { marginTop: "16px", gridTemplateColumns: "1fr" } },
+      champCommande(cmd, "coutMatiereEstime", "Coût matière estimé, pour la commande (€ HT)", {
+        decimal: true, direct: true, desactive: verrou, indice: "0,00",
+        aide: "Le calcul automatique depuis CALCUL BOIS arrive au lot 3."
+      }),
+      champCommande(cmd, "prixUnitaireHT", "Prix de vente par coffret (€ HT)", { decimal: true, direct: true, desactive: verrou, requis: true, indice: "0,00" })));
+
+    resume.appendChild(h("dl", { style: { marginTop: "16px" } },
+      h("dt", null, "Montant du devis"), h("dd", null, euros(c.prix)),
+      h("dt", null, "Coût prévu"), h("dd", null, euros(c.cout)),
+      h("div", { class: "total", style: { display: "contents" } },
+        h("dt", null, "Marge prévue"), h("dd", null, euros(c.marge) + (c.margePm !== null ? "  ·  " + pourMille(c.margePm) : "")))));
+
+    if (c.marge !== null) {
+      resume.appendChild(h("p", { style: { marginTop: "12px", marginBottom: "0" } },
+        c.marge < 0 ? pastille("alerte", "Vente à perte") : pastille("ok", "Commande rentable sur le papier")));
+    }
+    droite.appendChild(resume);
+
+    if (c.ops.length) {
+      var detail = h("div", { class: "carte carte-corps", style: { marginTop: "12px" } },
+        h("h4", { style: { marginBottom: "6px" } }, "Temps prévu par opération"));
+      var table = h("table", null, h("tbody", null, c.ops.map(function (op) {
+        return h("tr", null, h("td", null, op.nom), h("td", { class: "nb" }, minutes(tempsPrevu(op, c.lancee))));
+      })));
+      detail.appendChild(h("div", { class: "defile" }, table));
+      detail.appendChild(h("p", { class: "aide", style: { marginTop: "8px" } }, "Réglage compté une fois par opération + temps unitaire × " + grouper(c.lancee) + "."));
+      droite.appendChild(detail);
+    }
+
+    p.appendChild(h("div", { class: "deux-colonnes" }, gauche, droite));
+  }
+
+  function reprendreGamme(cmd) {
+    var autres = etat.commandes.filter(function (x) { return x.id !== cmd.id && (x.gamme || []).length; });
+    if (!autres.length) return null;
+    var options = [["", "Reprendre la gamme d'une autre commande…"]].concat(autres.map(function (x) {
+      return [x.id, x.numero + " · " + (x.client || "") + " · " + (x.produit || "")];
+    }));
+    return selectHtml("reprendre-" + cmd.id, options, "", function (ev) {
+      var source = etat.cmdParId[ev.target.value];
+      if (!source) return;
+      ecrire("commandes/" + cmd.id, { gamme: (source.gamme || []).slice() }, "Gamme reprise de " + source.numero);
+    }, !peutEcrire);
+  }
+
+  // --- Étape 3 ---------------------------------------------------------
+
+  function panneau3(p, cmd, s) {
+    var actif = s === "courante";
+    var bat = h("div", { class: "valide-carte" + (cmd.batValideLe ? " ok" : "") },
+      h("h3", null, "BAT — validation visuelle"),
+      cmd.batValideLe ? pastille("ok", "Validé par le client le " + jourDe(cmd.batValideLe)) : pastille("attente", "En attente du client"),
+      actif ? (cmd.batValideLe
+        ? bouton("Annuler la validation", function () { ecrire("commandes/" + cmd.id, { batValideLe: null }, "Validation du BAT annulée"); }, { classe: "discret" })
+        : bouton("Le client a validé le BAT", function () { ecrire("commandes/" + cmd.id, { batValideLe: maintenant() }, "BAT validé"); }, { classe: "succes grand" }))
+        : null);
+
+    var requis = cmd.prototypeRequis !== false;
+    var proto = h("div", { class: "valide-carte" + (!requis || cmd.prototypeValideLe ? " ok" : "") },
+      h("h3", null, "Prototype — validation technique"),
+      h("label", { class: "case" + (requis ? " coche" : ""), for: "proto-" + cmd.id, style: { gridTemplateColumns: "auto 1fr" } },
+        h("input", {
+          type: "checkbox", id: "proto-" + cmd.id, checked: requis, disabled: !actif || !peutEcrire,
+          onchange: function (ev) { ecrire("commandes/" + cmd.id, { prototypeRequis: ev.target.checked }, "Enregistré"); }
+        }),
+        h("span", null, "Commande nouvelle en atelier : prototype nécessaire")),
+      !requis ? pastille("neutre", "Pas de prototype : produit déjà fabriqué")
+        : cmd.prototypeValideLe ? pastille("ok", "Validé le " + jourDe(cmd.prototypeValideLe)) : pastille("attente", "À réaliser"),
+      actif && requis ? (cmd.prototypeValideLe
+        ? bouton("Annuler la validation", function () { ecrire("commandes/" + cmd.id, { prototypeValideLe: null }, "Validation du prototype annulée"); }, { classe: "discret" })
+        : bouton("Prototype validé", function () { ecrire("commandes/" + cmd.id, { prototypeValideLe: maintenant() }, "Prototype validé"); }, { classe: "succes grand" }))
+        : null);
+
+    p.appendChild(h("div", { class: "validation" }, bat, proto));
+  }
+
+  // --- Étape 4 ---------------------------------------------------------
+
+  function panneau4(p, cmd) {
+    var c = chiffrage(cmd);
+    var maj = majoration();
+    p.appendChild(h("div", { class: "fleche-qte" },
+      h("div", null, h("div", { class: "aide" }, "Quantité commandée"), h("div", { class: "grand-chiffre" }, grouper(Number(cmd.quantite) || 0))),
+      h("span", { class: "sep", "aria-hidden": "true" }, "→"),
+      h("div", null, h("div", { class: "aide" }, "Majoration rebuts"), h("div", { class: "grand-chiffre" }, "+" + formater(maj, 2, 0) + FINE + "%")),
+      h("span", { class: "sep", "aria-hidden": "true" }, "→"),
+      h("div", null, h("div", { class: "aide" }, "Quantité lancée"), h("div", { class: "grand-chiffre", style: { color: "var(--orange-texte)" } }, grouper(c.lancee)))));
+
+    p.appendChild(h("p", { class: "aide", style: { marginTop: "8px" } }, "Arrondie à l'unité supérieure : on ne lance pas un demi-coffret."));
+
+    p.appendChild(h("div", { class: "tuiles", style: { marginTop: "16px" } },
+      tuile(String(c.ops.length), "Opérations dans la gamme"),
+      tuile(duree(c.prevu), "Temps prévu"),
+      tuile(cmd.batValideLe ? "Validé" : "—", "BAT"),
+      tuile(cmd.prototypeRequis === false ? "Non requis" : cmd.prototypeValideLe ? "Validé" : "—", "Prototype")));
+
+    if (cmd.lanceLe) p.appendChild(h("p", { style: { marginTop: "14px" } }, pastille("ok", "Lancée le " + jourDe(cmd.lanceLe) + " à " + heureDe(cmd.lanceLe) + " — " + grouper(cmd.quantiteLancee || c.lancee) + " pièces")));
+  }
+
+  // --- Étapes 5 et 6 : l'ordre de fabrication et le pointage ------------
+
+  function choixOperateur() {
+    var noms = etat.operateurs.map(function (o) { return o.nom; });
+    var bloc = h("div", { class: "carte carte-corps", style: { background: "var(--encadre)" } });
+    bloc.appendChild(h("h3", { style: { marginBottom: "10px" } }, etat.operateur ? "Vous êtes " + etat.operateur : "Qui êtes-vous ?"));
+    if (noms.length) {
+      bloc.appendChild(h("div", { class: "qui-suis-je", role: "group", "aria-label": "Choisir l'opérateur" }, noms.map(function (nom) {
+        return bouton(nom, function () { etat.operateur = nom; ecrireLocal("fps-operateur", nom); rendre(); }, { presse: etat.operateur === nom, ecriture: false });
+      })));
+    } else {
+      bloc.appendChild(h("label", { class: "champ", for: "operateur-libre", style: { maxWidth: "320px" } }, "Votre nom",
+        h("input", {
+          type: "text", id: "operateur-libre", placeholder: "Prénom",
+          value: etat.brouillons.operateur !== undefined ? etat.brouillons.operateur : etat.operateur,
+          oninput: function (ev) { etat.brouillons.operateur = ev.target.value; },
+          onchange: retenirNom, onblur: retenirNom
+        })));
+      bloc.appendChild(h("p", { class: "aide", style: { marginTop: "8px" } }, "Ajoutez les opérateurs dans Réglages pour les choisir d'un geste."));
+    }
+    return bloc;
+  }
+
+  function retenirNom() {
+    if (enRendu || etat.brouillons.operateur === undefined) return;
+    etat.operateur = String(etat.brouillons.operateur).trim();
+    delete etat.brouillons.operateur;
+    ecrireLocal("fps-operateur", etat.operateur);
+    planifierRendu();
+  }
+
+  function blocOperations(cmd, pointage) {
+    var lancee = lanceeDe(cmd);
+    var ops = opsDeGamme(cmd);
+    if (!ops.length) return h("p", { class: "vide" }, "Aucune opération dans la gamme : elle se choisit à l'étape 2.");
+    var conteneur = h("div", null);
+    var groupes = {};
+    ops.forEach(function (op) {
+      var k = categorie(op.categorie) ? op.categorie : "_";
+      (groupes[k] = groupes[k] || []).push(op);
+    });
+    CATEGORIES.concat([{ code: "_", n: 0, nom: "Non classées" }]).forEach(function (cat) {
+      var liste = groupes[cat.code];
+      if (!liste) return;
+      var g = h("div", { class: "groupe-cat" }, h("h4", null, cat.n ? h("span", { class: "rang" }, String(cat.n)) : null, cat.nom));
+      liste.forEach(function (op) { g.appendChild(ligneOperation(cmd, op, lancee, pointage)); });
+      conteneur.appendChild(g);
+    });
+    return conteneur;
+  }
+
+  function ligneOperation(cmd, op, lancee, pointage) {
+    var s = suiviOp(cmd, op);
+    var pct = lancee ? Math.min(100, Math.round((s.realisee * 100) / lancee)) : 0;
+    var mien = s.ouverts.filter(function (pt) { return pt.operateur === etat.operateur; })[0];
+    var classe = "op" + (s.statut === "encours" ? " encours" : s.statut === "terminee" ? " terminee" : "");
+
+    var gauche = h("div", null,
+      h("div", { class: "nom-op" }, op.nom,
+        s.statut === "terminee" ? pastille("ok", "Terminée") : s.statut === "partielle" ? pastille("neutre", "Commencée") : null),
+      h("div", { class: "details" },
+        (op.centreTravail ? op.centreTravail : "Centre de travail à renseigner") + " · prévu " + minutes(tempsPrevu(op, lancee))
+          + (s.reel ? " · réel " + minutes(s.reel) : "")),
+      h("div", { class: "jauge", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(lancee), "aria-valuenow": String(s.realisee), "aria-label": "Avancement de " + op.nom },
+        h("span", { style: { width: pct + "%" } })),
+      h("div", { class: "details" }, grouper(s.realisee) + " / " + grouper(lancee) + " pièces"),
+      s.ouverts.map(function (pt) {
+        return h("div", { class: "qui" }, pt.operateur + " · en cours ", h("span", { dataset: { debut: pt.debut } }, ""));
+      }));
+
+    var droite = null;
+    if (pointage) {
+      if (mien && etat.fin && etat.fin.pointageId === mien.id) {
+        droite = saisieFin(cmd, op, mien, s);
+      } else if (mien) {
+        droite = bouton("Terminer", function () {
+          etat.fin = { pointageId: mien.id, quantite: Math.max(0, lancee - s.realisee) };
+          rendre();
+        }, { classe: "principal grand" });
+      } else {
+        droite = bouton(s.statut === "terminee" ? "Ajouter un pointage" : s.realisee > 0 ? "Reprendre" : "Démarrer",
+          function () { demarrer(cmd, op); }, { classe: s.statut === "terminee" ? "discret" : "grand" });
+      }
+    }
+    return h("div", { class: classe }, gauche, droite);
+  }
+
+  function saisieFin(cmd, op, pt, s) {
+    var id = "qte-fin-" + pt.id;
+    var regler = function (delta) {
+      etat.fin.quantite = Math.max(0, (Number(etat.fin.quantite) || 0) + delta);
+      rendre();
+    };
+    return h("div", { style: { display: "grid", gap: "8px", justifyItems: "end" } },
+      h("label", { for: id, class: "aide" }, "Pièces réalisées"),
+      h("div", { class: "compteur-qte" },
+        bouton("−", function () { regler(-1); }, { ecriture: false }),
+        h("input", {
+          type: "number", id: id, min: "0", value: String(etat.fin.quantite),
+          oninput: function (ev) { etat.fin.quantite = Math.max(0, Math.floor(Number(ev.target.value)) || 0); }
+        }),
+        bouton("+", function () { regler(1); }, { ecriture: false })),
+      h("div", { class: "actions" },
+        bouton("Annuler", function () { etat.fin = null; rendre(); }, { classe: "discret", ecriture: false }),
+        bouton("Valider", function () {
+          var q = Math.max(0, Math.floor(Number(etat.fin.quantite)) || 0);
+          etat.fin = null;
+          ecrire("pointages/" + pt.id, { fin: maintenant(), quantite: q }, op.nom + " : " + q + " pièces enregistrées");
+        }, { classe: "principal grand" })));
+  }
+
+  function demarrer(cmd, op) {
+    if (!etat.operateur) {
+      signaler("Choisissez d'abord votre nom, en haut de l'écran.", true);
+      return;
+    }
+    var deja = etat.pointages.filter(function (pt) { return !pt.fin && pt.operateur === etat.operateur; })[0];
+    if (deja) {
+      var o = etat.opParId[deja.operationId];
+      var c = etat.cmdParId[deja.commandeId];
+      signaler("Vous avez déjà « " + (o ? o.nom : "une opération") + " » en cours" + (c ? " sur " + c.numero : "") + ". Terminez-la d'abord.", true);
+      return;
+    }
+    var id = nouvelId("p");
+    creer("pointages/" + id, {
+      commandeId: cmd.id, operationId: op.id, operateur: etat.operateur,
+      debut: maintenant(), fin: null, quantite: null
+    }, op.nom + " démarré").catch(function () { /* message déjà affiché */ });
+  }
+
+  function infosAtelier(cmd) {
+    return h("div", { class: "tuiles", style: { marginBottom: "16px" } },
+      tuile(grouper(lanceeDe(cmd)), "Pièces à produire"),
+      tuile(cmd.batValideLe ? "Validé" : "—", "BAT final" + (cmd.batValideLe ? " le " + jourDe(cmd.batValideLe) : "")),
+      tuile(cmd.prototypeRequis === false ? "Non requis" : cmd.prototypeValideLe ? "Validé" : "—", "Prototype"),
+      tuile(cmd.essence || "—", [cmd.finition, (MARQUAGES.filter(function (m) { return m[0] === cmd.marquage; })[0] || [0, ""])[1]].filter(Boolean).join(" · ") || "Matière"));
+  }
+
+  function panneau5(p, cmd, s) {
+    var actif = s === "courante";
+    p.appendChild(infosAtelier(cmd));
+    if (actif) p.appendChild(h("div", { style: { marginBottom: "16px" } }, choixOperateur()));
+    p.appendChild(blocOperations(cmd, actif));
+    if (actif) p.appendChild(h("p", { class: "aide", style: { marginTop: "14px" } }, "Les étapes 5 et 6 se déroulent ensemble : chaque « Démarrer » / « Terminer » alimente le suivi de production. Le même écran existe en grand dans l'onglet Atelier, pour la tablette."));
+  }
+
+  function panneau6(p, cmd) {
+    var lancee = lanceeDe(cmd);
+    var ops = opsDeGamme(cmd);
+    var totPrevu = 0, totReel = 0;
+    var lignes = ops.map(function (op) {
+      var su = suiviOp(cmd, op);
+      var prevu = tempsPrevu(op, lancee) || 0;
+      totPrevu += prevu; totReel += su.reel;
+      var noms = {};
+      su.pointages.forEach(function (pt) { noms[pt.operateur] = true; });
+      var ecart = su.reel && prevu ? Math.round(((su.reel - prevu) * 1000) / prevu) : null;
+      return h("tr", null,
+        h("td", null, op.nom),
+        h("td", { class: "nb" }, minutes(prevu)),
+        h("td", { class: "nb" }, su.reel ? minutes(su.reel) : "—"),
+        h("td", { class: "nb " + (ecart === null ? "" : ecart > 0 ? "ecart-plus" : "ecart-moins") }, ecart === null ? "—" : (ecart > 0 ? "+" : "") + pourMille(ecart)),
+        h("td", { class: "nb" }, grouper(su.realisee) + " / " + grouper(lancee)),
+        h("td", null, Object.keys(noms).join(", ") || "—"));
+    });
+
+    p.appendChild(h("div", { class: "defile" }, h("table", null,
+      h("thead", null, h("tr", null,
+        h("th", null, "Opération"), h("th", { class: "nb" }, "Prévu"), h("th", { class: "nb" }, "Réel"),
+        h("th", { class: "nb" }, "Écart"), h("th", { class: "nb" }, "Pièces"), h("th", null, "Opérateurs"))),
+      h("tbody", null, lignes),
+      h("tfoot", null, h("tr", null,
+        h("td", null, "Total"), h("td", { class: "nb" }, duree(totPrevu)), h("td", { class: "nb" }, totReel ? duree(totReel) : "—"),
+        h("td", { colspan: "3" }, ""))))));
+
+    var pts = pointagesDe(cmd).slice().sort(function (a, b) { return a.debut < b.debut ? 1 : -1; });
+    p.appendChild(h("h3", { style: { marginTop: "22px", marginBottom: "8px" } }, "Journal des pointages"));
+    if (!pts.length) {
+      p.appendChild(h("p", { class: "aide" }, "Aucun pointage pour l'instant. Ils apparaîtront dès qu'un opérateur démarre une opération."));
+      return;
+    }
+    p.appendChild(h("div", { class: "defile" }, h("table", null,
+      h("thead", null, h("tr", null,
+        h("th", null, "Opérateur"), h("th", null, "Opération"), h("th", null, "Jour"), h("th", null, "Début"),
+        h("th", null, "Fin"), h("th", { class: "nb" }, "Durée"), h("th", { class: "nb" }, "Pièces"), h("th", null, ""))),
+      h("tbody", null, pts.map(function (pt) {
+        var op = etat.opParId[pt.operationId];
+        var cle = "suppr-pt-" + pt.id;
+        return h("tr", null,
+          h("td", null, pt.operateur), h("td", null, op ? op.nom : "—"),
+          h("td", null, jourDe(pt.debut)), h("td", null, heureDe(pt.debut)),
+          h("td", null, pt.fin ? heureDe(pt.fin) : pastille("attente", "en cours")),
+          h("td", { class: "nb" }, pt.fin ? minutes(dureePointage(pt)) : "—"),
+          h("td", { class: "nb" }, pt.fin ? grouper(Number(pt.quantite) || 0) : "—"),
+          h("td", null, etat.confirmation === cle
+            ? h("div", { class: "actions" },
+              bouton("Supprimer", function () { etat.confirmation = null; supprimer("pointages/" + pt.id, "Pointage supprimé"); }, { classe: "danger" }),
+              bouton("Garder", function () { etat.confirmation = null; rendre(); }, { classe: "discret", ecriture: false }))
+            : bouton("Corriger", function () { etat.confirmation = cle; rendre(); }, { classe: "discret" })));
+      })))));
+  }
+
+  // --- Étape 7 ---------------------------------------------------------
+
+  function panneau7(p, cmd, s) {
+    var actif = s === "courante";
+    var lancee = lanceeDe(cmd);
+    var grille = h("div", { class: "controles" });
+    CONTROLES.forEach(function (k) {
+      var r = (cmd.controles || {})[k.cle] || {};
+      var pertinent = controlePertinent(cmd, k);
+      var classe = "controle" + (!pertinent ? " so" : r.statut === "conforme" ? " ok" : r.statut === "non-conforme" ? " ko" : "");
+      var carte = h("div", { class: classe }, h("h3", null, k.nom));
+      if (!pertinent) {
+        carte.appendChild(pastille("neutre", "Sans objet : pas d'opération de ce type dans la gamme"));
+      } else {
+        carte.appendChild(r.statut === "conforme" ? pastille("ok", "Conforme")
+          : r.statut === "non-conforme" ? pastille("alerte", "Non conforme") : pastille("attente", "À contrôler"));
+        if (actif) {
+          carte.appendChild(h("div", { class: "actions" },
+            bouton("Conforme", function () { var patch = { controles: {} }; patch.controles[k.cle] = { statut: "conforme", le: maintenant() }; ecrire("commandes/" + cmd.id, patch, k.nom + " : conforme"); }, { classe: r.statut === "conforme" ? "succes" : null }),
+            bouton("Non conforme", function () { var patch = { controles: {} }; patch.controles[k.cle] = { statut: "non-conforme", le: maintenant() }; ecrire("commandes/" + cmd.id, patch, k.nom + " : non conforme"); }, { classe: r.statut === "non-conforme" ? "danger" : null })));
+        }
+        var idR = "rebut-" + cmd.id + "-" + k.cle;
+        var cleR = cmd.id + ":rebut." + k.cle;
+        var liaisonR = brouillon(cleR, function (saisie) {
+          var n = Math.max(0, Math.floor(Number(saisie)) || 0);
+          if (n === (Number(r.rebut) || 0)) return null;
+          var patch = { controles: {} };
+          patch.controles[k.cle] = { rebut: n };
+          ecrire("commandes/" + cmd.id, patch, "Rebut enregistré");
+          return n;
+        });
+        carte.appendChild(h("label", { class: "champ", for: idR }, "Pièces rebutées",
+          h("input", {
+            type: "number", id: idR, min: "0", class: "nombre", disabled: !actif || !peutEcrire,
+            value: etat.brouillons[cleR] !== undefined ? etat.brouillons[cleR] : String(r.rebut || 0),
+            oninput: liaisonR.oninput, onchange: liaisonR.onchange, onblur: liaisonR.onblur
+          })));
+      }
+      grille.appendChild(carte);
+    });
+    p.appendChild(grille);
+    var r = rebuts(cmd);
+    p.appendChild(h("p", { style: { marginTop: "14px" } },
+      "Rebut total : ", h("strong", null, grouper(r) + " pièce" + (r > 1 ? "s" : "")),
+      " sur " + grouper(lancee) + " lancées — ",
+      h("strong", null, lancee ? pourMille(Math.round((r * 1000) / lancee)) : "—"),
+      r > lancee - (Number(cmd.quantite) || 0) ? h("span", null, " ", pastille("alerte", "La majoration de 5 % ne couvre pas ce rebut")) : null));
+  }
+
+  // --- Étape 8 ---------------------------------------------------------
+
+  function panneau8(p, cmd, s) {
+    var actif = s === "courante";
+    var ops = opsDeGamme(cmd);
+    var derniere = ops[ops.length - 1];
+    var produite = derniere ? suiviOp(cmd, derniere).realisee : 0;
+    var bonnes = Math.max(0, produite - rebuts(cmd));
+    p.appendChild(h("div", { class: "tuiles", style: { marginBottom: "16px" } },
+      tuile(grouper(Number(cmd.quantite) || 0), "Coffrets commandés"),
+      tuile(grouper(produite), "Sortis de la dernière opération" + (derniere ? " (" + derniere.nom + ")" : "")),
+      tuile(grouper(bonnes), "Bons après rebut", bonnes < (Number(cmd.quantite) || 0) ? "alerte" : "bon")));
+
+    if (cmd.livreeLe) {
+      p.appendChild(h("p", null, pastille("ok", "Livrée le " + jourDe(cmd.livreeLe) + " — " + grouper(Number(cmd.quantiteLivree) || 0) + " coffrets")));
+      return;
+    }
+    if (!etat.brouillons[cmd.id + ":quantiteLivree"] && etat.brouillons[cmd.id + ":quantiteLivree"] !== "") {
+      etat.brouillons[cmd.id + ":quantiteLivree"] = String(Number(cmd.quantite) || 0);
+    }
+    var id = "livree-" + cmd.id;
+    p.appendChild(h("label", { class: "champ", for: id, style: { maxWidth: "260px" } }, "Coffrets livrés",
+      h("input", {
+        type: "number", id: id, min: "0", class: "nombre", disabled: !actif || !peutEcrire,
+        value: etat.brouillons[cmd.id + ":quantiteLivree"],
+        oninput: function (ev) { etat.brouillons[cmd.id + ":quantiteLivree"] = ev.target.value; }
+      })));
+  }
+
+  // --- Étape 9 ---------------------------------------------------------
+
+  function panneau9(p, cmd, s) {
+    var actif = s === "courante";
+    var b = bilan(cmd);
+    p.appendChild(h("div", { class: "tuiles", style: { marginBottom: "16px" } },
+      tuile(grouper(b.livree), "Coffrets livrés"),
+      tuile(euros(b.c.pu), "Prix par coffret HT"),
+      tuile(euros(b.prixFacture), "Montant à facturer HT", "forte")));
+    if (cmd.factureeLe) {
+      p.appendChild(h("p", null, pastille("ok", "Facturée le " + jourDe(cmd.factureeLe) + (cmd.numeroFacture ? " — facture " + cmd.numeroFacture : ""))));
+    } else {
+      p.appendChild(h("div", { class: "grille", style: { maxWidth: "520px" } },
+        champCommande(cmd, "numeroFacture", "Numéro de facture EBP", { desactive: !actif, indice: "FA-2026-0001", aide: "Facultatif. La facture est émise dans EBP." })));
+    }
+  }
+
+  // --- Étape 10 --------------------------------------------------------
+
+  function panneau10(p, cmd, s) {
+    var actif = s === "courante";
+    var b = bilan(cmd);
+    var c = b.c;
+
+    p.appendChild(h("div", { class: "tuiles", style: { marginBottom: "18px" } },
+      tuile(euros(b.marge), "Marge réelle", b.marge === null ? null : b.marge >= 0 ? "bon" : "alerte"),
+      tuile(pourMille(b.margePm), "Taux de marge réel", b.margePm === null ? null : b.margePm >= 0 ? "bon" : "alerte"),
+      tuile(euros(c.marge), "Marge prévue au chiffrage"),
+      tuile(duree(b.reel || null), "Temps réellement passé")));
+
+    var table = h("table", null,
+      h("thead", null, h("tr", null, h("th", null, ""), h("th", { class: "nb" }, "Prévu (étape 2)"), h("th", { class: "nb" }, "Réel"), h("th", null, ""))),
+      h("tbody", null,
+        h("tr", null, h("td", null, "Prix de vente HT"), h("td", { class: "nb" }, euros(c.prix)), h("td", { class: "nb" }, euros(b.prixFacture)), h("td", null)),
+        h("tr", null, h("td", null, "Temps de main-d'œuvre"), h("td", { class: "nb" }, duree(c.prevuMO)), h("td", { class: "nb" }, b.reel ? duree(b.reel) : "—"), h("td", null)),
+        h("tr", null, h("td", null, "Coût main-d'œuvre à " + euros(c.taux) + "/h"), h("td", { class: "nb" }, euros(c.mo)), h("td", { class: "nb" }, euros(b.moReel)), h("td", null)),
+        h("tr", null, h("td", null, "Coût matière"), h("td", { class: "nb" }, euros(c.matiere)), h("td", { class: "nb" }, euros(b.matReel)), h("td", null)),
+        h("tr", null, h("td", null, "Coût total"), h("td", { class: "nb" }, euros(c.cout)), h("td", { class: "nb" }, euros(b.coutReel)), h("td", null))),
+      h("tfoot", null, h("tr", null, h("td", null, "Marge"), h("td", { class: "nb" }, euros(c.marge)), h("td", { class: "nb" }, euros(b.marge)), h("td", null))));
+    p.appendChild(h("div", { class: "defile" }, table));
+
+    if (!cmd.clos) {
+      p.appendChild(h("div", { class: "grille", style: { marginTop: "16px", maxWidth: "520px" } },
+        champCommande(cmd, "coutMatiereReel", "Coût matière réel (€ HT)", {
+          decimal: true, direct: true, desactive: !actif, indice: c.matiere !== null ? formater(c.matiere, 2, 2) : "0,00",
+          aide: "Panneaux réellement achetés, gâche incluse. Vide : on reprend l'estimation."
+        })));
+    } else {
+      p.appendChild(h("p", { style: { marginTop: "14px" } }, pastille("ok", "Bilan archivé le " + jourDe(cmd.closLe))));
+    }
+    if (c.taux === null) p.appendChild(h("p", { class: "aide", style: { marginTop: "10px" } }, "Le taux horaire est vide dans Réglages : les coûts de main-d'œuvre ne peuvent pas être calculés."));
+  }
+
+  // --- Pied d'étape : l'action principale -------------------------------
+
+  function manquesPour(cmd, n) {
+    var m = [];
+    if (n === 1) {
+      if (!String(valeur(cmd, "client") || "").trim()) m.push("le client");
+      if (!String(valeur(cmd, "produit") || "").trim()) m.push("le produit");
+      if (!(Number(valeur(cmd, "quantite")) > 0)) m.push("la quantité");
+    } else if (n === 2) {
+      if (!(cmd.gamme || []).length) m.push("au moins une opération dans la gamme");
+      if (versEchelle(valeur(cmd, "prixUnitaireHT"), 2) === null) m.push("le prix de vente par coffret");
+    } else if (n === 3) {
+      if (!cmd.batValideLe) m.push("la validation du BAT par le client");
+      if (cmd.prototypeRequis !== false && !cmd.prototypeValideLe) m.push("la validation du prototype");
+    } else if (n === 4) {
+      if (!(cmd.gamme || []).length) m.push("une gamme (étape 2)");
+    } else if (n === 7) {
+      CONTROLES.forEach(function (k) {
+        var r = (cmd.controles || {})[k.cle] || {};
+        if (controlePertinent(cmd, k) && !r.statut) m.push("le contrôle « " + k.nom.toLowerCase() + " »");
+      });
+    } else if (n === 8) {
+      var v = etat.brouillons[cmd.id + ":quantiteLivree"];
+      if (!(Number(v === undefined ? cmd.quantite : v) > 0)) m.push("le nombre de coffrets livrés");
+    }
+    return m;
+  }
+
+  var LIBELLES_ACTION = {
+    1: "Valider la demande → Étude et chiffrage",
+    2: "Devis accepté → Validation et prototypage",
+    3: "BAT validé → Lancement en production",
+    4: "Lancer la fabrication",
+    5: "Fabrication terminée → Contrôle qualité",
+    6: "Fabrication terminée → Contrôle qualité",
+    7: "Contrôles faits → Conditionnement et livraison",
+    8: "Commande livrée → Facturation",
+    9: "Commande facturée → Bilan de marge",
+    10: "Clôturer et archiver le bilan"
+  };
+
+  function piedEtape(cmd, n, s) {
+    var pied = h("div", { class: "pied-etape" });
+
+    if (s !== "courante") {
+      var courante = cmd.clos ? null : cmd.etape;
+      pied.appendChild(h("span", { class: "aide" }, s === "faite" ? "Étape terminée." : "Pas encore à cette étape."));
+      if (courante) pied.appendChild(bouton("Aller à l'étape en cours (" + courante + ")", function () { etat.etapeVue[cmd.id] = courante; rendre(); }, { ecriture: false }));
+      if (cmd.clos && n === 10) pied.appendChild(bouton("Rouvrir le bilan", function () { ecrire("commandes/" + cmd.id, { clos: false, closLe: null }, "Bilan rouvert"); }, { classe: "discret" }));
+      return pied;
+    }
+
+    var gauche = h("div", null);
+    if (cmd.etape > 1) {
+      var vers = cmd.etape === 7 ? 5 : cmd.etape - 1;
+      gauche.appendChild(bouton("← Revenir à l'étape " + vers, function () { reculer(cmd); }, { classe: "discret" }));
+    }
+
+    var droite = h("div", { style: { display: "grid", gap: "8px", justifyItems: "end" } });
+    var manque = manquesPour(cmd, n);
+
+    if (manque.length) {
+      droite.appendChild(h("div", { class: "manques" }, "Pour continuer, il manque :", h("ul", null, manque.map(function (x) { return h("li", null, x); }))));
+      droite.appendChild(bouton(LIBELLES_ACTION[n], function () {}, { classe: "principal grand", disabled: true }));
+    } else if ((n === 5 || n === 6) && opsIncompletes(cmd).length && etat.confirmation !== "fab-" + cmd.id) {
+      droite.appendChild(bouton(LIBELLES_ACTION[n], function () { etat.confirmation = "fab-" + cmd.id; rendre(); }, { classe: "principal grand" }));
+    } else if ((n === 5 || n === 6) && etat.confirmation === "fab-" + cmd.id) {
+      var inc = opsIncompletes(cmd);
+      droite.appendChild(h("div", { class: "manques" }, inc.length + " opération" + (inc.length > 1 ? "s ne sont" : " n'est") + " pas terminée" + (inc.length > 1 ? "s" : "") + " : " + inc.map(function (o) { return o.nom; }).join(", ") + "."));
+      droite.appendChild(h("div", { class: "actions" },
+        bouton("Continuer la fabrication", function () { etat.confirmation = null; rendre(); }, { classe: "discret", ecriture: false }),
+        bouton("Passer quand même au contrôle", function () { etat.confirmation = null; avancer(cmd, n); }, { classe: "principal grand" })));
+    } else {
+      droite.appendChild(bouton(LIBELLES_ACTION[n], function () { avancer(cmd, n); }, { classe: "principal grand", id: "action-etape" }));
+    }
+
+    pied.appendChild(gauche);
+    pied.appendChild(droite);
+    return pied;
+  }
+
+  function opsIncompletes(cmd) {
+    return opsDeGamme(cmd).filter(function (op) { return suiviOp(cmd, op).statut !== "terminee"; });
+  }
+
+  function avancer(cmd, n) {
+    var t = maintenant();
+    var patch = { historique: {} };
+    patch.historique[String(n)] = t;
+    var vers = n + 1;
+    var message = "Étape " + n + " validée";
+
+    if (n === 4) {
+      patch.quantiteLancee = quantiteLancee(Number(cmd.quantite) || 0, majoration());
+      patch.lanceLe = t;
+      message = "Fabrication lancée : " + grouper(patch.quantiteLancee) + " pièces";
+    }
+    if (n === 5 || n === 6) {
+      patch.historique["5"] = t; patch.historique["6"] = t;
+      vers = 7;
+      message = "Fabrication terminée";
+    }
+    if (n === 8) {
+      var v = etat.brouillons[cmd.id + ":quantiteLivree"];
+      patch.quantiteLivree = Math.max(0, Math.floor(Number(v === undefined ? cmd.quantite : v)) || 0);
+      patch.livreeLe = t;
+      delete etat.brouillons[cmd.id + ":quantiteLivree"];
+      message = "Commande livrée";
+    }
+    if (n === 9) { patch.factureeLe = t; message = "Commande facturée"; }
+    if (n === 10) {
+      patch.clos = true; patch.closLe = t;
+      vers = 10;
+      message = "Bilan clôturé et archivé";
+    }
+    patch.etape = vers;
+    etat.etapeVue[cmd.id] = vers;
+    ecrire("commandes/" + cmd.id, patch, message);
+  }
+
+  function reculer(cmd) {
+    var de = cmd.etape;
+    var vers = de === 7 ? 5 : de - 1;
+    if (de === 5 && pointagesDe(cmd).length) {
+      signaler("Des pointages existent déjà : la fabrication ne peut plus revenir avant le lancement.", true);
+      return;
+    }
+    var patch = { etape: vers };
+    if (de === 5) { patch.quantiteLancee = null; patch.lanceLe = null; }
+    if (de === 9) { patch.livreeLe = null; }
+    if (de === 10) { patch.factureeLe = null; }
+    etat.etapeVue[cmd.id] = vers;
+    ecrire("commandes/" + cmd.id, patch, "Retour à l'étape " + vers);
+  }
+
+  // ===================================================================
+  // Vue : atelier (tablette)
+  // ===================================================================
+
+  function vueAtelier(racine) {
+    racine.appendChild(h("div", { class: "titre-page" },
+      h("div", null, h("h1", null, "Atelier"),
+        h("p", { class: "sous-titre" }, "Les ordres de fabrication en cours. Touchez votre nom, puis Démarrer et Terminer sur chaque opération."))));
+    racine.appendChild(choixOperateur());
+
+    var enFab = etat.commandes.filter(function (c) { return !c.clos && c.etape === 5; }).sort(function (a, b) {
+      return (a.echeance || "9999") < (b.echeance || "9999") ? -1 : 1;
+    });
+
+    var mien = etat.pointages.filter(function (pt) { return !pt.fin && pt.operateur === etat.operateur && etat.operateur; })[0];
+    if (mien) {
+      var o = etat.opParId[mien.operationId];
+      var c = etat.cmdParId[mien.commandeId];
+      racine.appendChild(h("div", { class: "carte carte-corps", style: { marginTop: "16px", borderColor: "var(--orange)" } },
+        h("h3", null, "En cours pour vous : " + (o ? o.nom : "opération") + (c ? " · " + c.numero : "")),
+        h("p", { class: "aide" }, "Démarré à " + heureDe(mien.debut) + " — ", h("span", { dataset: { debut: mien.debut } }, ""))));
+    }
+
+    if (!enFab.length) {
+      racine.appendChild(h("div", { class: "carte vide", style: { marginTop: "16px" } },
+        "Aucune commande en fabrication. Une commande arrive ici quand elle est lancée à l'étape 4."));
+      return;
+    }
+
+    enFab.forEach(function (cmd) {
+      var ech = echeanceTexte(cmd.echeance);
+      var carte = h("section", { class: "carte", style: { marginTop: "16px" } },
+        h("div", { class: "carte-tete" },
+          h("div", null,
+            h("div", { class: "aide" }, cmd.numero, ech ? " · livraison le " + ech : ""),
+            h("h2", null, (cmd.client || "") + " — " + (cmd.produit || ""))),
+          lien("Voir la commande", "#commande-" + cmd.id, "bouton discret")),
+        h("div", { class: "carte-corps" }, infosAtelier(cmd), blocOperations(cmd, true)));
+      racine.appendChild(carte);
+    });
+  }
+
+  // ===================================================================
+  // Vue : réglages
+  // ===================================================================
+
+  function vueReglages(racine) {
+    racine.appendChild(h("div", { class: "titre-page" },
+      h("div", null, h("h1", null, "Réglages"),
+        h("p", { class: "sous-titre" }, "Ce qui sert à toutes les commandes : opérations, centres de travail, opérateurs, taux."))));
+
+    var onglets = [["operations", "Opérations"], ["centres", "Centres de travail"], ["operateurs", "Opérateurs"], ["parametres", "Taux et paramètres"], ["export", "Export CSV"]];
+    racine.appendChild(h("div", { class: "sous-onglets", role: "group" }, onglets.map(function (o) {
+      return bouton(o[1], function () { etat.sousOnglet = o[0]; rendre(); }, { presse: etat.sousOnglet === o[0], ecriture: false });
+    })));
+
+    var o = etat.sousOnglet;
+    if (o === "centres") reglagesCentres(racine);
+    else if (o === "operateurs") reglagesOperateurs(racine);
+    else if (o === "parametres") reglagesParametres(racine);
+    else if (o === "export") reglagesExport(racine);
+    else reglagesOperations(racine);
+  }
+
+  function reglagesOperations(racine) {
+    var aConfirmer = etat.operations.filter(function (op) { return op.categorieSource === "proposition"; }).length;
+    var carte = h("div", { class: "carte carte-corps" });
+    carte.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } },
+      "Les 6 catégories sont celles de l'étape 5 de votre document. Les temps viennent du classeur (data/operations.csv) et ne se modifient pas ici."));
+    if (aConfirmer) {
+      carte.appendChild(h("div", { class: "citation" },
+        aConfirmer + " opération" + (aConfirmer > 1 ? "s sont classées" : " est classée") + " par déduction : le document ne les cite pas. Elles portent la mention « à confirmer » — corrigez la catégorie ou confirmez-la."));
+    }
+
+    CATEGORIES.concat([{ code: null, n: 0, nom: "Non classées" }]).forEach(function (cat) {
+      var ops = etat.operations.filter(function (op) { return cat.code === null ? !categorie(op.categorie) : op.categorie === cat.code; });
+      if (!ops.length) return;
+      var g = h("div", { class: "groupe-cat" }, h("h4", null, cat.n ? h("span", { class: "rang" }, String(cat.n)) : null, cat.nom + " · " + ops.length));
+      var table = h("table", null, h("tbody", null, ops.map(function (op) {
+        return h("tr", null,
+          h("td", null, h("strong", null, op.nom), " ",
+            op.categorieSource === "proposition" ? pastille("attente", "à confirmer") : null),
+          h("td", { class: "nb aide" }, formater(versEchelle(op.tempsUnitaireMin, 2), 2, 0) + " min"),
+          h("td", { style: { minWidth: "190px" } }, selectHtml("cat-" + op.id,
+            [["", "— catégorie —"]].concat(CATEGORIES.map(function (c) { return [c.code, c.n + " · " + c.nom]; })),
+            op.categorie || "",
+            function (ev) { ecrire("operations/" + op.id, { categorie: ev.target.value || null, categorieSource: "gerant" }, "Catégorie enregistrée"); },
+            !peutEcrire)),
+          h("td", { style: { minWidth: "190px" } }, selectHtml("ctr-" + op.id,
+            [["", "— centre de travail —"]].concat(etat.centres.map(function (c) { return [c.nom, c.nom]; }))
+              .concat(op.centreTravail && !etat.centres.some(function (c) { return c.nom === op.centreTravail; }) ? [[op.centreTravail, op.centreTravail + " (supprimé)"]] : []),
+            op.centreTravail || "",
+            function (ev) { ecrire("operations/" + op.id, { centreTravail: ev.target.value || null }, "Centre de travail enregistré"); },
+            !peutEcrire)),
+          h("td", null, op.categorieSource === "proposition"
+            ? bouton("Confirmer", function () { ecrire("operations/" + op.id, { categorieSource: "gerant" }, op.nom + " confirmée"); }, { classe: "discret" })
+            : null));
+      })));
+      g.appendChild(h("div", { class: "defile" }, table));
+      carte.appendChild(g);
+    });
+    if (!etat.centres.length) carte.appendChild(h("p", { class: "aide", style: { marginTop: "14px" } }, "Aucun centre de travail : créez-les dans l'onglet « Centres de travail » pour les affecter."));
+    racine.appendChild(carte);
+  }
+
+  function slug(nom) {
+    return nom.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "x";
+  }
+
+  function listeSimple(racine, opts) {
+    var carte = h("div", { class: "carte carte-corps" });
+    carte.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } }, opts.aide));
+    var idChamp = "ajout-" + opts.collection;
+    var form = h("form", {
+      class: "actions",
+      onsubmit: function (ev) {
+        ev.preventDefault();
+        var nom = String(etat.brouillons["ajout:" + opts.collection] || "").trim();
+        if (!nom) return;
+        if (opts.elements.some(function (x) { return x.nom.toLowerCase() === nom.toLowerCase(); })) { signaler("« " + nom + " » existe déjà.", true); return; }
+        creer(opts.collection + "/" + slug(nom), { nom: nom }, opts.ajoute).then(function () {
+          delete etat.brouillons["ajout:" + opts.collection];
+          planifierRendu();
+        }).catch(function () { /* déjà signalé */ });
+      }
+    },
+      h("label", { class: "champ", for: idChamp, style: { flex: "1 1 240px" } }, opts.libelle,
+        h("input", {
+          type: "text", id: idChamp, placeholder: opts.indice, disabled: !peutEcrire,
+          value: etat.brouillons["ajout:" + opts.collection] || "",
+          oninput: function (ev) { etat.brouillons["ajout:" + opts.collection] = ev.target.value; }
+        })),
+      h("button", { type: "submit", class: "principal", disabled: !peutEcrire, style: { alignSelf: "flex-end" } }, "Ajouter"));
+    carte.appendChild(form);
+
+    if (!opts.elements.length) {
+      carte.appendChild(h("p", { class: "vide" }, opts.vide));
+    } else {
+      carte.appendChild(h("div", { class: "defile", style: { marginTop: "14px" } }, h("table", null, h("tbody", null, opts.elements.map(function (x) {
+        var cle = "suppr-" + opts.collection + "-" + x.id;
+        var usage = opts.usage ? opts.usage(x) : 0;
+        return h("tr", null,
+          h("td", null, h("strong", null, x.nom)),
+          h("td", { class: "aide" }, opts.usageTexte ? opts.usageTexte(usage) : ""),
+          h("td", { class: "nb" }, etat.confirmation === cle
+            ? h("div", { class: "actions", style: { justifyContent: "flex-end" } },
+              bouton("Supprimer", function () { etat.confirmation = null; supprimer(opts.collection + "/" + x.id, opts.supprime); }, { classe: "danger" }),
+              bouton("Garder", function () { etat.confirmation = null; rendre(); }, { classe: "discret", ecriture: false }))
+            : bouton("Supprimer", function () {
+              if (usage && opts.bloque) { signaler(opts.bloque(x, usage), true); return; }
+              etat.confirmation = cle; rendre();
+            }, { classe: "discret danger" })));
+      })))));
+    }
+    racine.appendChild(carte);
+  }
+
+  function reglagesCentres(racine) {
+    listeSimple(racine, {
+      collection: "centres", elements: etat.centres, libelle: "Nouveau centre de travail", indice: "Scie à format",
+      aide: "Scie, toupie, ponceuse, cabine de finition, poste d'assemblage, laser… Chaque opération se fait sur l'un d'eux.",
+      vide: "Aucun centre de travail.", ajoute: "Centre de travail ajouté", supprime: "Centre de travail supprimé",
+      usage: function (x) { return etat.operations.filter(function (op) { return op.centreTravail === x.nom; }).length; },
+      usageTexte: function (n) { return n ? n + " opération" + (n > 1 ? "s" : "") : "Aucune opération"; },
+      bloque: function (x, n) { return "« " + x.nom + " » est utilisé par " + n + " opération" + (n > 1 ? "s" : "") + ". Changez-les d'abord dans l'onglet Opérations."; }
+    });
+  }
+
+  function reglagesOperateurs(racine) {
+    listeSimple(racine, {
+      collection: "operateurs", elements: etat.operateurs, libelle: "Nouvel opérateur", indice: "Prénom",
+      aide: "Les personnes de l'atelier. Elles se choisissent d'un geste sur la tablette pour pointer.",
+      vide: "Aucun opérateur : sur la tablette, chacun tapera son nom.", ajoute: "Opérateur ajouté", supprime: "Opérateur retiré",
+      usage: function (x) { return etat.pointages.filter(function (pt) { return pt.operateur === x.nom; }).length; },
+      usageTexte: function (n) { return n ? n + " pointage" + (n > 1 ? "s" : "") : ""; }
+    });
+  }
+
+  function reglagesParametres(racine) {
+    var defs = [
+      [CLE_TAUX, "Taux horaire atelier (€ HT, par salarié)", "Multiplie les heures de main-d'œuvre."],
+      [CLE_MAJ, "Majoration des quantités lancées", "0.05 pour +5 %, pour absorber les rebuts."],
+      [CLE_REGLAGE, "Temps de réglage par défaut (min)", "Compté une seule fois par opération."]
+    ];
+    var carte = h("div", { class: "carte carte-corps" });
+    carte.appendChild(h("div", { class: "grille" }, defs.map(function (d) {
+      var id = "param-" + d[0];
+      var cleP = "param:" + d[0];
+      var liaisonP = brouillon(cleP, function (saisie) {
+        var v = String(saisie).trim();
+        if (v !== "" && versEchelle(v, 4) === null) { signaler("« " + v + " » n'est pas un nombre valide.", true); return false; }
+        v = v.replace(",", ".");
+        if (v === (etat.parametres[d[0]] || "")) return null;
+        creer("parametres/" + d[0], { valeur: v, description: d[1] }, "Paramètre enregistré").catch(function () { /* déjà signalé */ });
+        return v;
+      });
+      return h("label", { class: "champ", for: id }, d[1],
+        h("input", {
+          type: "text", id: id, inputmode: "decimal", class: "nombre", disabled: !peutEcrire,
+          value: etat.brouillons[cleP] !== undefined ? etat.brouillons[cleP] : etat.parametres[d[0]] || "",
+          placeholder: "à renseigner",
+          oninput: liaisonP.oninput, onchange: liaisonP.onchange, onblur: liaisonP.onblur
+        }),
+        h("span", { class: "aide" }, d[2]));
+    })));
+    racine.appendChild(carte);
+  }
+
+  function csv(v) {
+    var t = v === null || v === undefined ? "" : String(v);
+    return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }
+
+  function reglagesExport(racine) {
+    var lignes = ["nom,temps_unitaire_min,temps_reglage_min,nb_operateurs,centre_travail,categorie"];
+    var ignorees = 0;
+    etat.operations.slice().sort(function (a, b) { return a.ordre - b.ordre; }).forEach(function (op) {
+      var cat = op.categorie && op.categorieSource !== "proposition" ? op.categorie : "";
+      if (op.categorie && op.categorieSource === "proposition") ignorees += 1;
+      lignes.push([csv(op.nom), csv(op.tempsUnitaireMin), csv(op.tempsReglageMin), csv(op.nbOperateurs), csv(op.centreTravail || ""), csv(cat)].join(","));
+    });
+    var texte = lignes.join("\n") + "\n";
+    var pre = h("pre", { class: "sortie", id: "csv" }, texte);
+    var carte = h("div", { class: "carte carte-corps" },
+      h("p", { class: "aide", style: { marginBottom: "10px" } },
+        "Cet aperçu a son propre stockage. Copiez ce fichier dans data/operations.csv du dépôt, puis lancez npm run seed : les affectations passent dans la vraie base."
+        + (ignorees ? " Les " + ignorees + " catégories « à confirmer » ne sont pas exportées tant que vous ne les avez pas confirmées." : "")),
+      h("div", { class: "actions", style: { marginBottom: "10px" } }, bouton("Copier le CSV", function () {
+        var ok = function () { signaler("CSV copié"); };
+        var repli = function () {
+          try { var r = document.createRange(); r.selectNodeContents(pre); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) { /* rien */ }
+          signaler("Copie refusée : le texte est sélectionné, copiez-le à la main.", true);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(texte).then(ok, repli); else repli();
+      }, { classe: "principal", ecriture: false })),
+      pre);
+    racine.appendChild(carte);
+  }
+
+  // ===================================================================
+  // Chronomètres des opérations en cours
+  // ===================================================================
+
+  function rafraichirChronos() {
+    var maintenantMs = Date.now();
+    document.querySelectorAll("[data-debut]").forEach(function (n) {
+      var debut = Date.parse(n.dataset.debut);
+      if (isNaN(debut)) return;
+      var min = Math.max(0, Math.floor((maintenantMs - debut) / 60000));
+      n.textContent = min < 1 ? "depuis moins d'une minute" : min < 60 ? "depuis " + min + " min" : "depuis " + Math.floor(min / 60) + " h " + String(min % 60).padStart(2, "0");
+    });
+  }
+
+  window.setInterval(rafraichirChronos, 20000);
+
+  // ===================================================================
+  // Navigation
+  // ===================================================================
+
+  function lireRoute() {
+    var hsh = (window.location.hash || "").slice(1);
+    if (hsh === "atelier" || hsh === "reglages" || hsh === "nouvelle") return { vue: hsh };
+    if (hsh.indexOf("commande-") === 0) return { vue: "commande", id: hsh.slice(9) };
+    return { vue: "commandes" };
+  }
+
+  window.addEventListener("hashchange", function () {
+    etat.route = lireRoute();
+    etat.confirmation = null;
+    etat.fin = null;
+    rendre();
+  });
+
+  // ===================================================================
+  // Démarrage : abonnements aux données
+  // ===================================================================
+
+  etat.route = lireRoute();
+  rendre();
+
+  var minuteur = window.setTimeout(function () {
+    if (!etat.pret.ops || !etat.pret.cmd) { etat.lent = true; rendre(); }
+  }, 10000);
+
+  function recu() {
+    if (etat.pret.ops && etat.pret.cmd) window.clearTimeout(minuteur);
+    planifierRendu();
+  }
+
+  function echec(e) {
+    window.clearTimeout(minuteur);
+    etat.erreur = texteErreur(e);
+    rendre();
+  }
+
+  function normaliserCommande(id, d) {
+    return Object.assign({
+      numero: "", client: "", produit: "", quantite: 0, echeance: "", typologie: "standard",
+      famille: "", essence: "", finition: "", marquage: "aucun", notes: "",
+      etape: 1, historique: {}, gamme: [], prixUnitaireHT: "", coutMatiereEstime: "",
+      prototypeRequis: true, controles: {}, clos: false
+    }, d, { id: id, etape: Math.min(10, Math.max(1, Number(d.etape) || 1)) });
+  }
+
+  if (!window.claude || typeof window.claude.use !== "function") {
+    window.setTimeout(function () {
+      window.clearTimeout(minuteur);
+      etat.erreur = "Cette page a besoin du stockage de l'artefact, indisponible ici.";
+      rendre();
+    }, 1500);
+    return;
+  }
+
+  window.claude.use("user").then(function (u) {
+    if (!u || typeof u.can !== "function") return;
+    return u.can("data.write").then(function (droit) { if (droit === false) { peutEcrire = false; planifierRendu(); } });
+  }).catch(function () { /* sans information, les champs restent actifs */ });
+
+  window.claude.use("db").then(function (db) {
+    if (!db) {
+      window.clearTimeout(minuteur);
+      etat.erreur = "Les données ne sont pas accessibles depuis cette vue. Essayez en étant connecté.";
+      rendre();
+      return;
+    }
+    magasin = db;
+
+    db.collection("operations").orderBy("ordre").onSnapshot(function (snap) {
+      etat.operations = snap.docs.map(function (d) {
+        var v = d.data() || {};
+        return {
+          id: d.id, nom: v.nom || d.id, ordre: typeof v.ordre === "number" ? v.ordre : 0,
+          tempsUnitaireMin: v.tempsUnitaireMin, tempsReglageMin: v.tempsReglageMin,
+          nbOperateurs: typeof v.nbOperateurs === "number" ? v.nbOperateurs : 1,
+          centreTravail: v.centreTravail || null, categorie: v.categorie || null,
+          categorieSource: v.categorieSource || (v.categorie ? "gerant" : null),
+          actif: v.actif !== false
+        };
+      });
+      etat.opParId = {};
+      etat.operations.forEach(function (op) { etat.opParId[op.id] = op; });
+      etat.pret.ops = true;
+      recu();
+    }, echec);
+
+    db.collection("commandes").onSnapshot(function (snap) {
+      etat.commandes = snap.docs.map(function (d) { return normaliserCommande(d.id, d.data() || {}); });
+      etat.cmdParId = {};
+      etat.commandes.forEach(function (c) { etat.cmdParId[c.id] = c; });
+      etat.pret.cmd = true;
+      purgerBrouillons();
+      recu();
+    }, echec);
+
+    db.collection("pointages").onSnapshot(function (snap) {
+      etat.pointages = snap.docs.map(function (d) { var v = d.data() || {}; v.id = d.id; return v; });
+      etat.pret.pt = true;
+      if (etat.fin && !etat.pointages.some(function (pt) { return pt.id === etat.fin.pointageId && !pt.fin; })) etat.fin = null;
+      recu();
+    }, function (e) { signaler(texteErreur(e), true); });
+
+    db.collection("centres").orderBy("nom").onSnapshot(function (snap) {
+      etat.centres = snap.docs.map(function (d) { var v = d.data() || {}; return { id: d.id, nom: v.nom || d.id }; });
+      planifierRendu();
+    }, function (e) { signaler(texteErreur(e), true); });
+
+    db.collection("operateurs").orderBy("nom").onSnapshot(function (snap) {
+      etat.operateurs = snap.docs.map(function (d) { var v = d.data() || {}; return { id: d.id, nom: v.nom || d.id }; });
+      planifierRendu();
+    }, function (e) { signaler(texteErreur(e), true); });
+
+    db.collection("parametres").onSnapshot(function (snap) {
+      var p = {};
+      snap.docs.forEach(function (d) { var v = d.data() || {}; p[d.id] = v.valeur === undefined || v.valeur === null ? "" : String(v.valeur); });
+      etat.parametres = p;
+      purgerBrouillons();
+      planifierRendu();
+    }, function (e) { signaler(texteErreur(e), true); });
+  }).catch(echec);
+})();
+</script>

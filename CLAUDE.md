@@ -102,6 +102,11 @@ saisie des référentiels (Next.js App Router, `src/app`).
 Prochaine étape : charger les types de coupe et les matières, puis le modèle
 produit du lot 2.
 
+Ergonomie : le gérant raisonne commande par commande, à travers les 10 étapes
+de son document de processus, pas par référentiel. La maquette de
+`prototype/` (en cours de validation) fixe ce parcours ; les écrans des lots
+2, 4 et 6 doivent le reprendre.
+
 ### Commandes
 
 ```

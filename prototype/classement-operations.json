@@ -1,0 +1,45 @@
+{
+  "_source": "Tableau de l'étape 5 du document PROCESSUS_FABRICATION.pdf",
+  "document": {
+    "mise-a-longueur":        ["PREPARATION_DEBIT", "« Mise à longueur » est citée en Préparation et débit"],
+    "ponceuse-calibreuse":    ["PREPARATION_DEBIT", "« calibrage » est cité en Préparation et débit"],
+    "rainurage":              ["USINAGE", "« Rainurage » est cité en Usinage"],
+    "coup-de-pouce":          ["USINAGE", "« coup de pouce » est cité en Usinage"],
+    "percage-goulot":         ["USINAGE", "« perçage » est cité en Usinage"],
+    "usinage-queue-droite":   ["USINAGE", "nom de la catégorie"],
+    "poncage-1-face":         ["PONCAGE", "nom de la catégorie"],
+    "poncage-queue-droite":   ["PONCAGE", "nom de la catégorie"],
+    "assemblage-queue-droite":["ASSEMBLAGE", "nom de la catégorie"],
+    "collage-chene":          ["ASSEMBLAGE", "« Collage » est cité en Assemblage"],
+    "collage-cube":           ["ASSEMBLAGE", "« Collage » est cité en Assemblage"],
+    "collage-calage-mousse":  ["ASSEMBLAGE", "« Collage » est cité en Assemblage"],
+    "collage-calage-liege":   ["ASSEMBLAGE", "« Collage » est cité en Assemblage"],
+    "collage-tasseaux":       ["ASSEMBLAGE", "« tasseaux » est cité en Assemblage"],
+    "clouage-fond":           ["ASSEMBLAGE", "« clouage » est cité en Assemblage"],
+    "berceaux":               ["ASSEMBLAGE", "« berceau » est cité en Assemblage"],
+    "teinte-vernis":          ["FINITION", "« Teinte, vernis » sont cités en Finition"],
+    "marquage-laser-1-cote":  ["FINITION", "« gravure laser » est citée en Finition"],
+    "serigraphie-1-cote":     ["FINITION", "« sérigraphie » est citée en Finition"]
+  },
+  "proposition": {
+    "delignage":                     ["PREPARATION_DEBIT", "débit en largeur"],
+    "rabotage":                      ["PREPARATION_DEBIT", "mise à épaisseur, avant usinage"],
+    "refente":                       ["PREPARATION_DEBIT", "débit en épaisseur"],
+    "decoupe-tirette-cp":            ["PREPARATION_DEBIT", "découpe d'une pièce"],
+    "feuillure-bouvetage":           ["USINAGE", "usinage de profil"],
+    "rayon":                         ["USINAGE", "usinage d'arrondi"],
+    "percage-pose-charniere":        ["USINAGE", "le perçage est en Usinage, mais la pose de charnière ressemble à de l'Assemblage"],
+    "guillotine-percage-refente":    ["USINAGE", "perçage et refente"],
+    "guillotine-defonceuse-refente": ["USINAGE", "défonceuse et refente"],
+    "pose-fermoir":                  ["ASSEMBLAGE", "montage d'accessoire"],
+    "tirette-recouvrante":           ["ASSEMBLAGE", "montage de la tirette"],
+    "egrainage":                     ["FINITION", "ponçage léger entre deux couches de vernis ; pourrait être Ponçage"],
+    "marquage-a-feu-1-cote":         ["FINITION", "même famille que la gravure laser"],
+    "marquage-a-chaud-1-cote":       ["FINITION", "même famille que la gravure laser"],
+    "ceintureuse":                   ["CONDITIONNEMENT", "incertain : si c'est un cerclage, c'est du conditionnement"],
+    "cale-carton":                   ["CONDITIONNEMENT", "calage pour l'emballage"]
+  },
+  "gerant": {
+    "collage-manuelle": ["PREPARATION_DEBIT", "saisi dans l'aperçu ; le document range le collage en Assemblage"]
+  }
+}
