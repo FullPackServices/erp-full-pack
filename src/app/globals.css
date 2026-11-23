@@ -1,0 +1,610 @@
+/* Charte de l'application. Sobre et dense : l'écran sert à lire des
+   référentiels et à saisir, pas à faire joli. Lisible sur bureau et
+   tablette ; la vue TV d'atelier viendra au lot 4 avec ses propres tailles. */
+
+:root {
+  --fond: #f6f5f3;
+  --fond-carte: #ffffff;
+  --fond-nav: #1f1b16;
+  --fond-nav-actif: #332c23;
+  --fond-entete-tableau: #f0eeea;
+  --fond-survol: #faf8f5;
+
+  --texte: #211d18;
+  --texte-doux: #6b6259;
+  --texte-nav: #d9d2c7;
+  --texte-nav-doux: #8c8276;
+
+  --bord: #ddd8d0;
+  --bord-fort: #c4bdb2;
+
+  --accent: #9a6a2f;
+  --accent-fond: #f6ecdd;
+  --accent-bord: #e0c9a6;
+
+  --alerte: #a3341f;
+  --alerte-fond: #fbeae6;
+  --alerte-bord: #eec7bd;
+
+  --ok: #2f6b43;
+  --ok-fond: #e9f3ec;
+
+  --rayon: 6px;
+  --ombre: 0 1px 2px rgba(33, 29, 24, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------- Structure */
+
+.application {
+  display: grid;
+  grid-template-columns: 236px 1fr;
+  min-height: 100vh;
+}
+
+.navigation {
+  background: var(--fond-nav);
+  color: var(--texte-nav);
+  padding: 18px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.navigation .marque {
+  padding: 0 18px;
+}
+
+.navigation .marque strong {
+  display: block;
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+.navigation .marque span {
+  display: block;
+  color: var(--texte-nav-doux);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.navigation section {
+  display: flex;
+  flex-direction: column;
+}
+
+.navigation h2 {
+  margin: 0 18px 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--texte-nav-doux);
+}
+
+.navigation a {
+  color: var(--texte-nav);
+  text-decoration: none;
+  padding: 7px 18px;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+
+.navigation a:hover {
+  background: var(--fond-nav-actif);
+  color: #fff;
+}
+
+.navigation a[aria-current="page"] {
+  background: var(--fond-nav-actif);
+  color: #fff;
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.navigation .a-venir {
+  padding: 7px 18px;
+  font-size: 14px;
+  color: #5e564c;
+  cursor: default;
+}
+
+.contenu {
+  padding: 28px 32px 64px;
+  max-width: 1320px;
+  /* Sans ça, un élément de grille se dimensionne sur son contenu minimum : un
+     tableau large étirerait la colonne, donc toute la page, et la navigation
+     avec elle. Le défilement horizontal appartient à .tableau-enveloppe. */
+  min-width: 0;
+}
+
+/* -------------------------------------------------------------------- Titres */
+
+.entete-page {
+  margin-bottom: 22px;
+}
+
+.entete-page h1 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.entete-page p {
+  margin: 6px 0 0;
+  color: var(--texte-doux);
+  max-width: 76ch;
+}
+
+.fil {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--texte-doux);
+  margin-bottom: 7px;
+}
+
+/* --------------------------------------------------------------------- Carte */
+
+.carte {
+  background: var(--fond-carte);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  margin-bottom: 22px;
+}
+
+.carte > h2,
+.carte > header h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.carte > header {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--bord);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.carte > header p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--texte-doux);
+}
+
+.carte .corps {
+  padding: 16px;
+}
+
+/* ------------------------------------------------------------------ Tableaux */
+
+.tableau-enveloppe {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  background: var(--fond-entete-tableau);
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-doux);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--bord);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 7px 12px;
+  border-bottom: 1px solid #eceae5;
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: var(--fond-survol);
+}
+
+td.nombre,
+th.nombre {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+td.principal {
+  font-weight: 500;
+}
+
+tfoot td {
+  padding: 9px 12px;
+  border-top: 1px solid var(--bord-fort);
+  background: var(--fond-entete-tableau);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------- Formulaires */
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texte-doux);
+  margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--texte);
+  background: #fff;
+  border: 1px solid var(--bord-fort);
+  border-radius: 4px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: var(--accent);
+}
+
+input.compact,
+select.compact {
+  padding: 3px 6px;
+  font-size: 13px;
+}
+
+input.nombre {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.grille-champs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 13px;
+  align-items: end;
+}
+
+.aide {
+  font-size: 12px;
+  color: var(--texte-doux);
+  margin: 4px 0 0;
+}
+
+button {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--bord-fort);
+  background: #fff;
+  color: var(--texte);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  background: var(--fond-survol);
+  border-color: var(--texte-doux);
+}
+
+button.principal {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+
+button.principal:hover {
+  background: #86591f;
+  border-color: #86591f;
+}
+
+button.compact {
+  padding: 3px 9px;
+  font-size: 13px;
+}
+
+button.discret {
+  border-color: transparent;
+  background: transparent;
+  color: var(--accent);
+  padding: 3px 6px;
+}
+
+button.discret:hover {
+  background: var(--accent-fond);
+  border-color: transparent;
+}
+
+/* --------------------------------------------------------------- Indicateurs */
+
+.compteurs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+  gap: 13px;
+  margin-bottom: 22px;
+}
+
+.compteur {
+  background: var(--fond-carte);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 13px 15px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.compteur:hover {
+  border-color: var(--accent-bord);
+}
+
+.compteur .valeur {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.compteur .etiquette {
+  font-size: 12.5px;
+  color: var(--texte-doux);
+  margin-top: 1px;
+}
+
+.compteur.vide .valeur {
+  color: var(--bord-fort);
+}
+
+.etiquette-statut {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.etiquette-statut.a-renseigner {
+  background: var(--accent-fond);
+  border-color: var(--accent-bord);
+  color: #7d5520;
+}
+
+.etiquette-statut.bloquant {
+  background: var(--alerte-fond);
+  border-color: var(--alerte-bord);
+  color: var(--alerte);
+}
+
+.etiquette-statut.ok {
+  background: var(--ok-fond);
+  border-color: #c3dfcc;
+  color: var(--ok);
+}
+
+.etiquette-statut.inactif {
+  background: #f0eeea;
+  border-color: var(--bord);
+  color: var(--texte-doux);
+}
+
+.encart {
+  border: 1px solid var(--accent-bord);
+  background: var(--accent-fond);
+  border-radius: var(--rayon);
+  padding: 13px 15px;
+  margin-bottom: 22px;
+}
+
+.encart h2 {
+  margin: 0 0 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #7d5520;
+}
+
+.encart ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.encart li + li {
+  margin-top: 3px;
+}
+
+.encart p {
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.vide {
+  padding: 26px 16px;
+  text-align: center;
+  color: var(--texte-doux);
+  font-size: 14px;
+}
+
+.erreur {
+  border: 1px solid var(--alerte-bord);
+  background: var(--alerte-fond);
+  color: var(--alerte);
+  border-radius: 4px;
+  padding: 9px 12px;
+  margin: 0 0 14px;
+  font-size: 13.5px;
+}
+
+.formule {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  background: var(--fond-entete-tableau);
+  border: 1px solid var(--bord);
+  border-radius: 4px;
+  padding: 9px 12px;
+  color: var(--texte-doux);
+  white-space: pre-wrap;
+}
+
+.barre-actions {
+  display: flex;
+  gap: 9px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Dans une cellule de tableau, les actions restent sur une ligne : 36 lignes
+   qui doublent de hauteur rendent l'écran illisible. */
+td .barre-actions {
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.discret-texte {
+  color: var(--texte-doux);
+}
+
+/* -------------------------------------------------------------- Responsive */
+
+@media (max-width: 900px) {
+  .application {
+    grid-template-columns: 1fr;
+  }
+
+  /* En colonne, une navigation verticale occuperait tout le premier écran
+     avant le moindre contenu. Elle se replie en barre de pastilles. */
+  .navigation {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    padding: 11px 14px 13px;
+  }
+
+  .navigation .marque {
+    width: 100%;
+    padding: 0 0 4px;
+  }
+
+  .navigation section {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .navigation h2,
+  .navigation .a-venir {
+    display: none;
+  }
+
+  .navigation a {
+    padding: 5px 10px;
+    font-size: 13px;
+    border: 1px solid #3c352b;
+    border-left-width: 1px;
+    border-radius: 4px;
+  }
+
+  .navigation a[aria-current="page"] {
+    border-color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  .contenu {
+    padding: 20px 16px 48px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #16130f;
+    --fond-carte: #201c17;
+    --fond-nav: #100e0b;
+    --fond-nav-actif: #2a241d;
+    --fond-entete-tableau: #272219;
+    --fond-survol: #272219;
+
+    --texte: #ece7df;
+    --texte-doux: #a79d90;
+
+    --bord: #342d25;
+    --bord-fort: #473e33;
+
+    --accent: #c99753;
+    --accent-fond: #2e2416;
+    --accent-bord: #4d3c21;
+
+    --alerte: #e58a72;
+    --alerte-fond: #341d17;
+    --alerte-bord: #5a2e23;
+
+    --ok: #85c49a;
+    --ok-fond: #1b2b20;
+  }
+
+  :root:not([data-theme="light"]) input,
+  :root:not([data-theme="light"]) select,
+  :root:not([data-theme="light"]) textarea,
+  :root:not([data-theme="light"]) button {
+    background: #1a1713;
+    color: var(--texte);
+  }
+
+  :root:not([data-theme="light"]) button.principal {
+    background: var(--accent);
+    color: #1a1713;
+  }
+
+  :root:not([data-theme="light"]) tbody td {
+    border-bottom-color: #2a241d;
+  }
+}

@@ -1,0 +1,1189 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.centre_travail",
+    "label": "Create table \"centre_travail\"",
+    "summary": "Creates table \"centre_travail\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "centre_travail"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"centre_travail\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"centre_travail\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"centre_travail\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"centre_travail\"",
+        "sql": "CREATE TABLE \"public\".\"centre_travail\" (\n  \"actif\" bool DEFAULT true NOT NULL,\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"majLe\" timestamptz(3) NOT NULL,\n  \"nom\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"centre_travail\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"centre_travail\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"centre_travail\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.client",
+    "label": "Create table \"client\"",
+    "summary": "Creates table \"client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"client\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"client\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"client\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"client\"",
+        "sql": "CREATE TABLE \"public\".\"client\" (\n  \"actif\" bool DEFAULT true NOT NULL,\n  \"codeEbp\" text,\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"majLe\" timestamptz(3) NOT NULL,\n  \"nom\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"client\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"client\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"client\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.essence",
+    "label": "Create table \"essence\"",
+    "summary": "Creates table \"essence\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "essence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"essence\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"essence\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"essence\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"essence\"",
+        "sql": "CREATE TABLE \"public\".\"essence\" (\n  \"id\" text NOT NULL,\n  \"nom\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"essence\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"essence\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"essence\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.famille_produit",
+    "label": "Create table \"famille_produit\"",
+    "summary": "Creates table \"famille_produit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "famille_produit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"famille_produit\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"famille_produit\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"famille_produit\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"famille_produit\"",
+        "sql": "CREATE TABLE \"public\".\"famille_produit\" (\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"nom\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"famille_produit\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"famille_produit\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"famille_produit\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.matiere",
+    "label": "Create table \"matiere\"",
+    "summary": "Creates table \"matiere\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "matiere"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"matiere\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matiere\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"matiere\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"matiere\"",
+        "sql": "CREATE TABLE \"public\".\"matiere\" (\n  \"actif\" bool DEFAULT true NOT NULL,\n  \"codeEbp\" text,\n  \"coutHT\" numeric(10,4) NOT NULL,\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"designation\" text NOT NULL,\n  \"epaisseurMm\" numeric(6,2) NOT NULL,\n  \"essenceId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"largeurMm\" int4 NOT NULL,\n  \"longueurMm\" int4 NOT NULL,\n  \"majLe\" timestamptz(3) NOT NULL,\n  \"prixReleveLe\" timestamptz(3),\n  \"unite\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"matiere_unite_check_81257510\" CHECK (\"unite\" IN ('PLAQUE', 'PLANCHE'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"matiere\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"matiere\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"matiere\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.operation",
+    "label": "Create table \"operation\"",
+    "summary": "Creates table \"operation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "operation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"operation\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"operation\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"operation\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"operation\"",
+        "sql": "CREATE TABLE \"public\".\"operation\" (\n  \"actif\" bool DEFAULT true NOT NULL,\n  \"categorie\" text,\n  \"centreTravailId\" text,\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"majLe\" timestamptz(3) NOT NULL,\n  \"nbOperateurs\" int4 DEFAULT 1 NOT NULL,\n  \"nom\" text NOT NULL,\n  \"tempsReglageMin\" numeric(6,2) DEFAULT '5.00'::numeric(6,2) NOT NULL,\n  \"tempsUnitaireMin\" numeric(6,2) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"operation_categorie_check_867f57ef\" CHECK (\"categorie\" IN ('PREPARATION_DEBIT', 'USINAGE', 'PONCAGE', 'ASSEMBLAGE', 'FINITION', 'CONDITIONNEMENT'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"operation\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"operation\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"operation\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.parametre",
+    "label": "Create table \"parametre\"",
+    "summary": "Creates table \"parametre\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "parametre"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"parametre\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"parametre\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"parametre\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"parametre\"",
+        "sql": "CREATE TABLE \"public\".\"parametre\" (\n  \"cle\" text NOT NULL,\n  \"description\" text,\n  \"majLe\" timestamptz(3) NOT NULL,\n  \"valeur\" text NOT NULL,\n  PRIMARY KEY (\"cle\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"parametre\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"parametre\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"parametre\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.piece",
+    "label": "Create table \"piece\"",
+    "summary": "Creates table \"piece\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "piece"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"piece\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"piece\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"piece\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"piece\"",
+        "sql": "CREATE TABLE \"public\".\"piece\" (\n  \"actif\" bool DEFAULT true NOT NULL,\n  \"code\" text NOT NULL,\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"libelle\" text NOT NULL,\n  \"majLe\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"piece\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"piece\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"piece\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.type_coupe",
+    "label": "Create table \"type_coupe\"",
+    "summary": "Creates table \"type_coupe\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "type_coupe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"type_coupe\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"type_coupe\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"type_coupe\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"type_coupe\"",
+        "sql": "CREATE TABLE \"public\".\"type_coupe\" (\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"explication\" text,\n  \"id\" text NOT NULL,\n  \"majLe\" timestamptz(3) NOT NULL,\n  \"nom\" text NOT NULL,\n  \"retraitPlaqueLargeurMm\" numeric(6,2) NOT NULL,\n  \"retraitPlaqueLongueurMm\" numeric(6,2) NOT NULL,\n  \"surcoteDelignageMm\" numeric(6,2) NOT NULL,\n  \"surcoteLongueurMm\" numeric(6,2) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"type_coupe\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"type_coupe\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"type_coupe\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.typologie",
+    "label": "Create table \"typologie\"",
+    "summary": "Creates table \"typologie\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "typologie"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"typologie\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"typologie\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"typologie\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"typologie\"",
+        "sql": "CREATE TABLE \"public\".\"typologie\" (\n  \"creeLe\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"nom\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"typologie\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"typologie\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"typologie\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique.centre_travail.centre_travail_nom_key",
+    "label": "Add unique constraint on \"centre_travail\" (nom)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "centre_travail_nom_key",
+        "table": "centre_travail"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"centre_travail_nom_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "centre_travail_nom_key",
+          "public",
+          "\"public\".\"centre_travail\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"centre_travail_nom_key\" on \"centre_travail\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"centre_travail_nom_key\"",
+        "sql": "ALTER TABLE \"public\".\"centre_travail\" ADD CONSTRAINT \"centre_travail_nom_key\" UNIQUE (\"nom\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"centre_travail_nom_key\" exists on (nom)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "centre_travail_nom_key",
+          "public",
+          "\"public\".\"centre_travail\"",
+          "u",
+          "[\"nom\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.essence.essence_nom_key",
+    "label": "Add unique constraint on \"essence\" (nom)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "essence_nom_key",
+        "table": "essence"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"essence_nom_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "essence_nom_key",
+          "public",
+          "\"public\".\"essence\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"essence_nom_key\" on \"essence\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"essence_nom_key\"",
+        "sql": "ALTER TABLE \"public\".\"essence\" ADD CONSTRAINT \"essence_nom_key\" UNIQUE (\"nom\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"essence_nom_key\" exists on (nom)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "essence_nom_key",
+          "public",
+          "\"public\".\"essence\"",
+          "u",
+          "[\"nom\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.famille_produit.famille_produit_nom_key",
+    "label": "Add unique constraint on \"famille_produit\" (nom)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "famille_produit_nom_key",
+        "table": "famille_produit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"famille_produit_nom_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "famille_produit_nom_key",
+          "public",
+          "\"public\".\"famille_produit\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"famille_produit_nom_key\" on \"famille_produit\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"famille_produit_nom_key\"",
+        "sql": "ALTER TABLE \"public\".\"famille_produit\" ADD CONSTRAINT \"famille_produit_nom_key\" UNIQUE (\"nom\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"famille_produit_nom_key\" exists on (nom)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "famille_produit_nom_key",
+          "public",
+          "\"public\".\"famille_produit\"",
+          "u",
+          "[\"nom\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.matiere.matiere_designation_key",
+    "label": "Add unique constraint on \"matiere\" (designation)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "matiere_designation_key",
+        "table": "matiere"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"matiere_designation_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matiere_designation_key",
+          "public",
+          "\"public\".\"matiere\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"matiere_designation_key\" on \"matiere\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"matiere_designation_key\"",
+        "sql": "ALTER TABLE \"public\".\"matiere\" ADD CONSTRAINT \"matiere_designation_key\" UNIQUE (\"designation\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"matiere_designation_key\" exists on (designation)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "matiere_designation_key",
+          "public",
+          "\"public\".\"matiere\"",
+          "u",
+          "[\"designation\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.operation.operation_nom_key",
+    "label": "Add unique constraint on \"operation\" (nom)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "operation_nom_key",
+        "table": "operation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"operation_nom_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "operation_nom_key",
+          "public",
+          "\"public\".\"operation\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"operation_nom_key\" on \"operation\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"operation_nom_key\"",
+        "sql": "ALTER TABLE \"public\".\"operation\" ADD CONSTRAINT \"operation_nom_key\" UNIQUE (\"nom\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"operation_nom_key\" exists on (nom)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "operation_nom_key",
+          "public",
+          "\"public\".\"operation\"",
+          "u",
+          "[\"nom\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.piece.piece_code_key",
+    "label": "Add unique constraint on \"piece\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "piece_code_key",
+        "table": "piece"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"piece_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "piece_code_key",
+          "public",
+          "\"public\".\"piece\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"piece_code_key\" on \"piece\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"piece_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"piece\" ADD CONSTRAINT \"piece_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"piece_code_key\" exists on (code)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "piece_code_key",
+          "public",
+          "\"public\".\"piece\"",
+          "u",
+          "[\"code\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.type_coupe.type_coupe_nom_key",
+    "label": "Add unique constraint on \"type_coupe\" (nom)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "type_coupe_nom_key",
+        "table": "type_coupe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"type_coupe_nom_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "type_coupe_nom_key",
+          "public",
+          "\"public\".\"type_coupe\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"type_coupe_nom_key\" on \"type_coupe\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"type_coupe_nom_key\"",
+        "sql": "ALTER TABLE \"public\".\"type_coupe\" ADD CONSTRAINT \"type_coupe_nom_key\" UNIQUE (\"nom\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"type_coupe_nom_key\" exists on (nom)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "type_coupe_nom_key",
+          "public",
+          "\"public\".\"type_coupe\"",
+          "u",
+          "[\"nom\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.typologie.typologie_nom_key",
+    "label": "Add unique constraint on \"typologie\" (nom)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "typologie_nom_key",
+        "table": "typologie"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"typologie_nom_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "typologie_nom_key",
+          "public",
+          "\"public\".\"typologie\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"typologie_nom_key\" on \"typologie\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"typologie_nom_key\"",
+        "sql": "ALTER TABLE \"public\".\"typologie\" ADD CONSTRAINT \"typologie_nom_key\" UNIQUE (\"nom\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"typologie_nom_key\" exists on (nom)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "typologie_nom_key",
+          "public",
+          "\"public\".\"typologie\"",
+          "u",
+          "[\"nom\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.client.client_codeEbp_idx_fffbba04",
+    "label": "Create index \"client_codeEbp_idx_fffbba04\" on \"client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "client_codeEbp_idx_fffbba04",
+        "table": "client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"client_codeEbp_idx_fffbba04\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"client_codeEbp_idx_fffbba04\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"client_codeEbp_idx_fffbba04\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"client_codeEbp_idx_fffbba04\"",
+        "sql": "CREATE INDEX \"client_codeEbp_idx_fffbba04\" ON \"public\".\"client\" (\"codeEbp\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"client_codeEbp_idx_fffbba04\" exists on \"client\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"client_codeEbp_idx_fffbba04\"",
+          "i",
+          "I",
+          "\"public\".\"client\"",
+          "btree",
+          "[\"codeEbp\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matiere.matiere_codeEbp_idx_fffbba04",
+    "label": "Create index \"matiere_codeEbp_idx_fffbba04\" on \"matiere\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matiere_codeEbp_idx_fffbba04",
+        "table": "matiere"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matiere_codeEbp_idx_fffbba04\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matiere_codeEbp_idx_fffbba04\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"matiere_codeEbp_idx_fffbba04\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matiere_codeEbp_idx_fffbba04\"",
+        "sql": "CREATE INDEX \"matiere_codeEbp_idx_fffbba04\" ON \"public\".\"matiere\" (\"codeEbp\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matiere_codeEbp_idx_fffbba04\" exists on \"matiere\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"matiere_codeEbp_idx_fffbba04\"",
+          "i",
+          "I",
+          "\"public\".\"matiere\"",
+          "btree",
+          "[\"codeEbp\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.matiere.matiere_essenceId_idx_71fea885",
+    "label": "Create index \"matiere_essenceId_idx_71fea885\" on \"matiere\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "matiere_essenceId_idx_71fea885",
+        "table": "matiere"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"matiere_essenceId_idx_71fea885\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"matiere_essenceId_idx_71fea885\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"matiere_essenceId_idx_71fea885\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"matiere_essenceId_idx_71fea885\"",
+        "sql": "CREATE INDEX \"matiere_essenceId_idx_71fea885\" ON \"public\".\"matiere\" (\"essenceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"matiere_essenceId_idx_71fea885\" exists on \"matiere\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"matiere_essenceId_idx_71fea885\"",
+          "i",
+          "I",
+          "\"public\".\"matiere\"",
+          "btree",
+          "[\"essenceId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.operation.operation_centreTravailId_idx_32e65291",
+    "label": "Create index \"operation_centreTravailId_idx_32e65291\" on \"operation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "operation_centreTravailId_idx_32e65291",
+        "table": "operation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"operation_centreTravailId_idx_32e65291\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"operation_centreTravailId_idx_32e65291\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"operation_centreTravailId_idx_32e65291\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"operation_centreTravailId_idx_32e65291\"",
+        "sql": "CREATE INDEX \"operation_centreTravailId_idx_32e65291\" ON \"public\".\"operation\" (\"centreTravailId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"operation_centreTravailId_idx_32e65291\" exists on \"operation\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"operation_centreTravailId_idx_32e65291\"",
+          "i",
+          "I",
+          "\"public\".\"operation\"",
+          "btree",
+          "[\"centreTravailId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.matiere.matiere_essenceId_fkey",
+    "label": "Add foreign key \"matiere_essenceId_fkey\" on \"matiere\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "matiere_essenceId_fkey",
+        "table": "matiere"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"matiere_essenceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "matiere_essenceId_fkey",
+          "public",
+          "\"public\".\"matiere\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"matiere_essenceId_fkey\" on \"matiere\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"matiere_essenceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"matiere\"\nADD CONSTRAINT \"matiere_essenceId_fkey\"\nFOREIGN KEY (\"essenceId\")\nREFERENCES \"public\".\"essence\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"matiere_essenceId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "matiere_essenceId_fkey",
+          "public",
+          "\"public\".\"matiere\"",
+          "f",
+          "[\"essenceId\"]",
+          "\"public\".\"essence\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.operation.operation_centreTravailId_fkey",
+    "label": "Add foreign key \"operation_centreTravailId_fkey\" on \"operation\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "operation_centreTravailId_fkey",
+        "table": "operation"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"operation_centreTravailId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "operation_centreTravailId_fkey",
+          "public",
+          "\"public\".\"operation\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"operation_centreTravailId_fkey\" on \"operation\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"operation_centreTravailId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"operation\"\nADD CONSTRAINT \"operation_centreTravailId_fkey\"\nFOREIGN KEY (\"centreTravailId\")\nREFERENCES \"public\".\"centre_travail\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"operation_centreTravailId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "operation_centreTravailId_fkey",
+          "public",
+          "\"public\".\"operation\"",
+          "f",
+          "[\"centreTravailId\"]",
+          "\"public\".\"centre_travail\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  }
+]

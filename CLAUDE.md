@@ -92,15 +92,49 @@ Six modules sur une base de données centralisée :
 
 ## Lot en cours
 
-Lot 1 : référentiels. Contrat dans `prisma/contract.prisma`, seed à écrire
-depuis `data/operations.csv`.
+Lot 1 : référentiels. Contrat dans `prisma/contract.prisma`, seed dans
+`prisma/seed.ts` depuis `data/operations.csv`.
 
-Le contrat du lot 1 est déjà écrit et compile (`npx prisma contract emit`).
-Prochaine étape : le script de seed, les tests de la règle de temps, puis
-les écrans de consultation et de saisie des référentiels.
+Fait : contrat appliqué par migration, seed relançable des 36 opérations et
+des paramètres, règle de temps portée et testée, écrans de consultation et de
+saisie des référentiels (Next.js App Router, `src/app`).
+
+Prochaine étape : charger les types de coupe et les matières, puis le modèle
+produit du lot 2.
+
+### Commandes
+
+```
+npm run dev                 # application sur http://localhost:3000
+npm run seed                # recharge data/operations.csv, sans doublon
+npm test                    # tests des règles de calcul
+npm run typecheck
+npx prisma contract emit    # après toute modification du contrat
+npx prisma db update        # aligne la base de dev sur le contrat
+```
+
+### Qui possède quelle donnée
+
+Ce partage est ce qui permet de relancer le seed sans rien perdre :
+
+- Les temps et le nombre d'opérateurs viennent de `data/operations.csv`. Le
+  seed les réécrit à chaque passage, donc l'écran Opérations les affiche en
+  lecture seule : les modifier se fait dans le CSV puis `npm run seed`.
+- Le centre de travail et la catégorie se saisissent dans l'application. Une
+  cellule vide du CSV vaut « non renseigné », jamais « à effacer » : le seed
+  ne les écrase pas.
+- Les valeurs de paramètres appartiennent au gérant. Le seed crée les clés
+  manquantes et tient leur description à jour, jamais leur valeur.
+- Les matières et les prix viennent d'EBP (lot 5). L'écran Matières est donc
+  en consultation seulement : une saisie manuelle créerait une seconde vérité
+  sur les prix.
 
 ## À trancher (bloquant selon le lot)
 
 - Taux horaire atelier, nécessaire au calcul de marge (lot 6).
-- Centre de travail de chaque opération, à renseigner dans data/operations.csv.
+- Centre de travail de chaque opération, dans data/operations.csv ou sur
+  l'écran Opérations.
 - Formules de dimensions du coffret à charnière (lot 2).
+- Contrôle d'accès par rôle : aucune authentification n'est en place, alors
+  que les tables de prix doivent être fermées au rôle opérateur. Bloquant
+  pour une mise en service en atelier.

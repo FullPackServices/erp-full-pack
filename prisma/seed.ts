@@ -20,6 +20,7 @@ import "dotenv/config";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { analyserOperationsCsv, type LigneOperationCsv } from "../src/lot1/operations-csv";
+import { PARAMETRES_ATTENDUS } from "../src/lot1/parametres";
 import { db } from "../src/prisma/db";
 
 const CHEMIN_CSV = path.join(import.meta.dirname, "..", "data", "operations.csv");
@@ -102,6 +103,35 @@ async function chargerOperations(lignes: readonly LigneOperationCsv[]): Promise<
   };
 }
 
+/**
+ * Crée les clés de paramètres manquantes et tient leur description à jour.
+ * Une valeur déjà saisie n'est jamais réécrite : `update` ne porte que la
+ * description. `cle` étant la clé primaire, le conflit se résout dessus sans
+ * qu'on ait à le nommer.
+ */
+async function chargerParametres(): Promise<{ crees: number; existants: number }> {
+  const clesEnBase = new Set(
+    (await db.orm.public.Parametre.select("cle").all()).map((parametre) => parametre.cle),
+  );
+
+  let crees = 0;
+  for (const definition of PARAMETRES_ATTENDUS) {
+    await db.orm.public.Parametre.upsert({
+      create: {
+        cle: definition.cle,
+        valeur: definition.valeurInitiale,
+        description: definition.description,
+      },
+      update: { description: definition.description },
+    });
+    if (!clesEnBase.has(definition.cle)) {
+      crees += 1;
+    }
+  }
+
+  return { crees, existants: PARAMETRES_ATTENDUS.length - crees };
+}
+
 async function main(): Promise<void> {
   const contenu = await readFile(CHEMIN_CSV, "utf8");
   const lignes = analyserOperationsCsv(contenu);
@@ -117,8 +147,21 @@ async function main(): Promise<void> {
     console.log(`CentreTravail : ${bilan.centresCrees} créé(s) depuis la colonne centre_travail.`);
   }
 
+  const parametres = await chargerParametres();
+  console.log(
+    `Parametre : ${parametres.crees} créé(s), ${parametres.existants} déjà présent(s).`,
+  );
+
   const enBase = await db.orm.public.Operation.select("nom").all();
   console.log(`Total en base : ${enBase.length} opérations.`);
+
+  const aRenseigner = await db.orm.public.Parametre.where({ valeur: "" }).select("cle").all();
+  if (aRenseigner.length > 0) {
+    console.log(
+      `\nÀ renseigner avant les calculs qui en dépendent : ` +
+        aRenseigner.map((parametre) => parametre.cle).join(", "),
+    );
+  }
 }
 
 try {
