@@ -1,0 +1,197 @@
+// use prisma-8
+
+// Lot 1 : référentiels.
+// Origine des données : classeur ABELE_RASANTE_1BT_270ans.xlsm
+// (feuilles Composant, Type de Coupe, Mat Premiere) et le cadrage métier.
+//
+// Règle tenue dans tout ce contrat : aucun identifiant EBP ne sert de clé.
+// Les champs codeEbp sont des champs de correspondance, pour que le jour où
+// EBP part, seul le module de pont soit à remplacer.
+
+/// Les 6 catégories du processus de fabrication.
+enum CategorieOperation {
+  PREPARATION_DEBIT
+  USINAGE
+  PONCAGE
+  ASSEMBLAGE
+  FINITION
+  CONDITIONNEMENT
+}
+
+enum UniteAchat {
+  PLAQUE
+  PLANCHE
+}
+
+// ---------------------------------------------------------------------------
+// Atelier
+// ---------------------------------------------------------------------------
+
+/// Scie, toupie, ponceuse, cabine de finition, laser, poste d'assemblage.
+model CentreTravail {
+  id         String  @id @onCreate(cuid(2))
+  nom        String  @unique
+  actif      Boolean @default(true)
+  operations Operation[]
+  creeLe     temporal.CreatedAt
+  majLe      temporal.UpdatedAt
+
+  @@map("centre_travail")
+}
+
+/// Référentiel des 36 opérations. Seed : data/operations.csv
+///
+/// Temps prévu sur un ordre de fabrication :
+///   tempsReglageMin (une seule fois) + tempsUnitaireMin * quantiteLancee
+/// avec quantiteLancee = quantite commandée * 1,05.
+model Operation {
+  id               String @id @onCreate(cuid(2))
+  nom              String @unique
+  /// Minutes par pièce.
+  tempsUnitaireMin Decimal(precision: 6, scale: 2)
+  /// Minutes de réglage, comptées une seule fois par ordre de fabrication.
+  tempsReglageMin  Decimal(precision: 6, scale: 2) @default(5)
+  /// Une personne par poste par défaut.
+  nbOperateurs     Int     @default(1)
+  categorie        CategorieOperation?
+  centreTravailId  String?
+  centreTravail    CentreTravail? @relation(fields: [centreTravailId], references: [id])
+  actif            Boolean @default(true)
+  creeLe           temporal.CreatedAt
+  majLe            temporal.UpdatedAt
+
+  @@index([centreTravailId])
+  @@map("operation")
+}
+
+// ---------------------------------------------------------------------------
+// Produit
+// ---------------------------------------------------------------------------
+
+/// Pièce élémentaire d'un coffret : GCD, GCG, DES, DSS, FON, TIR, et les
+/// composants optionnels (guillotines, berceaux, tasseaux, cales).
+model Piece {
+  id      String  @id @onCreate(cuid(2))
+  code    String  @unique
+  libelle String
+  actif   Boolean @default(true)
+  creeLe  temporal.CreatedAt
+  majLe   temporal.UpdatedAt
+
+  @@map("piece")
+}
+
+/// Coffret bois standard, coffret à charnière.
+model Typologie {
+  id     String @id @onCreate(cuid(2))
+  nom    String @unique
+  creeLe temporal.CreatedAt
+
+  @@map("typologie")
+}
+
+/// Les familles de produits, par format et contenance.
+model FamilleProduit {
+  id     String @id @onCreate(cuid(2))
+  nom    String @unique
+  creeLe temporal.CreatedAt
+
+  @@map("famille_produit")
+}
+
+// ---------------------------------------------------------------------------
+// Matière
+// ---------------------------------------------------------------------------
+
+/// Chêne, Peuplier massif, CP Peuplier, Pin Radiata, Frêne, MDF, Paulownia, Céplin.
+model Essence {
+  id       String @id @onCreate(cuid(2))
+  nom      String @unique
+  matieres Matiere[]
+
+  @@map("essence")
+}
+
+/// Feuille "Mat Premiere" du classeur.
+/// Le prix est une photo du stock EBP à une date : prixReleveLe la porte,
+/// pour qu'un chiffrage sache s'il travaille sur un prix périmé.
+model Matiere {
+  id           String  @id @onCreate(cuid(2))
+  /// Ex. "CP PEUPLIER - 10 mm - 2500 x 1220"
+  designation  String  @unique
+  essenceId    String
+  essence      Essence @relation(fields: [essenceId], references: [id])
+  unite        UniteAchat
+  longueurMm   Int
+  largeurMm    Int
+  epaisseurMm  Decimal(precision: 6, scale: 2)
+  /// Coût HT d'une plaque ou d'une planche entière.
+  coutHT       Decimal(precision: 10, scale: 4)
+  /// Correspondance EBP, ex. "AR02973". Jamais une clé.
+  codeEbp      String?
+  /// Date du relevé de prix dans EBP.
+  prixReleveLe DateTime?
+  actif        Boolean @default(true)
+  creeLe       temporal.CreatedAt
+  majLe        temporal.UpdatedAt
+
+  @@index([essenceId])
+  @@index([codeEbp])
+  @@map("matiere")
+}
+
+/// Feuille "Type de Coupe" du classeur.
+/// Surcotes à ajouter à la pièce pour le débit, et dimensions à retirer de
+/// la plaque. Entrent directement dans le calcul des bandes et des panneaux.
+model TypeCoupe {
+  id                      String  @id @onCreate(cuid(2))
+  /// Ex. "Coupe droite + rainurage"
+  nom                     String  @unique
+  explication             String?
+  /// Surcote largeur pour le délignage, en mm.
+  surcoteDelignageMm      Decimal(precision: 6, scale: 2)
+  /// Surcote longueur pour la mise à longueur, en mm.
+  surcoteLongueurMm       Decimal(precision: 6, scale: 2)
+  /// À retirer de la longueur de la plaque, en mm.
+  retraitPlaqueLongueurMm Decimal(precision: 6, scale: 2)
+  /// À retirer de la largeur de la plaque, en mm.
+  retraitPlaqueLargeurMm  Decimal(precision: 6, scale: 2)
+  creeLe                  temporal.CreatedAt
+  majLe                   temporal.UpdatedAt
+
+  @@map("type_coupe")
+}
+
+// ---------------------------------------------------------------------------
+// Commercial
+// ---------------------------------------------------------------------------
+
+model Client {
+  id      String  @id @onCreate(cuid(2))
+  nom     String
+  /// Correspondance EBP. Jamais une clé.
+  codeEbp String?
+  actif   Boolean @default(true)
+  creeLe  temporal.CreatedAt
+  majLe   temporal.UpdatedAt
+
+  @@index([codeEbp])
+  @@map("client")
+}
+
+// ---------------------------------------------------------------------------
+// Paramètres
+// ---------------------------------------------------------------------------
+
+/// Clés attendues :
+///   taux_horaire_atelier_eur   (à renseigner, bloque le calcul de marge)
+///   majoration_lancement       (0.05)
+///   temps_reglage_defaut_min   (5)
+model Parametre {
+  cle         String  @id
+  valeur      String
+  description String?
+  majLe       temporal.UpdatedAt
+
+  @@map("parametre")
+}

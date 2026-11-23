@@ -1,0 +1,39 @@
+{
+  "name": "erp-full-pack",
+  "version": "1.0.0",
+  "description": "ERP Full Pack Services — coffrets et caisses bois sur mesure",
+  "main": "src/prisma/db.ts",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "prisma:emit": "prisma contract emit",
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FullPackServices/erp-full-pack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/FullPackServices/erp-full-pack/issues"
+  },
+  "homepage": "https://github.com/FullPackServices/erp-full-pack#readme",
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "prisma": "8.0.0-rc.35",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "@prisma/orm-postgres": "8.0.0-rc.25",
+    "decimal.js": "10.6.0",
+    "dotenv": "18.0.10"
+  },
+  "type": "module",
+  "private": true
+}
