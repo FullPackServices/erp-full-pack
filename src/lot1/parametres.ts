@@ -1,11 +1,13 @@
 // Paramètres attendus par le contrat (voir le commentaire du modèle Parametre
 // dans prisma/contract.prisma).
 //
-// Le seed crée les clés manquantes et tient leur description à jour, mais ne
-// touche jamais à une valeur déjà saisie : un paramètre appartient au gérant,
-// pas au dépôt. C'est aussi pourquoi `taux_horaire_atelier_eur` part vide
-// plutôt qu'avec un chiffre inventé — il est encore à trancher, et une marge
-// calculée sur un taux faux serait pire qu'une marge non calculée.
+// Le seed crée les clés manquantes, remplit celles qui sont restées vides et
+// tient les descriptions à jour. Il ne réécrit jamais une valeur déjà saisie :
+// un paramètre appartient au gérant, pas au dépôt.
+//
+// Une valeur n'est posée ici que lorsqu'elle a été tranchée. Un chiffre
+// inventé serait pire qu'une absence de chiffre : la marge sortirait fausse
+// sans que personne ne le voie.
 
 import Decimal from "decimal.js";
 
@@ -50,11 +52,11 @@ export const PARAMETRES_ATTENDUS: readonly DefinitionParametre[] = [
   {
     cle: CLE_TAUX_HORAIRE_ATELIER_EUR,
     format: "decimal",
-    valeurInitiale: "",
+    valeurInitiale: "32.50",
     description:
-      "Taux horaire atelier en euros HT. À renseigner : " +
-      "sans lui le coût de main-d'œuvre et la marge par commande (lot 6) " +
-      "ne peuvent pas être calculés.",
+      "Taux horaire atelier en euros HT, par salarié. Multiplie les heures " +
+      "de main-d'œuvre (temps prévu x nombre d'opérateurs) pour donner le " +
+      "coût de main-d'œuvre et la marge par commande (lot 6).",
     bloquant: true,
   },
 ];

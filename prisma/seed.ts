@@ -104,32 +104,60 @@ async function chargerOperations(lignes: readonly LigneOperationCsv[]): Promise<
 }
 
 /**
- * Crée les clés de paramètres manquantes et tient leur description à jour.
+ * Crée les clés de paramètres manquantes, remplit celles qui sont restées
+ * vides, et tient les descriptions à jour.
+ *
  * Une valeur déjà saisie n'est jamais réécrite : `update` ne porte que la
- * description. `cle` étant la clé primaire, le conflit se résout dessus sans
- * qu'on ait à le nommer.
+ * description, sauf quand la valeur en base est vide et que la définition en
+ * propose une — un paramètre tranché après coup n'a pas à être ressaisi à la
+ * main sur chaque installation. `cle` étant la clé primaire, le conflit se
+ * résout dessus sans qu'on ait à le nommer.
  */
-async function chargerParametres(): Promise<{ crees: number; existants: number }> {
-  const clesEnBase = new Set(
-    (await db.orm.public.Parametre.select("cle").all()).map((parametre) => parametre.cle),
+async function chargerParametres(): Promise<{
+  crees: number;
+  remplis: number;
+  existants: number;
+}> {
+  const enBase = new Map(
+    (await db.orm.public.Parametre.select("cle", "valeur").all()).map((parametre) => [
+      parametre.cle,
+      parametre.valeur.trim(),
+    ]),
   );
 
   let crees = 0;
+  let remplis = 0;
+
   for (const definition of PARAMETRES_ATTENDUS) {
+    const valeurConnue = enBase.get(definition.cle);
+    const aRemplir =
+      valeurConnue !== undefined &&
+      valeurConnue === "" &&
+      definition.valeurInitiale.trim() !== "";
+
     await db.orm.public.Parametre.upsert({
       create: {
         cle: definition.cle,
         valeur: definition.valeurInitiale,
         description: definition.description,
       },
-      update: { description: definition.description },
+      update: aRemplir
+        ? { valeur: definition.valeurInitiale, description: definition.description }
+        : { description: definition.description },
     });
-    if (!clesEnBase.has(definition.cle)) {
+
+    if (valeurConnue === undefined) {
       crees += 1;
+    } else if (aRemplir) {
+      remplis += 1;
     }
   }
 
-  return { crees, existants: PARAMETRES_ATTENDUS.length - crees };
+  return {
+    crees,
+    remplis,
+    existants: PARAMETRES_ATTENDUS.length - crees - remplis,
+  };
 }
 
 async function main(): Promise<void> {
@@ -149,7 +177,8 @@ async function main(): Promise<void> {
 
   const parametres = await chargerParametres();
   console.log(
-    `Parametre : ${parametres.crees} créé(s), ${parametres.existants} déjà présent(s).`,
+    `Parametre : ${parametres.crees} créé(s), ${parametres.remplis} rempli(s), ` +
+      `${parametres.existants} déjà renseigné(s).`,
   );
 
   const enBase = await db.orm.public.Operation.select("nom").all();

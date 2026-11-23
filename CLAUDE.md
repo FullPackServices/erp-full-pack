@@ -124,14 +124,17 @@ Ce partage est ce qui permet de relancer le seed sans rien perdre :
   cellule vide du CSV vaut « non renseigné », jamais « à effacer » : le seed
   ne les écrase pas.
 - Les valeurs de paramètres appartiennent au gérant. Le seed crée les clés
-  manquantes et tient leur description à jour, jamais leur valeur.
+  manquantes, remplit celles restées vides depuis la définition, et ne
+  réécrit jamais une valeur saisie.
+- Taux horaire atelier tranché : 32,50 € HT de l'heure et par salarié. Il
+  multiplie les heures de main-d'œuvre, c'est-à-dire le temps prévu fois le
+  nombre d'opérateurs du poste, et non le seul temps au poste.
 - Les matières et les prix viennent d'EBP (lot 5). L'écran Matières est donc
   en consultation seulement : une saisie manuelle créerait une seconde vérité
   sur les prix.
 
 ## À trancher (bloquant selon le lot)
 
-- Taux horaire atelier, nécessaire au calcul de marge (lot 6).
 - Centre de travail de chaque opération, dans data/operations.csv ou sur
   l'écran Opérations.
 - Formules de dimensions du coffret à charnière (lot 2).
