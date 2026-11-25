@@ -107,6 +107,23 @@ de son document de processus, pas par référentiel. La maquette de
 `prototype/` (en cours de validation) fixe ce parcours ; les écrans des lots
 2, 4 et 6 doivent le reprendre.
 
+Planning : chronologie façon Notion (une barre par commande, couleur par
+étape, glisser pour fixer une date de début). Capacité : 4 opérateurs ×
+35 h par semaine, paramètres `nb_operateurs_atelier` et
+`heures_semaine_operateur`.
+
+Indicateurs : volet dédié (commercial, délais, production, qualité,
+rentabilité), chaque carte dit son calcul et son objectif.
+
+Demandes d'évolution : l'Assistant de la maquette range les idées du gérant
+dans la collection `demandes` de l'artefact
+(https://claude.ai/artifact/EiMprqCxV6v7acasA7AvHt). Pour « traiter les
+demandes » : les lire avec ArtifactData, les réaliser, passer leur `statut`
+à `encours` puis `livree` et écrire un mot dans `reponse`.
+
+La 3D des pièces a été retirée à la demande du gérant : l'étape 2 garde la
+nomenclature, les opérations par pièce et le croquis coté des OF.
+
 Plan d'atelier : la maquette porte une vue de dessus interactive des 16
 machines, en SVG, à l'échelle. Une machine est un centre de travail, jamais
 un second référentiel ; son statut « en production » se déduit des pointages
@@ -154,6 +171,7 @@ Ce partage est ce qui permet de relancer le seed sans rien perdre :
 - Cotes réelles de l'atelier et implantation des machines : les positions de
   la maquette sont une proposition.
 - Formules de dimensions du coffret à charnière (lot 2).
-- Contrôle d'accès par rôle : aucune authentification n'est en place, alors
-  que les tables de prix doivent être fermées au rôle opérateur. Bloquant
-  pour une mise en service en atelier.
+- Contrôle d'accès par rôle : la maquette n'a qu'un mot de passe partagé
+  (empreinte SHA-256 salée, vérifiée dans le navigateur : un verrou d'usage,
+  pas une sécurité). Les tables de prix doivent être fermées au rôle
+  opérateur. Bloquant pour une mise en service en atelier.
