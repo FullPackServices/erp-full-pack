@@ -156,9 +156,11 @@ npx prisma db update        # aligne la base de dev sur le contrat
 
 Ce partage est ce qui permet de relancer le seed sans rien perdre :
 
-- Les temps et le nombre d'opérateurs viennent de `data/operations.csv`. Le
-  seed les réécrit à chaque passage, donc l'écran Opérations les affiche en
-  lecture seule : les modifier se fait dans le CSV puis `npm run seed`.
+- Les temps, le réglage, le nombre d'opérateurs, le nom, la catégorie et la
+  machine d'une opération se modifient directement dans l'écran Opérations
+  (maquette : Réglages → Opérations). Le gérant en est le propriétaire : le
+  CSV ne sert plus qu'à l'amorce. À faire dans l'application Next.js : le seed
+  ne doit plus réécrire un temps déjà saisi (aujourd'hui il le réécrit).
 - Le centre de travail et la catégorie se saisissent dans l'application. Une
   cellule vide du CSV vaut « non renseigné », jamais « à effacer » : le seed
   ne les écrase pas.
@@ -177,8 +179,9 @@ Ce partage est ce qui permet de relancer le seed sans rien perdre :
 - Centre de travail de chaque opération : 34 des 36 sont proposées par
   déduction dans la maquette et attendent confirmation. Une proposition n'est
   pas exportée vers data/operations.csv. Restent sans réponse : le marquage
-  laser (aucun laser à l'atelier), la cale carton (aucun poste de
-  conditionnement), et la dégauchisseuse, qui ne reçoit aucune opération.
+  laser (aucun laser à l'atelier) et la dégauchisseuse, qui ne reçoit aucune
+  opération. La « Cale carton » a été supprimée à la demande du gérant : elle
+  reste dans data/operations.csv tant que la ligne n'y est pas retirée.
 - Cotes réelles de l'atelier et implantation des machines : les positions de
   la maquette sont une proposition.
 - Formules de dimensions du coffret à charnière (lot 2).

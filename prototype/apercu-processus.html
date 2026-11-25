@@ -408,7 +408,15 @@
   .rang { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: #1a1512; font-size: 12px; font-weight: 700; flex: none; }
 
   .ops-choisies { display: grid; gap: 6px; }
-  .op-choisie { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 8px; align-items: center; padding: 7px 10px; border-radius: 8px; background: var(--encadre); font-size: 14px; }
+  .op-choisie { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; gap: 8px; align-items: center; padding: 7px 10px; border-radius: 8px; background: var(--encadre); font-size: 14px; }
+  .fleches { display: inline-flex; gap: 2px; }
+  .fleches button { min-width: 32px; min-height: 32px; padding: 2px 6px; justify-content: center; }
+  .actions-op { white-space: nowrap; }
+  .actions-op > * { margin-right: 4px; }
+  .table-ops td, .table-ops th { vertical-align: top; padding: 8px 6px; }
+  .table-ops th:first-child, .table-ops td:first-child { padding-left: 0; }
+  .table-ops input, .table-ops select { min-height: 36px; font-size: 14px; }
+  .table-ops input.nombre { width: 100%; }
   .pas { display: inline-flex; align-items: center; gap: 4px; }
   .pas button { min-width: 34px; min-height: 34px; padding: 2px; justify-content: center; font-size: 17px; }
   .pas span { min-width: 44px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -894,7 +902,7 @@
     planZoom: lireLocal("fps-plan-zoom") || "mois", chronoX: null, chronoZoom: null,
     kpiPeriode: lireLocal("fps-kpi-periode") || "trimestre",
     acces: { charge: false, doc: null, proprietaire: null, erreur: null },
-    demandes: [],
+    demandes: [], opNouv: { reglage: "5", nb: "1" },
     chat: (function () { try { var c = JSON.parse(lireLocal("fps-chat") || "[]"); return Array.isArray(c) ? c.filter(function (m) { return m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string"; }) : []; } catch (e) { return []; } })(),
     chatCtl: null, chatTexte: "", chatErreur: null, demandeProposee: null, sample: null, sampleRefuse: false,
     nouvelle: { typologie: "standard", essence: "Chêne", marquage: "aucun", epaisseur: "12" },
@@ -975,9 +983,12 @@
     DES: function (c) { return { libelle: "Dessus", qte: 1, longueur: c.L, largeur: c.l, epaisseur: c.e, orientation: "plat", x: 0, y: c.H / 2 - c.e / 2, z: 0, couvercle: true }; },
     GCD: function (c) { return { libelle: "Grand côté droit", qte: 1, longueur: c.L, largeur: c.H - 2 * c.e, epaisseur: c.e, orientation: "long", x: 0, y: 0, z: c.l / 2 - c.e / 2 }; },
     GCG: function (c) { return { libelle: "Grand côté gauche", qte: 1, longueur: c.L, largeur: c.H - 2 * c.e, epaisseur: c.e, orientation: "long", x: 0, y: 0, z: -(c.l / 2 - c.e / 2) }; },
-    FON: function (c) { return { libelle: "Fond", qte: 2, longueur: c.l - 2 * c.e, largeur: c.H - 2 * c.e, epaisseur: c.e, orientation: "travers", x: 0, y: 0, z: 0, ecart: c.L - c.e }; }
+    FON: function (c) { return { libelle: "Fond", qte: 2, longueur: c.l - 2 * c.e, largeur: c.H - 2 * c.e, epaisseur: c.e, orientation: "travers", x: 0, y: 0, z: 0, ecart: c.L - c.e }; },
+    // Tirette : plaque sous le couvercle. Proposition, à ajuster.
+    TIR: function (c) { return { libelle: "Tirette", qte: 1, longueur: c.L - 2 * c.e, largeur: c.l - 2 * c.e, epaisseur: c.e, orientation: "plat", x: 0, y: c.H / 2 - 1.5 * c.e, z: 0, couvercle: true }; }
   };
-  var ORDRE_STANDARD = ["DSS", "DES", "GCD", "GCG", "FON"];
+  // Ordre d'apparition des pièces de départ : GCG, GCD, Dessus, Dessous, Fond, Tirette.
+  var ORDRE_STANDARD = ["GCG", "GCD", "DES", "DSS", "FON", "TIR"];
 
   function depuisGabarit(code, c, base) {
     var g = GABARITS[code](c);
@@ -1047,7 +1058,6 @@
     { code: "MOU", libelle: "Calage mousse", matiere: "Mousse", qte: 1, orientation: "plat", d: function (i) { return [i.L, i.l, Math.min(30, i.H / 3)]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; } },
     { code: "SEP", libelle: "Séparateur", matiere: "bois", qte: 1, orientation: "travers", d: function (i) { return [i.l, i.H, 6]; }, pos: function () { return {}; } },
     { code: "GUI", libelle: "Guillotine", matiere: "bois", qte: 1, orientation: "travers", d: function (i) { return [i.l, i.H * 0.6, 8]; }, pos: function (i, t) { return { x: i.L / 2 - 20, y: i.H / 2 - t.y / 2 }; } },
-    { code: "TIR", libelle: "Tirette", matiere: "bois", qte: 1, orientation: "plat", d: function (i, c) { return [c.L - c.e, i.l + c.e, Math.max(4, c.e / 2)]; }, pos: function (i, t, c) { return { x: c.e / 2, y: c.H / 2 - c.e - t.y / 2 }; }, couvercle: true },
     { code: "CHA", libelle: "Charnière", matiere: "Métal", qte: 2, orientation: "long", d: function () { return [40, 20, 3]; }, pos: function (i, t, c) { return { y: c.H / 2 - c.e - 10, z: -(i.l / 2 - 2) }; }, ecart: function (i) { return i.L / 2; } },
     { code: "FER", libelle: "Fermoir", matiere: "Métal", qte: 1, orientation: "long", d: function () { return [30, 20, 5]; }, pos: function (i, t, c) { return { y: c.H / 2 - c.e - 10, z: i.l / 2 - 3 }; } },
     { code: "PCE", libelle: "Pièce libre", matiere: "bois", qte: 1, orientation: "plat", d: function () { return [100, 50, 10]; }, pos: function () { return {}; } }
@@ -1110,9 +1120,9 @@
         res.push({ piece: p, op: op, n: n, quantite: quantite, prevu: prevu, mo: prevu * (op.nbOperateurs || 1) });
       });
     });
-    return res.sort(function (a, b) {
-      return (a.piece.genre === "coffret") - (b.piece.genre === "coffret") || rangCat(a.op.categorie) - rangCat(b.op.categorie) || a.op.ordre - b.op.ordre;
-    });
+    // L'ordre est celui de la gamme : pièces dans l'ordre de la nomenclature,
+    // opérations dans l'ordre choisi. Le coffret monté reste en dernier.
+    return res.sort(function (a, b) { return (a.piece.genre === "coffret") - (b.piece.genre === "coffret"); });
   }
 
   function ordresFabrication(cmd) {
@@ -1127,7 +1137,6 @@
     return ordre.sort(function (a, b) { return rang[a] - rang[b]; }).map(function (id) {
       var of = parPiece[id];
       of.numero = (cmd.numero || "OF") + "-" + of.piece.code;
-      of.lignes.sort(function (a, b) { return rangCat(a.op.categorie) - rangCat(b.op.categorie) || a.op.ordre - b.op.ordre; });
       return of;
     });
   }
@@ -1428,6 +1437,12 @@
 
   function valeurBase(cle) {
     if (cle.indexOf("param:") === 0) return etat.parametres[cle.slice(6)];
+    if (cle.indexOf("op:") === 0) {
+      var mo = cle.split(":");
+      var opv = etat.opParId[mo[1]];
+      if (!opv) return undefined;
+      return opv[mo[2]] === undefined || opv[mo[2]] === null ? "" : opv[mo[2]];
+    }
     if (cle.indexOf("centres:") === 0 || cle.indexOf("emplacements:") === 0) {
       var m = cle.split(":");
       var doc = (m[0] === "centres" ? etat.centres : etat.emplacements).filter(function (x) { return x.id === m[1]; })[0];
@@ -2256,7 +2271,10 @@
         ? h("div", { class: "actions" }, h("span", { class: "aide" }, "Retirer " + piece.code + " de la nomenclature ?"),
           bouton("Retirer", function () { etat.confirmation = null; ecrirePieces(cmd, piecesDe(cmd).filter(function (x) { return x.id !== piece.id; }), piece.code + " retirée"); }, { classe: "danger petit" }),
           bouton("Garder", function () { etat.confirmation = null; rendre(); }, { classe: "discret petit", ecriture: false }))
-        : h("div", null, bouton("Retirer cette pièce", function () { etat.confirmation = cle; rendre(); }, { classe: "discret danger petit" })));
+        : h("div", { class: "actions" },
+          bouton("↑ Monter la pièce", function () { deplacerPiece(cmd, piece.id, -1); }, { classe: "discret petit", disabled: verrou || positionPiece(cmd, piece).k <= 1 }),
+          bouton("↓ Descendre la pièce", function () { deplacerPiece(cmd, piece.id, 1); }, { classe: "discret petit", disabled: verrou || positionPiece(cmd, piece).k >= positionPiece(cmd, piece).n - 1 }),
+          bouton("Retirer cette pièce", function () { etat.confirmation = cle; rendre(); }, { classe: "discret danger petit" })));
     }
     carte.appendChild(corps);
     return carte;
@@ -2327,10 +2345,7 @@
 
     if (ops.length) {
       var liste = h("div", { class: "ops-choisies" });
-      ops.slice().sort(function (a, b) {
-        var oa = etat.opParId[a.op], ob = etat.opParId[b.op];
-        return (oa ? rangCat(oa.categorie) : 99) - (ob ? rangCat(ob.categorie) : 99) || (oa ? oa.ordre : 0) - (ob ? ob.ordre : 0);
-      }).forEach(function (o) {
+      ops.forEach(function (o) {
         var op = etat.opParId[o.op];
         if (!op) return;
         var n = Math.max(1, o.n || 1);
@@ -2347,6 +2362,9 @@
             h("span", { title: "Nombre de passages par pièce" }, "× " + n),
             bouton("+", function () { regler(1); }, { aria: "Un passage de plus", disabled: verrou, id: "plus-" + piece.id + "-" + op.id })),
           h("span", { class: "nb aide" }, minutes(t)),
+          h("span", { class: "fleches" },
+            bouton("↑", function () { deplacerOpPiece(cmd, piece, o.op, -1); }, { aria: "Monter " + op.nom, classe: "discret petit", disabled: verrou || ops.indexOf(o) === 0 }),
+            bouton("↓", function () { deplacerOpPiece(cmd, piece, o.op, 1); }, { aria: "Descendre " + op.nom, classe: "discret petit", disabled: verrou || ops.indexOf(o) === ops.length - 1 })),
           bouton("✕", function () { maj(ops.filter(function (x) { return x.op !== o.op; }), op.nom + " retirée"); }, { classe: "discret petit", aria: "Retirer " + op.nom, disabled: verrou })));
       });
       bloc.appendChild(liste);
@@ -4369,29 +4387,164 @@
     else reglagesOperations(racine);
   }
 
+  // ---------------------------------------------- Opérations, tout modifiable
+
+  function deplacerPiece(cmd, id, delta) {
+    var pieces = piecesDe(cmd).slice();
+    var i = pieces.findIndex(function (p) { return p.id === id; });
+    var j = i + delta;
+    if (i <= 0 || j <= 0 || j >= pieces.length) return;
+    var tmp = pieces[i]; pieces[i] = pieces[j]; pieces[j] = tmp;
+    ecrirePieces(cmd, pieces, "Ordre des pièces enregistré");
+  }
+
+  function positionPiece(cmd, piece) {
+    var liste = piecesDe(cmd);
+    return { k: liste.findIndex(function (p) { return p.id === piece.id; }), n: liste.length };
+  }
+
+  function deplacerOpPiece(cmd, piece, opId, delta) {
+    var fraiche = piecesDe(cmd).filter(function (p) { return p.id === piece.id; })[0] || piece;
+    var ops = (fraiche.ops || []).slice();
+    var i = ops.findIndex(function (o) { return o.op === opId; });
+    var j = i + delta;
+    if (i < 0 || j < 0 || j >= ops.length) return;
+    var tmp = ops[i]; ops[i] = ops[j]; ops[j] = tmp;
+    modifierPiece(cmd, piece.id, { ops: ops }, "Ordre des opérations enregistré");
+  }
+
+  // Ordre dans le catalogue : on échange les rangs avec le voisin de même catégorie.
+  function deplacerOpCatalogue(op, delta) {
+    var freres = etat.operations.filter(function (o) { return op.categorie ? o.categorie === op.categorie : !categorie(o.categorie); })
+      .sort(function (a, b) { return a.ordre - b.ordre; });
+    var i = freres.findIndex(function (o) { return o.id === op.id; });
+    var j = i + delta;
+    if (i < 0 || j < 0 || j >= freres.length) return;
+    var autre = freres[j];
+    if (op.ordre !== autre.ordre) {
+      ecrire("operations/" + op.id, { ordre: autre.ordre });
+      ecrire("operations/" + autre.id, { ordre: op.ordre });
+    } else {
+      ecrire("operations/" + op.id, { ordre: autre.ordre + (delta > 0 ? 0.5 : -0.5) });
+    }
+  }
+
+  // Supprime l'opération du catalogue, et de toutes les gammes où elle figure.
+  function supprimerOp(op) {
+    etat.confirmation = null;
+    etat.commandes.filter(function (c) { return (c.pieces || []).some(function (p) { return (p.ops || []).some(function (o) { return o.op === op.id; }); }); })
+      .forEach(function (c) {
+        ecrirePieces(c, piecesDe(c).map(function (p) { return Object.assign({}, p, { ops: (p.ops || []).filter(function (o) { return o.op !== op.id; }) }); }), null);
+      });
+    supprimer("operations/" + op.id, "« " + op.nom + " » supprimée");
+  }
+
+  function champOp(op, cle, libelle) {
+    var numerique = cle !== "nom";
+    return champ("op:" + op.id + ":" + cle, libelle, function () { return op[cle] === undefined || op[cle] === null ? "" : op[cle]; }, function (saisie) {
+      var v = String(saisie).trim().replace(",", ".");
+      if (cle === "nom") {
+        if (!v) { signaler("Le nom ne peut pas être vide.", true); return false; }
+        if (v === op.nom) return null;
+        if (etat.operations.some(function (x) { return x.id !== op.id && x.nom.toLowerCase() === v.toLowerCase(); })) { signaler("« " + v + " » existe déjà.", true); return false; }
+        ecrire("operations/" + op.id, { nom: v }, "Nom enregistré");
+        return v;
+      }
+      if (cle === "nbOperateurs") {
+        var n = Math.floor(Number(v));
+        if (!(n >= 1)) { signaler("Au moins 1 opérateur.", true); return false; }
+        if (n === Number(op.nbOperateurs)) return null;
+        ecrire("operations/" + op.id, { nbOperateurs: n }, "Opérateurs enregistrés");
+        return String(n);
+      }
+      if (versEchelle(v, 2) === null) { signaler("« " + saisie + " » n'est pas un temps valide, en minutes.", true); return false; }
+      if (v === String(op[cle])) return null;
+      var patch = {}; patch[cle] = v;
+      ecrire("operations/" + op.id, patch, "Temps enregistré");
+      return v;
+    }, { nu: true, decimal: numerique && cle !== "nbOperateurs", type: cle === "nbOperateurs" ? "number" : "text", aria: libelle, id: "op-" + op.id + "-" + cle });
+  }
+
+  function formNouvelleOp() {
+    var n = etat.opNouv;
+    var champN = function (cle, libelle, o) {
+      return h("label", { class: "champ", for: "opn-" + cle }, libelle,
+        h("input", Object.assign({ type: "text", id: "opn-" + cle, value: n[cle] || "", disabled: !peutEcrire, oninput: function (ev) { n[cle] = ev.target.value; } }, o || {})));
+    };
+    return h("form", { class: "carte carte-corps", style: { background: "var(--encadre)", marginBottom: "14px" }, onsubmit: function (ev) { ev.preventDefault(); creerOperation(); } },
+      h("h3", { style: { marginBottom: "10px" } }, "Ajouter une opération"),
+      h("div", { class: "grille", style: { gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" } },
+        champN("nom", "Nom", { placeholder: "Ex. Vernis au pistolet" }),
+        champN("temps", "Temps unitaire (min par pièce)", { inputmode: "decimal", class: "nombre", placeholder: "0,5" }),
+        champN("reglage", "Réglage (min, une fois par OF)", { inputmode: "decimal", class: "nombre" }),
+        champN("nb", "Opérateurs", { inputmode: "numeric", class: "nombre" }),
+        h("label", { class: "champ", for: "opn-cat" }, "Catégorie",
+          selecteur("opn-cat", [["", "— à classer —"]].concat(CATEGORIES.map(function (c) { return [c.code, c.n + " · " + c.nom]; })), n.cat || "", function (ev) { n.cat = ev.target.value; }, !peutEcrire)),
+        h("label", { class: "champ", for: "opn-centre" }, "Machine",
+          selecteur("opn-centre", [["", "— à affecter —"]].concat(etat.centres.map(function (c) { return [c.nom, c.nom]; })), n.centre || "", function (ev) { n.centre = ev.target.value; }, !peutEcrire))),
+      h("div", { class: "actions", style: { marginTop: "12px" } }, h("button", { type: "submit", class: "principal", disabled: !peutEcrire }, "Ajouter l'opération")));
+  }
+
+  function creerOperation() {
+    var n = etat.opNouv;
+    var nom = String(n.nom || "").trim();
+    if (!nom) { signaler("Donnez un nom à l'opération.", true); return; }
+    var id = slug(nom);
+    if (etat.operations.some(function (o) { return o.id === id || o.nom.toLowerCase() === nom.toLowerCase(); })) { signaler("« " + nom + " » existe déjà.", true); return; }
+    var temps = String(n.temps || "").trim().replace(",", ".");
+    var reglage = String(n.reglage || "5").trim().replace(",", ".");
+    var nb = Math.floor(Number(n.nb || 1));
+    if (versEchelle(temps, 2) === null) { signaler("Temps unitaire : indiquez un nombre de minutes.", true); return; }
+    if (versEchelle(reglage, 2) === null) { signaler("Réglage : indiquez un nombre de minutes.", true); return; }
+    if (!(nb >= 1)) { signaler("Au moins 1 opérateur.", true); return; }
+    var ordre = etat.operations.reduce(function (m, o) { return Math.max(m, o.ordre); }, -1) + 1;
+    creer("operations/" + id, {
+      nom: nom, ordre: ordre, tempsUnitaireMin: temps, tempsReglageMin: reglage, nbOperateurs: nb,
+      categorie: n.cat || null, categorieSource: n.cat ? "gerant" : null,
+      centreTravail: n.centre || null, centreSource: n.centre ? "gerant" : null, actif: true
+    }, "« " + nom + " » ajoutée").then(function () { etat.opNouv = { reglage: "5", nb: "1" }; planifierRendu(); }).catch(function () { /* déjà signalé */ });
+  }
+
+  function ligneOperationCatalogue(op, i, n) {
+    var propose = op.categorieSource === "proposition" || op.centreSource === "proposition";
+    var cle = "suppr-op-" + op.id;
+    return h("tr", null,
+      h("td", { style: { minWidth: "170px" } }, champOp(op, "nom", "Nom de l'opération"), propose ? h("div", { style: { marginTop: "4px" } }, pastille("attente", "à confirmer")) : null),
+      h("td", { style: { minWidth: "88px" } }, champOp(op, "tempsUnitaireMin", "Temps unitaire de " + op.nom + ", en minutes par pièce")),
+      h("td", { style: { minWidth: "84px" } }, champOp(op, "tempsReglageMin", "Réglage de " + op.nom + ", en minutes")),
+      h("td", { style: { minWidth: "76px" } }, champOp(op, "nbOperateurs", "Nombre d'opérateurs de " + op.nom)),
+      h("td", { style: { minWidth: "132px" } }, selecteur("cat-" + op.id, [["", "— catégorie —"]].concat(CATEGORIES.map(function (c) { return [c.code, c.n + " · " + c.nom]; })), op.categorie || "",
+        function (ev) { ecrire("operations/" + op.id, { categorie: ev.target.value || null, categorieSource: "gerant" }, "Catégorie enregistrée"); }, !peutEcrire, "Catégorie de " + op.nom)),
+      h("td", { style: { minWidth: "132px" } }, selecteur("ctr-" + op.id, [["", "— machine —"]].concat(etat.centres.map(function (c) { return [c.nom, c.nom]; }))
+        .concat(op.centreTravail && !etat.centres.some(function (c) { return c.nom === op.centreTravail; }) ? [[op.centreTravail, op.centreTravail + " (supprimée)"]] : []), op.centreTravail || "",
+        function (ev) { ecrire("operations/" + op.id, { centreTravail: ev.target.value || null, centreSource: "gerant" }, "Machine enregistrée"); }, !peutEcrire, "Machine de " + op.nom)),
+      h("td", { class: "actions-op" },
+        h("span", { class: "fleches" },
+          bouton("↑", function () { deplacerOpCatalogue(op, -1); }, { aria: "Monter " + op.nom, classe: "discret petit", disabled: i === 0 }),
+          bouton("↓", function () { deplacerOpCatalogue(op, 1); }, { aria: "Descendre " + op.nom, classe: "discret petit", disabled: i === n - 1 })),
+        propose ? bouton("Confirmer", function () { ecrire("operations/" + op.id, { categorieSource: "gerant", centreSource: "gerant" }, op.nom + " confirmée"); }, { classe: "discret petit" }) : null,
+        etat.confirmation === cle
+          ? h("span", { class: "actions" }, bouton("Oui, supprimer", function () { supprimerOp(op); }, { classe: "danger petit" }),
+            bouton("Non", function () { etat.confirmation = null; rendre(); }, { classe: "discret petit", ecriture: false }))
+          : bouton("Supprimer", function () { etat.confirmation = cle; rendre(); }, { classe: "discret danger petit", aria: "Supprimer " + op.nom })));
+  }
+
   function reglagesOperations(racine) {
     var aConfirmer = etat.operations.filter(function (op) { return op.categorieSource === "proposition" || op.centreSource === "proposition"; }).length;
     var carte = h("div", { class: "carte carte-corps" });
-    carte.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } }, "Les 6 catégories sont celles de l'étape 5 de votre document. Les temps viennent du classeur (data/operations.csv) et ne se modifient pas ici."));
+    carte.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } }, "Tout se modifie ici : nom, temps, opérateurs, catégorie, machine. Les flèches déplacent une opération dans sa catégorie. Ces temps servent désormais à tous les calculs, sans passer par le CSV."));
+    carte.appendChild(formNouvelleOp());
     if (aConfirmer) carte.appendChild(h("div", { class: "citation" }, aConfirmer + " opération" + (aConfirmer > 1 ? "s portent" : " porte") + " une catégorie ou une machine déduite, que votre document ne dit pas. Corrigez ou confirmez : tant que ce n'est pas confirmé, l'export CSV laisse la case vide."));
     CATEGORIES.concat([{ code: null, n: 0, nom: "Non classées" }]).forEach(function (cat) {
-      var ops = etat.operations.filter(function (op) { return cat.code === null ? !categorie(op.categorie) : op.categorie === cat.code; });
+      var ops = etat.operations.filter(function (op) { return cat.code === null ? !categorie(op.categorie) : op.categorie === cat.code; })
+        .sort(function (a, b) { return a.ordre - b.ordre; });
       if (!ops.length) return;
       carte.appendChild(h("div", { class: "cat-titre" }, cat.n ? h("span", { class: "rang" }, String(cat.n)) : null, h("h4", null, cat.nom + " · " + ops.length)));
-      carte.appendChild(h("div", { class: "defile" }, h("table", null, h("tbody", null, ops.map(function (op) {
-        var propose = op.categorieSource === "proposition" || op.centreSource === "proposition";
-        return h("tr", null,
-          h("td", null, h("strong", null, op.nom), " ", propose ? pastille("attente", "à confirmer") : null),
-          h("td", { class: "nb aide" }, formater(versEchelle(op.tempsUnitaireMin, 2), 2, 0) + " min"),
-          h("td", { style: { minWidth: "190px" } }, selecteur("cat-" + op.id, [["", "— catégorie —"]].concat(CATEGORIES.map(function (c) { return [c.code, c.n + " · " + c.nom]; })), op.categorie || "",
-            function (ev) { ecrire("operations/" + op.id, { categorie: ev.target.value || null, categorieSource: "gerant" }, "Catégorie enregistrée"); }, !peutEcrire, "Catégorie de " + op.nom)),
-          h("td", { style: { minWidth: "190px" } }, selecteur("ctr-" + op.id, [["", "— centre de travail —"]].concat(etat.centres.map(function (c) { return [c.nom, c.nom]; }))
-            .concat(op.centreTravail && !etat.centres.some(function (c) { return c.nom === op.centreTravail; }) ? [[op.centreTravail, op.centreTravail + " (supprimé)"]] : []), op.centreTravail || "",
-            function (ev) { ecrire("operations/" + op.id, { centreTravail: ev.target.value || null, centreSource: "gerant" }, "Centre de travail enregistré"); }, !peutEcrire, "Centre de travail de " + op.nom)),
-          h("td", null, propose ? bouton("Confirmer", function () { ecrire("operations/" + op.id, { categorieSource: "gerant", centreSource: "gerant" }, op.nom + " confirmée"); }, { classe: "discret petit" }) : null));
-      })))));
+      carte.appendChild(h("div", { class: "defile" }, h("table", { class: "table-ops" },
+        h("thead", null, h("tr", null, ["Opération", "Temps unitaire (min/pièce)", "Réglage (min)", "Opérateurs", "Catégorie", "Machine", ""].map(function (x) { return h("th", null, x); }))),
+        h("tbody", null, ops.map(function (op, i) { return ligneOperationCatalogue(op, i, ops.length); })))));
     });
-    if (!etat.centres.length) carte.appendChild(h("p", { class: "aide", style: { marginTop: "14px" } }, "Aucun centre de travail : créez-les dans l'onglet « Centres de travail » pour les affecter. Le planning par poste en dépend."));
+    if (!etat.centres.length) carte.appendChild(h("p", { class: "aide", style: { marginTop: "14px" } }, "Aucune machine : créez-les dans l'onglet « Centres de travail » pour les affecter. Le planning par machine en dépend."));
     racine.appendChild(carte);
   }
 
