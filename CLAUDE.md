@@ -115,6 +115,17 @@ Planning : chronologie façon Notion (une barre par commande, couleur par
 Indicateurs : volet dédié (commercial, délais, production, qualité,
 rentabilité), chaque carte dit son calcul et son objectif.
 
+Logo : `prototype/logo-full-pack.png`, à utiliser partout (volet, accès,
+documents). Couleurs du planning : par essence de bois, définies dans
+`COULEURS_ESSENCE` (prototype/apercu-processus.html). Familles de coffrets :
+13 références, dans `FAMILLES`.
+
+Tableau de bord : maquette validée à relire avant intégration, dans
+`prototype/maquette-tableau-de-bord.html`. Ses chiffres sont des exemples ;
+l'intégration doit les calculer depuis les commandes, les pointages et le
+planning. Les alertes « stocks insuffisants » restent non connectées tant que
+le module Stocks n'existe pas.
+
 Demandes d'évolution : l'Assistant de la maquette range les idées du gérant
 dans la collection `demandes` de l'artefact
 (https://claude.ai/artifact/EiMprqCxV6v7acasA7AvHt). Pour « traiter les
