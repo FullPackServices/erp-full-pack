@@ -539,6 +539,34 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+
+  /* ------------------------------------------------------ Plan de l'atelier */
+
+  .plan-page { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .plan-cadre { position: relative; border: 1px solid var(--bord); border-radius: 12px; background: var(--carte); overflow: hidden; height: clamp(360px, 58vh, 640px); touch-action: none; }
+  .plan-svg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  .plan-svg:active { cursor: grabbing; }
+  .plan-outils { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 20px); }
+  .plan-outils button { min-height: 34px; padding: 5px 11px; font-size: 13px; background: var(--carte); }
+  .plan-outils button[aria-pressed="true"] { background: var(--texte); border-color: var(--texte); color: var(--fond); }
+  .plan-legende { position: absolute; left: 12px; bottom: 10px; background: color-mix(in srgb, var(--carte) 88%, transparent); padding: 5px 11px; border-radius: 7px; max-width: calc(100% - 24px); }
+  .plan-legende .legende { margin: 0; gap: 13px; font-size: 12.5px; }
+  .machine, .emplacement { cursor: pointer; }
+  .machine:focus-visible, .emplacement:focus-visible { outline: none; }
+  .machine:focus-visible .corps-machine, .emplacement:focus-visible rect { stroke-dasharray: 22 14; }
+  .nom-machine { fill: var(--texte); font-family: var(--corps); font-weight: 600; }
+  .sous-machine { fill: var(--doux); font-family: var(--corps); }
+  .nom-zone { fill: var(--pale); font-family: var(--titre); letter-spacing: 0.05em; text-transform: uppercase; }
+  .bloc-prod { border: 1px solid var(--orange); background: var(--orange-pale); border-radius: 9px; padding: 12px 14px; }
+  .bloc-prod .numero-of { font-variant-numeric: tabular-nums; }
+  .op-machine { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; background: var(--neutre-pale); border-radius: 16px; padding: 3px 4px 3px 11px; }
+  .op-machine.proposee { background: var(--orange-pale); box-shadow: inset 0 0 0 1px var(--orange); }
+  .op-machine button { min-height: 26px; padding: 2px 8px; font-size: 12px; }
+  .ligne-statut { display: flex; align-items: center; gap: 9px; font-size: 14px; }
+  .ligne-statut i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .ligne-statut strong { margin-left: auto; }
+
+  @media (max-width: 1100px) { .plan-page { grid-template-columns: minmax(0, 1fr); } }
 </style>
 
 <div class="appli">
@@ -745,6 +773,9 @@
     vue2: {},
     eclate: false,
     cotes: true,
+    emplacements: [], zones: [],
+    plan: null, planCle: null, planAdmin: false, planFlux: false, machineSel: null,
+    sousAtelier: "plan",
     astuceVue: lireLocal("fps-astuce-3d") === "1",
     nouvelle: { typologie: "standard", essence: "Chêne", marquage: "aucun", epaisseur: "12" },
     operateur: lireLocal("fps-operateur") || "",
@@ -1258,6 +1289,12 @@
 
   function valeurBase(cle) {
     if (cle.indexOf("param:") === 0) return etat.parametres[cle.slice(6)];
+    if (cle.indexOf("centres:") === 0 || cle.indexOf("emplacements:") === 0) {
+      var m = cle.split(":");
+      var doc = (m[0] === "centres" ? etat.centres : etat.emplacements).filter(function (x) { return x.id === m[1]; })[0];
+      if (!doc) return undefined;
+      return doc[m[2]] === undefined || doc[m[2]] === null ? "" : doc[m[2]];
+    }
     var i = cle.indexOf(":");
     var cmd = etat.cmdParId[cle.slice(0, i)];
     if (!cmd) return undefined;
@@ -3092,8 +3129,20 @@
   // ===================================================================
 
   function vueAtelier(racine) {
+    var sous = etat.sousAtelier === "ofs" ? "ofs" : "plan";
     racine.appendChild(h("div", { class: "titre-page" },
-      h("div", null, h("h1", null, "Atelier"), h("p", { class: "sous-titre" }, "Les ordres de fabrication en cours, pièce par pièce. Touchez votre nom, puis Démarrer et Terminer."))));
+      h("div", null, h("h1", null, "Atelier"),
+        h("p", { class: "sous-titre" }, sous === "plan"
+          ? "Le plan de l'atelier. Touchez une machine pour savoir ce qu'elle produit et où elle en est."
+          : "Les ordres de fabrication en cours, pièce par pièce. Touchez votre nom, puis Démarrer et Terminer."))));
+    racine.appendChild(h("div", { class: "sous-onglets", role: "group", "aria-label": "Vue de l'atelier" },
+      bouton("Plan de l'atelier", function () { etat.sousAtelier = "plan"; rendre(); }, { presse: sous === "plan", ecriture: false, id: "onglet-plan" }),
+      bouton("Ordres de fabrication", function () { etat.sousAtelier = "ofs"; rendre(); }, { presse: sous === "ofs", ecriture: false, id: "onglet-ofs" })));
+    if (sous === "plan") { vuePlan(racine); return; }
+    vueAtelierOF(racine);
+  }
+
+  function vueAtelierOF(racine) {
     racine.appendChild(choixOperateur());
     var enFab = etat.commandes.filter(function (c) { return active(c) && c.etape === 5; }).sort(function (a, b) { return (a.echeance || "9999") < (b.echeance || "9999") ? -1 : 1; });
     var mien = etat.operateur && etat.pointages.filter(function (pt) { return !pt.fin && pt.operateur === etat.operateur; })[0];
@@ -3117,6 +3166,610 @@
   }
 
   // ===================================================================
+  // Plan de l'atelier
+  //
+  // Le plan n'est pas un module de production : c'est une vue. Il n'ajoute
+  // aux données qu'une seule chose, la place de chaque machine. Ce qu'une
+  // machine fabrique se déduit des ordres de fabrication et des pointages
+  // qui existent déjà, jamais d'un état de production saisi à part.
+  //
+  // Une machine est un centre de travail, celui des Réglages et celui que
+  // porte chaque opération. Pas de second référentiel de machines.
+  // ===================================================================
+
+  var CLE_ATELIER_L = "atelier_largeur_cm";
+  var CLE_ATELIER_P = "atelier_profondeur_cm";
+
+  var STATUTS_MACHINE = {
+    production: { nom: "En production", couleur: "var(--orange)", pastille: "attente" },
+    disponible: { nom: "Disponible", couleur: "var(--statut-bon)", pastille: "ok" },
+    arret: { nom: "À l'arrêt", couleur: "var(--pale)", pastille: "neutre" },
+    maintenance: { nom: "En maintenance", couleur: "var(--statut-juste)", pastille: "alerte" }
+  };
+  var STATUTS_SAISIS = [["disponible", "Disponible"], ["arret", "À l'arrêt"], ["maintenance", "En maintenance"]];
+
+  function entier(v, repli) { var n = Math.round(Number(v)); return isNaN(n) || v === "" || v === null || v === undefined ? repli : n; }
+  function metres(cm) { return formater(Math.round(Number(cm) || 0), 2, 0) + FINE + "m"; }
+
+  function dimsAtelier() {
+    return {
+      L: Math.max(500, entier(etat.parametres[CLE_ATELIER_L], 3000)),
+      P: Math.max(500, entier(etat.parametres[CLE_ATELIER_P], 1600))
+    };
+  }
+
+  function placee(m) { return m && m.xCm !== undefined && m.xCm !== null && m.xCm !== "" && m.yCm !== undefined && m.yCm !== null && m.yCm !== ""; }
+
+  function boite(m) {
+    return {
+      x: entier(m.xCm, 0), y: entier(m.yCm, 0),
+      l: Math.max(40, entier(m.largeurCm, 150)), p: Math.max(40, entier(m.profondeurCm, 100)),
+      r: ((entier(m.rotationDeg, 0) % 360) + 360) % 360
+    };
+  }
+
+  function milieu(m) { var b = boite(m); return { x: b.x + b.l / 2, y: b.y + b.p / 2 }; }
+
+  // Le travail présent dans l'atelier : les ordres de fabrication lancés et
+  // pas encore terminés, rangés par machine. Rien n'est stocké.
+  function travauxAtelier() {
+    var parNom = {};
+    etat.commandes.forEach(function (cmd) {
+      if (!active(cmd) || !cmd.lanceLe || cmd.etape > 6) return;
+      lignesTravail(cmd).forEach(function (l) {
+        var su = suiviLigne(cmd, l.piece, l.op, l.quantite);
+        if (su.statut === "terminee") return;
+        var nom = l.op.centreTravail || "";
+        (parNom[nom] || (parNom[nom] = [])).push({ cmd: cmd, ligne: l, suivi: su });
+      });
+    });
+    return parNom;
+  }
+
+  // Charge prévue par machine, toutes commandes en cours : la même que celle
+  // du planning, pour que les deux écrans ne se contredisent jamais.
+  function chargeParCentre() {
+    var t = {};
+    etat.commandes.forEach(function (c) {
+      if (!active(c) || c.etape < 2 || c.etape > 6) return;
+      var r = travailRestant(c);
+      Object.keys(r.parCentre).forEach(function (k) { t[k] = (t[k] || 0) + r.parCentre[k]; });
+    });
+    return t;
+  }
+
+  // Le statut se déduit d'abord : un pointage ouvert sur une opération de
+  // cette machine vaut « en production », et rien ne peut l'écraser. Le
+  // statut saisi ne sert qu'à dire qu'une machine libre est arrêtée.
+  function etatMachine(centre, travaux, charges) {
+    var t = travaux[centre.nom] || [];
+    var enCours = t.filter(function (x) { return x.suivi.ouverts.length; });
+    var file = t.filter(function (x) { return !x.suivi.ouverts.length; });
+    var saisi = centre.statut === "arret" || centre.statut === "maintenance" ? centre.statut : "disponible";
+    var reste = 0;
+    t.forEach(function (x) { reste += Math.max(0, x.ligne.mo - x.suivi.reel); });
+    return {
+      centre: centre, statut: enCours.length ? "production" : saisi, saisi: saisi,
+      enCours: enCours, file: file, reste: reste, charge: charges[centre.nom] || 0,
+      operations: etat.operations.filter(function (op) { return op.centreTravail === centre.nom; })
+    };
+  }
+
+  function prochaineEtape(cmd, piece, op) {
+    var of = ordresFabrication(cmd).filter(function (x) { return x.piece.id === piece.id; })[0];
+    if (!of) return null;
+    var i = -1;
+    of.lignes.forEach(function (l, k) { if (l.op.id === op.id) i = k; });
+    return i >= 0 ? of.lignes[i + 1] || null : null;
+  }
+
+  // Les flux viennent des gammes : deux opérations qui se suivent sur une
+  // pièce tracent un trajet entre leurs deux machines.
+  function fluxAtelier() {
+    var arcs = {};
+    etat.commandes.forEach(function (cmd) {
+      if (!active(cmd) || cmd.etape < 2 || cmd.etape > 6) return;
+      ordresFabrication(cmd).forEach(function (of) {
+        var centres = of.lignes.map(function (l) { return l.op.centreTravail || null; });
+        for (var i = 0; i < centres.length - 1; i++) {
+          var a = centres[i], b = centres[i + 1];
+          if (!a || !b || a === b) continue;
+          var cle = a + "\u0000" + b;
+          if (!arcs[cle]) arcs[cle] = { de: a, vers: b, pieces: 0 };
+          arcs[cle].pieces += of.quantite;
+        }
+      });
+    });
+    return Object.keys(arcs).map(function (k) { return arcs[k]; });
+  }
+
+  // ------------------------------------------------------- Dessin SVG
+
+  function echellePlan(svg, vb) {
+    var r = svg.getBoundingClientRect();
+    return Math.max(vb[2] / Math.max(1, r.width), vb[3] / Math.max(1, r.height));
+  }
+
+  function pointPlan(svg, ev, vb) {
+    var r = svg.getBoundingClientRect();
+    var k = echellePlan(svg, vb);
+    return {
+      x: vb[0] - (r.width * k - vb[2]) / 2 + (ev.clientX - r.left) * k,
+      y: vb[1] - (r.height * k - vb[3]) / 2 + (ev.clientY - r.top) * k
+    };
+  }
+
+  function vuePlanDefaut(dims) { return [-40, -40, dims.L + 80, dims.P + 80]; }
+
+  function appliquerVue(svg) { svg.setAttribute("viewBox", etat.plan.join(" ")); }
+
+  function zoomer(svg, facteur, ev) {
+    var vb = etat.plan, dims = dimsAtelier();
+    var min = 300, max = Math.max(dims.L, dims.P) * 3;
+    var l = Math.min(max, Math.max(min, vb[2] * facteur));
+    var f = l / vb[2];
+    var p = ev ? pointPlan(svg, ev, vb) : { x: vb[0] + vb[2] / 2, y: vb[1] + vb[3] / 2 };
+    etat.plan = [p.x - (p.x - vb[0]) * f, p.y - (p.y - vb[1]) * f, vb[2] * f, vb[3] * f];
+    appliquerVue(svg);
+  }
+
+  function texteAjuste(texte, largeurCm, taille) {
+    var n = Math.max(3, Math.floor(largeurCm / (taille * 0.56)));
+    return texte.length > n ? texte.slice(0, n - 1) + "…" : texte;
+  }
+
+  // Un nom trop long pour la largeur de la machine passe sur deux lignes,
+  // coupées au mot, plutôt que d'être tronqué.
+  function nomSurDeuxLignes(nom) {
+    var mots = nom.split(" ");
+    if (mots.length < 2) return [nom];
+    var meilleur = null;
+    for (var i = 1; i < mots.length; i++) {
+      var a = mots.slice(0, i).join(" "), b = mots.slice(i).join(" ");
+      var ecart = Math.abs(a.length - b.length);
+      if (!meilleur || ecart < meilleur.ecart) meilleur = { ecart: ecart, lignes: [a, b] };
+    }
+    return meilleur.lignes;
+  }
+
+  function etiquetteMachine(nom, largeur) {
+    var place = Math.max(40, largeur - 18);
+    var une = place / Math.max(4, nom.length * 0.56);
+    if (une >= 24 || nom.indexOf(" ") === -1) return { lignes: [nom], taille: Math.max(19, Math.min(42, une)) };
+    var lignes = nomSurDeuxLignes(nom);
+    var large = Math.max(lignes[0].length, lignes[1].length);
+    return { lignes: lignes, taille: Math.max(19, Math.min(36, place / (large * 0.56))) };
+  }
+
+  function formeMachine(m, choisie, admin) {
+    var b = boite(m.centre);
+    var st = STATUTS_MACHINE[m.statut];
+    var g = s("g", {
+      class: "machine" + (choisie ? " choisie" : ""), tabindex: "0", role: "button",
+      transform: "translate(" + b.x + "," + b.y + ")" + (b.r ? " rotate(" + b.r + "," + b.l / 2 + "," + b.p / 2 + ")" : ""),
+      "aria-label": m.centre.nom + " · " + st.nom + (m.enCours.length ? " · " + m.enCours[0].ligne.op.nom : ""),
+      "aria-pressed": choisie ? "true" : "false"
+    });
+    g.setAttribute("data-machine", m.centre.id);
+    g.setAttribute("data-x", String(b.x));
+    g.setAttribute("data-y", String(b.y));
+    g.appendChild(s("title", null, m.centre.nom + " — " + st.nom));
+    g.appendChild(s("rect", { x: 0, y: 0, width: b.l, height: b.p, rx: 14, class: "corps-machine", fill: "var(--carte)", stroke: st.couleur, "stroke-width": choisie ? 14 : 7 }));
+    g.appendChild(s("rect", { x: 7, y: 7, width: Math.max(10, b.l - 14), height: 26, rx: 13, fill: st.couleur, opacity: m.statut === "disponible" ? 0.55 : 1 }));
+    var tg = s("g", b.r ? { transform: "rotate(" + -b.r + "," + b.l / 2 + "," + b.p / 2 + ")" } : null);
+    var et = etiquetteMachine(m.centre.nom, b.l);
+    var sous = m.enCours.length ? m.enCours[0].cmd.numero + "-" + m.enCours[0].ligne.piece.code
+      : m.file.length ? m.file.length + " OF en file"
+        : m.statut === "disponible" ? "Libre" : st.nom;
+    var avecSous = b.p >= 84;
+    var hauteur = et.lignes.length * et.taille * 1.06 + (avecSous ? et.taille * 0.9 : 0);
+    var y0 = Math.max(et.taille + 26, (b.p - hauteur) / 2 + et.taille + 10);
+    et.lignes.forEach(function (ligne, i) {
+      tg.appendChild(s("text", { x: b.l / 2, y: y0 + i * et.taille * 1.06, "text-anchor": "middle", "font-size": et.taille, class: "nom-machine" }, texteAjuste(ligne, b.l - 14, et.taille)));
+    });
+    if (avecSous) {
+      var ys = y0 + (et.lignes.length - 1) * et.taille * 1.06 + et.taille * 0.95;
+      tg.appendChild(s("text", { x: b.l / 2, y: ys, "text-anchor": "middle", "font-size": et.taille * 0.74, class: "sous-machine" }, texteAjuste(sous, b.l - 14, et.taille * 0.74)));
+    }
+    g.appendChild(tg);
+    if (admin) g.appendChild(s("circle", { cx: b.l - 18, cy: b.p - 18, r: 13, fill: "var(--texte)", opacity: 0.35 }));
+    return g;
+  }
+
+  function formeEmplacement(e, choisi, admin) {
+    var b = boite(e);
+    var g = s("g", {
+      class: "emplacement" + (choisi ? " choisie" : ""), tabindex: "0", role: "button",
+      transform: "translate(" + b.x + "," + b.y + ")",
+      "aria-label": "Emplacement de stockage " + e.nom, "aria-pressed": choisi ? "true" : "false"
+    });
+    g.setAttribute("data-emplacement", e.id);
+    g.setAttribute("data-x", String(b.x));
+    g.setAttribute("data-y", String(b.y));
+    g.appendChild(s("title", null, "Stockage — " + e.nom));
+    g.appendChild(s("rect", { x: 0, y: 0, width: b.l, height: b.p, rx: 10, fill: "url(#hachures)", stroke: "var(--bord-fort)", "stroke-width": choisi ? 14 : 6, "stroke-dasharray": "26 18" }));
+    var ee = etiquetteMachine(e.nom, b.l);
+    ee.lignes.forEach(function (ligne, i) {
+      g.appendChild(s("text", { x: b.l / 2, y: b.p / 2 + 10 + (i - (ee.lignes.length - 1) / 2) * ee.taille * 1.06, "text-anchor": "middle", "font-size": Math.min(34, ee.taille), class: "nom-machine" }, ligne));
+    });
+    if (admin) g.appendChild(s("circle", { cx: b.l - 18, cy: b.p - 18, r: 13, fill: "var(--texte)", opacity: 0.35 }));
+    return g;
+  }
+
+  function dessinPlan(dims, machines, flux) {
+    var svg = s("svg", {
+      class: "plan-svg", viewBox: etat.plan.join(" "), preserveAspectRatio: "xMidYMid meet",
+      role: "group", "aria-label": "Plan de l'atelier, " + machines.length + " machines"
+    });
+    var defs = s("defs", null,
+      s("pattern", { id: "hachures", width: 48, height: 48, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" },
+        s("rect", { width: 48, height: 48, fill: "var(--encadre)" }),
+        s("line", { x1: 0, y1: 0, x2: 0, y2: 48, stroke: "var(--bord-fort)", "stroke-width": 7, opacity: 0.6 })),
+      s("marker", { id: "fleche", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto-start-reverse" },
+        s("path", { d: "M0,1 L9,5 L0,9 z", fill: "var(--serie-1)" })));
+    svg.appendChild(defs);
+    svg.appendChild(s("rect", { x: 0, y: 0, width: dims.L, height: dims.P, rx: 8, fill: "var(--fond)", stroke: "var(--bord-fort)", "stroke-width": 8 }));
+
+    etat.zones.slice().sort(function (a, b) { return entier(a.ordre, 0) - entier(b.ordre, 0); }).forEach(function (z) {
+      var b = boite(z);
+      svg.appendChild(s("g", { class: "zone" },
+        s("rect", { x: b.x, y: b.y, width: b.l, height: b.p, rx: 18, fill: "var(--encadre)", stroke: "var(--bord)", "stroke-width": 5 }),
+        s("text", { x: b.x + 22, y: b.y + 52, "font-size": 44, class: "nom-zone" }, z.nom)));
+    });
+
+    etat.emplacements.forEach(function (e) {
+      if (!placee(e)) return;
+      svg.appendChild(formeEmplacement(e, etat.machineSel === "e:" + e.id, etat.planAdmin));
+    });
+
+    if (etat.planFlux) {
+      var gf = s("g", { class: "flux", "aria-hidden": "true" });
+      var max = 1;
+      flux.forEach(function (f) { max = Math.max(max, f.pieces); });
+      flux.forEach(function (f) {
+        var a = etat.centres.filter(function (c) { return c.nom === f.de && placee(c); })[0];
+        var b = etat.centres.filter(function (c) { return c.nom === f.vers && placee(c); })[0];
+        if (!a || !b) return;
+        var p1 = milieu(a), p2 = milieu(b);
+        var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+        var dx = p2.x - p1.x, dy = p2.y - p1.y;
+        var n = Math.sqrt(dx * dx + dy * dy) || 1;
+        var c = { x: mx - (dy / n) * n * 0.14, y: my + (dx / n) * n * 0.14 };
+        gf.appendChild(s("path", {
+          d: "M" + p1.x + "," + p1.y + " Q" + c.x + "," + c.y + " " + p2.x + "," + p2.y,
+          fill: "none", stroke: "var(--serie-1)", "stroke-width": 5 + Math.round((f.pieces / max) * 16),
+          opacity: 0.5, "marker-end": "url(#fleche)"
+        }, s("title", null, f.de + " → " + f.vers + " : " + grouper(f.pieces) + " pièces")));
+      });
+      svg.appendChild(gf);
+    }
+
+    // Les grandes surfaces (espace d'assemblage, cabine) se dessinent en
+    // premier : une petite machine posée dessus reste visible et cliquable.
+    // La machine choisie passe toujours au-dessus.
+    machines.filter(function (m) { return placee(m.centre); }).map(function (m) {
+      var b = boite(m.centre);
+      return { m: m, aire: b.l * b.p, choisie: etat.machineSel === "m:" + m.centre.id };
+    }).sort(function (x, y) { return (x.choisie ? 1 : 0) - (y.choisie ? 1 : 0) || y.aire - x.aire; })
+      .forEach(function (x) { svg.appendChild(formeMachine(x.m, x.choisie, etat.planAdmin)); });
+    return svg;
+  }
+
+  // ---------------------------------------------------- Gestes du plan
+
+  function brancherPlan(svg, dims) {
+    var geste = null;
+    var selectionner = function (cle) {
+      etat.machineSel = etat.machineSel === cle ? null : cle;
+      rendre();
+    };
+
+    svg.addEventListener("wheel", function (ev) {
+      ev.preventDefault();
+      zoomer(svg, Math.exp(ev.deltaY * 0.0014), ev);
+    }, { passive: false });
+
+    svg.addEventListener("pointerdown", function (ev) {
+      if (geste) return;
+      var cible = ev.target && ev.target.closest ? ev.target.closest("[data-machine],[data-emplacement]") : null;
+      var deplacable = etat.planAdmin && cible && peutEcrire;
+      geste = {
+        id: ev.pointerId, x: ev.clientX, y: ev.clientY, vb: etat.plan.slice(),
+        k: echellePlan(svg, etat.plan), cible: cible, deplace: deplacable, bouge: false,
+        dx: cible ? entier(cible.getAttribute("data-x"), 0) : 0,
+        dy: cible ? entier(cible.getAttribute("data-y"), 0) : 0
+      };
+      try { svg.setPointerCapture(ev.pointerId); } catch (e) { /* souris sans capture */ }
+    });
+
+    svg.addEventListener("pointermove", function (ev) {
+      if (!geste || ev.pointerId !== geste.id) return;
+      var dx = (ev.clientX - geste.x) * geste.k, dy = (ev.clientY - geste.y) * geste.k;
+      if (!geste.bouge && Math.abs(dx) + Math.abs(dy) < geste.k * 4) return;
+      geste.bouge = true;
+      if (geste.deplace) {
+        var b = boite({ largeurCm: geste.cible.querySelector("rect").getAttribute("width"), profondeurCm: geste.cible.querySelector("rect").getAttribute("height") });
+        var nx = Math.max(0, Math.min(dims.L - b.l, Math.round((geste.dx + dx) / 5) * 5));
+        var ny = Math.max(0, Math.min(dims.P - b.p, Math.round((geste.dy + dy) / 5) * 5));
+        var r = geste.cible.getAttribute("transform").match(/rotate\(([-\d.]+)/);
+        geste.cible.setAttribute("transform", "translate(" + nx + "," + ny + ")" + (r ? " rotate(" + r[1] + "," + b.l / 2 + "," + b.p / 2 + ")" : ""));
+        geste.nx = nx; geste.ny = ny;
+      } else {
+        etat.plan = [geste.vb[0] - dx, geste.vb[1] - dy, geste.vb[2], geste.vb[3]];
+        appliquerVue(svg);
+      }
+    });
+
+    var finir = function (ev) {
+      if (!geste || ev.pointerId !== geste.id) return;
+      var g = geste;
+      geste = null;
+      try { svg.releasePointerCapture(ev.pointerId); } catch (e) { /* déjà relâché */ }
+      if (!g.cible) return;
+      var machine = g.cible.getAttribute("data-machine");
+      var emplacement = g.cible.getAttribute("data-emplacement");
+      if (!g.bouge) { selectionner(machine ? "m:" + machine : "e:" + emplacement); return; }
+      if (g.deplace && g.nx !== undefined) {
+        ecrire((machine ? "centres/" + machine : "emplacements/" + emplacement), { xCm: g.nx, yCm: g.ny }, "Position enregistrée");
+        planifierRendu();
+      }
+    };
+    svg.addEventListener("pointerup", finir);
+    svg.addEventListener("pointercancel", finir);
+
+    svg.addEventListener("keydown", function (ev) {
+      var cible = ev.target && ev.target.closest ? ev.target.closest("[data-machine],[data-emplacement]") : null;
+      if (!cible || (ev.key !== "Enter" && ev.key !== " ")) return;
+      ev.preventDefault();
+      var machine = cible.getAttribute("data-machine");
+      selectionner(machine ? "m:" + machine : "e:" + cible.getAttribute("data-emplacement"));
+    });
+  }
+
+  // ------------------------------------------------------------ Fiches
+
+  function ligneDef(libelle, valeur) { return [h("dt", null, libelle), h("dd", null, valeur)]; }
+
+  function blocProduction(t) {
+    var cmd = t.cmd, l = t.ligne, su = t.suivi;
+    var pct = l.quantite ? Math.min(100, Math.round((su.realisee * 100) / l.quantite)) : 0;
+    var suite = prochaineEtape(cmd, l.piece, l.op);
+    var qui = su.ouverts.map(function (p) { return p.operateur; }).filter(Boolean).join(", ");
+    return h("div", { class: "bloc-prod" },
+      h("div", { class: "titre-page", style: { marginBottom: "8px" } },
+        h("div", null, h("div", { class: "numero-of" }, "OF " + cmd.numero + "-" + l.piece.code), h("h3", null, l.op.nom + (l.n > 1 ? " × " + l.n + " passages" : ""))),
+        pastille("attente", "En production")),
+      h("div", { class: "resume" }, h("dl", null,
+        ligneDef("Client", cmd.client || "—"),
+        ligneDef("Produit", cmd.produit || "—"),
+        ligneDef("Pièce", l.piece.code + " · " + l.piece.libelle),
+        ligneDef("Essence", l.piece.matiere || cmd.essence || "—"),
+        ligneDef("À produire", grouper(l.quantite) + " pièces"),
+        ligneDef("Déjà réalisé", grouper(su.realisee) + " pièces"),
+        ligneDef("Temps prévu", duree(l.prevu)),
+        ligneDef("Temps passé", su.reel ? duree(su.reel) : "—"),
+        ligneDef("Opérateur", qui || "non renseigné"))),
+      h("div", { class: "jauge", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(l.quantite), "aria-valuenow": String(su.realisee), "aria-label": "Avancement" }, h("span", { style: { width: pct + "%" } })),
+      h("p", { class: "aide", style: { marginTop: "6px" } }, su.ouverts.length && su.ouverts[0].debut ? ["Démarré à " + heureDe(su.ouverts[0].debut) + " — ", h("span", { dataset: { debut: su.ouverts[0].debut } }, "")] : ""),
+      h("p", { class: "aide" }, suite ? "Prochaine étape : " + suite.op.nom + " sur " + (suite.op.centreTravail || "machine à affecter") : "Dernière opération de cette pièce."),
+      lien("Voir la commande", "#commande-" + cmd.id, "bouton discret petit"));
+  }
+
+  function blocFile(m) {
+    if (!m.file.length) return h("p", { class: "aide" }, m.enCours.length ? "Rien d'autre en file sur cette machine." : "Aucun ordre de fabrication en file sur cette machine.");
+    return h("div", { class: "defile" }, h("table", null,
+      h("thead", null, h("tr", null, h("th", null, "Ordre"), h("th", null, "Opération"), h("th", { class: "nb" }, "Reste"), h("th", { class: "nb" }, "Temps"))),
+      h("tbody", null, m.file.map(function (t) {
+        return h("tr", null,
+          h("td", null, h("a", { href: "#commande-" + t.cmd.id, style: { color: "inherit" } }, t.cmd.numero + "-" + t.ligne.piece.code), h("br"), h("span", { class: "aide" }, t.cmd.client || "")),
+          h("td", null, t.ligne.op.nom),
+          h("td", { class: "nb" }, grouper(Math.max(0, t.ligne.quantite - t.suivi.realisee))),
+          h("td", { class: "nb" }, duree(Math.max(0, t.ligne.mo - t.suivi.reel))));
+      }))));
+  }
+
+  function editeurOperationsMachine(m) {
+    var bloc = h("div", { class: "pile", style: { gap: "8px" } });
+    var aConfirmer = m.operations.filter(function (op) { return op.centreSource === "proposition"; }).length;
+    bloc.appendChild(h("h4", null, "Opérations faites sur cette machine · " + m.operations.length));
+    if (aConfirmer) bloc.appendChild(h("p", { class: "aide" }, aConfirmer + " affectation" + (aConfirmer > 1 ? "s sont proposées" : " est proposée") + " par déduction. Confirmez-la" + (aConfirmer > 1 ? "s" : "") + " ou retirez-la" + (aConfirmer > 1 ? "s" : "") + "."));
+    if (m.operations.length) {
+      bloc.appendChild(h("div", { class: "puces" }, m.operations.slice().sort(function (a, b) { return rangCat(a.categorie) - rangCat(b.categorie) || a.ordre - b.ordre; }).map(function (op) {
+        return h("span", { class: "op-machine" + (op.centreSource === "proposition" ? " proposee" : "") },
+          op.nom,
+          op.centreSource === "proposition" ? bouton("Confirmer", function () { ecrire("operations/" + op.id, { centreSource: "gerant" }, op.nom + " confirmée sur " + m.centre.nom); }, { classe: "discret petit" }) : null,
+          bouton("✕", function () { ecrire("operations/" + op.id, { centreTravail: null, centreSource: "gerant" }, op.nom + " retirée de " + m.centre.nom); }, { classe: "discret petit", aria: "Retirer " + op.nom }));
+      })));
+    } else {
+      bloc.appendChild(h("p", { class: "aide" }, "Aucune opération : tant qu'aucune ne lui est affectée, cette machine restera vide sur le plan."));
+    }
+    var libres = etat.operations.filter(function (op) { return op.actif !== false && !op.centreTravail; });
+    bloc.appendChild(h("details", null,
+      h("summary", { style: { cursor: "pointer", fontSize: "14px", fontWeight: "600" } }, "Affecter une opération" + (libres.length ? " (" + libres.length + " sans machine)" : "")),
+      h("div", { class: "puces", style: { marginTop: "8px" } }, (libres.length ? libres : etat.operations.filter(function (op) { return op.actif !== false && op.centreTravail !== m.centre.nom; })).map(function (op) {
+        return bouton("+ " + op.nom, function () {
+          ecrire("operations/" + op.id, { centreTravail: m.centre.nom, centreSource: "gerant" }, op.nom + " affectée à " + m.centre.nom);
+        }, { titre: op.centreTravail ? "Actuellement sur " + op.centreTravail : "Sans machine" });
+      }))));
+    return bloc;
+  }
+
+  function champPlan(doc, cle, libelle, o) {
+    o = o || {};
+    var collection = o.collection || "centres";
+    return champ(collection + ":" + doc.id + ":" + cle, libelle, function () { return doc[cle] === undefined || doc[cle] === null ? "" : doc[cle]; }, function (saisie) {
+      var v = entier(saisie, null);
+      if (v === null || v < (o.min === undefined ? 0 : o.min)) { signaler("« " + saisie + " » n'est pas une valeur valide.", true); return false; }
+      if (String(v) === String(doc[cle])) return null;
+      var patch = {}; patch[cle] = v;
+      ecrire(collection + "/" + doc.id, patch, "Enregistré");
+      return v;
+    }, { type: "number", id: "pl-" + doc.id + "-" + cle, aide: o.aide });
+  }
+
+  function blocImplantation(doc, collection) {
+    return h("div", { class: "pile", style: { gap: "10px" } },
+      h("h4", null, "Implantation"),
+      h("div", { class: "grille", style: { gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))" } },
+        champPlan(doc, "xCm", "X (cm)", { collection: collection }),
+        champPlan(doc, "yCm", "Y (cm)", { collection: collection }),
+        champPlan(doc, "largeurCm", "Largeur (cm)", { collection: collection, min: 40 }),
+        champPlan(doc, "profondeurCm", "Profondeur (cm)", { collection: collection, min: 40 })),
+      h("div", { class: "actions" },
+        bouton("Pivoter de 90°", function () {
+          ecrire(collection + "/" + doc.id, { rotationDeg: ((entier(doc.rotationDeg, 0) + 90) % 360) }, "Pivotée");
+        }, { classe: "petit" }),
+        bouton("Retirer du plan", function () {
+          ecrire(collection + "/" + doc.id, { xCm: null, yCm: null }, "Retirée du plan");
+          etat.machineSel = null;
+        }, { classe: "discret danger petit" })));
+  }
+
+  function fichePlan(machines) {
+    var cle = etat.machineSel;
+    if (!cle) {
+      return h("div", { class: "carte carte-corps" },
+        h("h3", null, "Choisissez une machine"),
+        h("p", { class: "aide", style: { marginTop: "6px" } }, "Touchez une machine sur le plan : vous verrez ce qu'elle produit, pour quelle commande, et où elle en est."),
+        h("div", { class: "pile", style: { gap: "6px", marginTop: "14px" } }, ["production", "disponible", "arret", "maintenance"].map(function (k) {
+          var n = machines.filter(function (m) { return m.statut === k; }).length;
+          return h("div", { class: "ligne-statut" }, h("i", { style: { background: STATUTS_MACHINE[k].couleur } }), STATUTS_MACHINE[k].nom, h("strong", { class: "mono" }, String(n)));
+        })));
+    }
+    if (cle.indexOf("e:") === 0) {
+      var e = etat.emplacements.filter(function (x) { return x.id === cle.slice(2); })[0];
+      if (!e) return h("div", { class: "carte carte-corps vide" }, "Cet emplacement n'existe plus.");
+      return h("div", { class: "carte carte-corps pile" },
+        h("div", { class: "titre-page", style: { marginBottom: 0 } },
+          h("div", null, h("div", { class: "aide" }, "Emplacement de stockage"), h("h3", null, e.nom)),
+          pastille("neutre", "Stock")),
+        h("div", { class: "citation" }, "Le module Stocks n'est pas encore connecté. Les quantités viendront d'EBP au lot 5 : aucune n'est inventée ici.",
+          h("small", null, "Apparaîtront : référence, essence, dimensions, quantité disponible, réservée et réellement utilisable.")),
+        e.note ? h("p", null, e.note) : null,
+        etat.planAdmin ? blocImplantation(e, "emplacements") : null,
+        etat.planAdmin ? bouton("Supprimer cet emplacement", function () { supprimer("emplacements/" + e.id, "Emplacement supprimé"); etat.machineSel = null; }, { classe: "discret danger petit" }) : null);
+    }
+    var m = machines.filter(function (x) { return x.centre.id === cle.slice(2); })[0];
+    if (!m) return h("div", { class: "carte carte-corps vide" }, "Cette machine n'existe plus.");
+    var st = STATUTS_MACHINE[m.statut];
+    var carte = h("div", { class: "carte carte-corps pile" });
+    carte.appendChild(h("div", { class: "titre-page", style: { marginBottom: 0 } },
+      h("div", null, h("div", { class: "aide" }, m.centre.zone || "Zone à définir"), h("h3", null, m.centre.nom)),
+      pastille(st.pastille, st.nom)));
+    if (m.enCours.length) m.enCours.forEach(function (t) { carte.appendChild(blocProduction(t)); });
+    else carte.appendChild(h("p", { class: "aide" }, m.statut === "disponible" ? "Aucune opération pointée en ce moment sur cette machine." : "Machine " + st.nom.toLowerCase() + (m.centre.noteStatut ? " : " + m.centre.noteStatut : "") + "."));
+
+    carte.appendChild(h("div", null, h("h4", { style: { marginBottom: "6px" } }, "File d'attente · ordres lancés"), blocFile(m)));
+    carte.appendChild(h("div", { class: "tuiles", style: { gridTemplateColumns: "repeat(2, minmax(0, 1fr))" } },
+      tuile(heuresTexte(m.charge), "Charge prévue", null, "toutes commandes en cours"),
+      tuile(String(m.operations.length), "Opérations affectées")));
+
+    carte.appendChild(h("div", null, h("h4", { style: { marginBottom: "6px" } }, "Statut de la machine"),
+      h("div", { class: "actions" }, STATUTS_SAISIS.map(function (o) {
+        return bouton(o[1], function () {
+          ecrire("centres/" + m.centre.id, { statut: o[0], statutMajLe: maintenant() }, m.centre.nom + " : " + o[1].toLowerCase());
+        }, { presse: m.saisi === o[0], classe: "petit" });
+      })),
+      champ("centres:" + m.centre.id + ":noteStatut", "Précision (panne, réglage, congés…)", function () { return m.centre.noteStatut || ""; }, function (saisie) {
+        var v = String(saisie).trim();
+        if (v === (m.centre.noteStatut || "")) return null;
+        ecrire("centres/" + m.centre.id, { noteStatut: v }, "Enregistré");
+        return v;
+      }, { id: "note-" + m.centre.id }),
+      m.statut === "production" && m.saisi !== "disponible" ? h("p", { class: "aide" }, "Un pointage est ouvert : la machine est vue en production tant qu'il n'est pas terminé.") : null));
+
+    carte.appendChild(editeurOperationsMachine(m));
+    if (etat.planAdmin) carte.appendChild(blocImplantation(m.centre, "centres"));
+    return carte;
+  }
+
+  // ------------------------------------------------------------- Vue
+
+  function vuePlan(racine) {
+    var dims = dimsAtelier();
+    var cle = dims.L + "x" + dims.P;
+    if (!etat.plan || etat.planCle !== cle) { etat.plan = vuePlanDefaut(dims); etat.planCle = cle; }
+    var travaux = travauxAtelier();
+    var charges = chargeParCentre();
+    var machines = etat.centres.map(function (c) { return etatMachine(c, travaux, charges); });
+    var posees = machines.filter(function (m) { return placee(m.centre); });
+    var aPlacer = machines.filter(function (m) { return !placee(m.centre); });
+
+    if (!etat.centres.length) {
+      racine.appendChild(h("div", { class: "carte vide" },
+        h("p", null, "Aucune machine : le plan se dessine à partir des centres de travail."),
+        lien("Créer les centres de travail", "#reglages", "bouton principal")));
+      return;
+    }
+
+    var cadre = h("div", { class: "plan-cadre" });
+    var svg = dessinPlan(dims, machines, etat.planFlux ? fluxAtelier() : []);
+    cadre.appendChild(svg);
+    cadre.appendChild(h("div", { class: "plan-outils" },
+      bouton("+", function () { zoomer(svg, 1 / 1.3); }, { aria: "Zoomer", ecriture: false, id: "plan-zoom-plus" }),
+      bouton("−", function () { zoomer(svg, 1.3); }, { aria: "Dézoomer", ecriture: false, id: "plan-zoom-moins" }),
+      bouton("Tout voir", function () { etat.plan = vuePlanDefaut(dims); appliquerVue(svg); }, { ecriture: false, id: "plan-recadrer" }),
+      bouton("Flux", function () { etat.planFlux = !etat.planFlux; rendre(); }, { presse: etat.planFlux, classe: "bascule", ecriture: false, id: "plan-flux" }),
+      bouton("Administration", function () { etat.planAdmin = !etat.planAdmin; rendre(); }, { presse: etat.planAdmin, classe: "bascule", id: "plan-admin" })));
+    cadre.appendChild(h("div", { class: "plan-legende" }, legende(["production", "disponible", "arret", "maintenance"].map(function (k) {
+      return { couleur: STATUTS_MACHINE[k].couleur, libelle: STATUTS_MACHINE[k].nom };
+    }).concat(etat.planFlux ? [{ couleur: "var(--serie-1)", libelle: "Flux entre machines" }] : []))));
+    etat.apresRendu.push(function () { brancherPlan(svg, dims); });
+
+    var gauche = h("div", { class: "pile" }, cadre);
+    if (etat.planAdmin) {
+      gauche.appendChild(h("div", { class: "carte carte-corps" },
+        h("h4", { style: { marginBottom: "8px" } }, "Mode administration"),
+        h("p", { class: "aide" }, "Faites glisser une machine pour la déplacer. Les cotes sont en centimètres, le plan est à l'échelle de l'atelier."),
+        h("div", { class: "grille", style: { marginTop: "12px", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" } },
+          champParametre(CLE_ATELIER_L, "Largeur de l'atelier (cm)"),
+          champParametre(CLE_ATELIER_P, "Profondeur de l'atelier (cm)")),
+        h("div", { class: "actions", style: { marginTop: "12px" } },
+          bouton("+ Emplacement de stockage", function () {
+            var id = nouvelId("e");
+            var v = etat.plan;
+            creer("emplacements/" + id, {
+              nom: "Nouvel emplacement", xCm: Math.max(0, Math.round((v[0] + v[2] / 2) / 5) * 5), yCm: Math.max(0, Math.round((v[1] + v[3] / 2) / 5) * 5),
+              largeurCm: 400, profondeurCm: 200
+            }, "Emplacement ajouté").then(function () { etat.machineSel = "e:" + id; planifierRendu(); }).catch(function () { /* déjà signalé */ });
+          }, { classe: "petit" }),
+          lien("Ajouter une machine", "#reglages", "bouton petit discret"))));
+    }
+    if (aPlacer.length) {
+      gauche.appendChild(h("div", { class: "carte carte-corps" },
+        h("h4", { style: { marginBottom: "8px" } }, aPlacer.length + " machine" + (aPlacer.length > 1 ? "s" : "") + " hors du plan"),
+        h("div", { class: "puces" }, aPlacer.map(function (m) {
+          return bouton("Placer " + m.centre.nom, function () {
+            var v = etat.plan;
+            ecrire("centres/" + m.centre.id, {
+              xCm: Math.max(0, Math.round((v[0] + v[2] / 2) / 5) * 5), yCm: Math.max(0, Math.round((v[1] + v[3] / 2) / 5) * 5),
+              largeurCm: entier(m.centre.largeurCm, 200), profondeurCm: entier(m.centre.profondeurCm, 130)
+            }, m.centre.nom + " placée au centre de la vue");
+            etat.machineSel = "m:" + m.centre.id;
+            etat.planAdmin = true;
+          }, { classe: "petit", id: "placer-" + m.centre.id });
+        }))));
+    }
+
+    racine.appendChild(h("div", { class: "plan-page" }, gauche, h("div", { class: "colonne-3d" }, fichePlan(machines))));
+
+    var sans = (travaux[""] || []).length;
+    racine.appendChild(h("p", { class: "aide", style: { marginTop: "12px" } },
+      posees.length + " machines sur le plan · " + metres(dims.L) + " × " + metres(dims.P) +
+      (sans ? " · " + sans + " opération" + (sans > 1 ? "s lancées ne sont" : " lancée n'est") + " affectée à aucune machine" : "")));
+  }
+
+  function champParametre(cle, libelle) {
+    return champ("param:" + cle, libelle, function () { return etat.parametres[cle] || ""; }, function (saisie) {
+      var v = entier(saisie, null);
+      if (v === null || v < 100) { signaler("Indiquez une dimension en centimètres.", true); return false; }
+      if (String(v) === String(etat.parametres[cle] || "")) return null;
+      creer("parametres/" + cle, { valeur: String(v), description: libelle }, "Enregistré").catch(function () { /* déjà signalé */ });
+      return v;
+    }, { type: "number", id: "param-" + cle });
+  }
+
+  // ===================================================================
   // Vue : réglages
   // ===================================================================
 
@@ -3136,24 +3789,25 @@
   }
 
   function reglagesOperations(racine) {
-    var aConfirmer = etat.operations.filter(function (op) { return op.categorieSource === "proposition"; }).length;
+    var aConfirmer = etat.operations.filter(function (op) { return op.categorieSource === "proposition" || op.centreSource === "proposition"; }).length;
     var carte = h("div", { class: "carte carte-corps" });
     carte.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } }, "Les 6 catégories sont celles de l'étape 5 de votre document. Les temps viennent du classeur (data/operations.csv) et ne se modifient pas ici."));
-    if (aConfirmer) carte.appendChild(h("div", { class: "citation" }, aConfirmer + " opération" + (aConfirmer > 1 ? "s sont classées" : " est classée") + " par déduction : le document ne les cite pas. Corrigez la catégorie ou confirmez-la."));
+    if (aConfirmer) carte.appendChild(h("div", { class: "citation" }, aConfirmer + " opération" + (aConfirmer > 1 ? "s portent" : " porte") + " une catégorie ou une machine déduite, que votre document ne dit pas. Corrigez ou confirmez : tant que ce n'est pas confirmé, l'export CSV laisse la case vide."));
     CATEGORIES.concat([{ code: null, n: 0, nom: "Non classées" }]).forEach(function (cat) {
       var ops = etat.operations.filter(function (op) { return cat.code === null ? !categorie(op.categorie) : op.categorie === cat.code; });
       if (!ops.length) return;
       carte.appendChild(h("div", { class: "cat-titre" }, cat.n ? h("span", { class: "rang" }, String(cat.n)) : null, h("h4", null, cat.nom + " · " + ops.length)));
       carte.appendChild(h("div", { class: "defile" }, h("table", null, h("tbody", null, ops.map(function (op) {
+        var propose = op.categorieSource === "proposition" || op.centreSource === "proposition";
         return h("tr", null,
-          h("td", null, h("strong", null, op.nom), " ", op.categorieSource === "proposition" ? pastille("attente", "à confirmer") : null),
+          h("td", null, h("strong", null, op.nom), " ", propose ? pastille("attente", "à confirmer") : null),
           h("td", { class: "nb aide" }, formater(versEchelle(op.tempsUnitaireMin, 2), 2, 0) + " min"),
           h("td", { style: { minWidth: "190px" } }, selecteur("cat-" + op.id, [["", "— catégorie —"]].concat(CATEGORIES.map(function (c) { return [c.code, c.n + " · " + c.nom]; })), op.categorie || "",
             function (ev) { ecrire("operations/" + op.id, { categorie: ev.target.value || null, categorieSource: "gerant" }, "Catégorie enregistrée"); }, !peutEcrire, "Catégorie de " + op.nom)),
           h("td", { style: { minWidth: "190px" } }, selecteur("ctr-" + op.id, [["", "— centre de travail —"]].concat(etat.centres.map(function (c) { return [c.nom, c.nom]; }))
             .concat(op.centreTravail && !etat.centres.some(function (c) { return c.nom === op.centreTravail; }) ? [[op.centreTravail, op.centreTravail + " (supprimé)"]] : []), op.centreTravail || "",
-            function (ev) { ecrire("operations/" + op.id, { centreTravail: ev.target.value || null }, "Centre de travail enregistré"); }, !peutEcrire, "Centre de travail de " + op.nom)),
-          h("td", null, op.categorieSource === "proposition" ? bouton("Confirmer", function () { ecrire("operations/" + op.id, { categorieSource: "gerant" }, op.nom + " confirmée"); }, { classe: "discret petit" }) : null));
+            function (ev) { ecrire("operations/" + op.id, { centreTravail: ev.target.value || null, centreSource: "gerant" }, "Centre de travail enregistré"); }, !peutEcrire, "Centre de travail de " + op.nom)),
+          h("td", null, propose ? bouton("Confirmer", function () { ecrire("operations/" + op.id, { categorieSource: "gerant", centreSource: "gerant" }, op.nom + " confirmée"); }, { classe: "discret petit" }) : null));
       })))));
     });
     if (!etat.centres.length) carte.appendChild(h("p", { class: "aide", style: { marginTop: "14px" } }, "Aucun centre de travail : créez-les dans l'onglet « Centres de travail » pour les affecter. Le planning par poste en dépend."));
@@ -3258,7 +3912,9 @@
       [CLE_TAUX, "Taux horaire atelier (€ HT, par salarié)", "Multiplie les heures de main-d'œuvre.", ""],
       [CLE_MAJ, "Majoration des quantités lancées", "0.05 pour +5 %, pour absorber les rebuts.", ""],
       [CLE_REGLAGE, "Temps de réglage par défaut (min)", "Compté une seule fois par opération et par ordre de fabrication.", ""],
-      [CLE_HEURES, "Heures de travail par semaine et par opérateur", "Capacité du planning. Vide : 35 h, la durée légale.", "35"]
+      [CLE_HEURES, "Heures de travail par semaine et par opérateur", "Capacité du planning. Vide : 35 h, la durée légale.", "35"],
+      [CLE_ATELIER_L, "Largeur de l'atelier (cm)", "Dimensions du plan de l'atelier. Vide : 3 000 × 1 600 cm.", "3000"],
+      [CLE_ATELIER_P, "Profondeur de l'atelier (cm)", "Le plan est dessiné à cette échelle, en centimètres.", "1600"]
     ];
     var carte = h("div", { class: "carte carte-corps" });
     carte.appendChild(h("div", { class: "grille" }, defs.map(function (dd) {
@@ -3282,13 +3938,14 @@
     var ignorees = 0;
     etat.operations.slice().sort(function (a, b) { return a.ordre - b.ordre; }).forEach(function (op) {
       var cat = op.categorie && op.categorieSource !== "proposition" ? op.categorie : "";
-      if (op.categorie && op.categorieSource === "proposition") ignorees += 1;
-      lignes.push([csv(op.nom), csv(op.tempsUnitaireMin), csv(op.tempsReglageMin), csv(op.nbOperateurs), csv(op.centreTravail || ""), csv(cat)].join(","));
+      var ctr = op.centreTravail && op.centreSource !== "proposition" ? op.centreTravail : "";
+      if ((op.categorie && op.categorieSource === "proposition") || (op.centreTravail && op.centreSource === "proposition")) ignorees += 1;
+      lignes.push([csv(op.nom), csv(op.tempsUnitaireMin), csv(op.tempsReglageMin), csv(op.nbOperateurs), csv(ctr), csv(cat)].join(","));
     });
     var texte = lignes.join("\n") + "\n";
     var pre = h("pre", { class: "sortie", id: "csv" }, texte);
     racine.appendChild(h("div", { class: "carte carte-corps" },
-      h("p", { class: "aide", style: { marginBottom: "10px" } }, "Copiez ce fichier dans data/operations.csv du dépôt, puis lancez npm run seed : les affectations passent dans la base de l'application." + (ignorees ? " Les " + ignorees + " catégories « à confirmer » ne sont pas exportées." : "")),
+      h("p", { class: "aide", style: { marginBottom: "10px" } }, "Copiez ce fichier dans data/operations.csv du dépôt, puis lancez npm run seed : les affectations passent dans la base de l'application." + (ignorees ? " Les " + ignorees + " opérations « à confirmer » sortent avec la case vide : confirmez-les d'abord dans l'onglet Opérations." : "")),
       h("div", { class: "actions", style: { marginBottom: "10px" } }, bouton("Copier le CSV", function () {
         var repli = function () {
           try { var r = document.createRange(); r.selectNodeContents(pre); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (e) { /* rien */ }
@@ -3378,7 +4035,8 @@
         var v = d.data() || {};
         return { id: d.id, nom: v.nom || d.id, ordre: typeof v.ordre === "number" ? v.ordre : 0, tempsUnitaireMin: v.tempsUnitaireMin, tempsReglageMin: v.tempsReglageMin,
           nbOperateurs: typeof v.nbOperateurs === "number" ? v.nbOperateurs : 1, centreTravail: v.centreTravail || null, categorie: v.categorie || null,
-          categorieSource: v.categorieSource || (v.categorie ? "gerant" : null), actif: v.actif !== false };
+          categorieSource: v.categorieSource || (v.categorie ? "gerant" : null),
+          centreSource: v.centreSource || (v.centreTravail ? "gerant" : null), actif: v.actif !== false };
       });
       etat.opParId = {};
       etat.operations.forEach(function (op) { etat.opParId[op.id] = op; });
@@ -3412,6 +4070,8 @@
       }, signalerErreur);
     };
     simple("centres", "centres");
+    simple("emplacements", "emplacements");
+    simple("zones", "zones");
     simple("operateurs", "operateurs");
     simple("typesCoupe", "typesCoupe");
 

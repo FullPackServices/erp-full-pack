@@ -107,6 +107,12 @@ de son document de processus, pas par référentiel. La maquette de
 `prototype/` (en cours de validation) fixe ce parcours ; les écrans des lots
 2, 4 et 6 doivent le reprendre.
 
+Plan d'atelier : la maquette porte une vue de dessus interactive des 16
+machines, en SVG, à l'échelle. Une machine est un centre de travail, jamais
+un second référentiel ; son statut « en production » se déduit des pointages
+ouverts et ne se saisit pas. Architecture et modifications de contrat à
+appliquer : `docs/plan-atelier.md`.
+
 ### Commandes
 
 ```
@@ -140,8 +146,13 @@ Ce partage est ce qui permet de relancer le seed sans rien perdre :
 
 ## À trancher (bloquant selon le lot)
 
-- Centre de travail de chaque opération, dans data/operations.csv ou sur
-  l'écran Opérations.
+- Centre de travail de chaque opération : 34 des 36 sont proposées par
+  déduction dans la maquette et attendent confirmation. Une proposition n'est
+  pas exportée vers data/operations.csv. Restent sans réponse : le marquage
+  laser (aucun laser à l'atelier), la cale carton (aucun poste de
+  conditionnement), et la dégauchisseuse, qui ne reçoit aucune opération.
+- Cotes réelles de l'atelier et implantation des machines : les positions de
+  la maquette sont une proposition.
 - Formules de dimensions du coffret à charnière (lot 2).
 - Contrôle d'accès par rôle : aucune authentification n'est en place, alors
   que les tables de prix doivent être fermées au rôle opérateur. Bloquant

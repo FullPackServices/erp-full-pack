@@ -8,7 +8,8 @@ l'ergonomie avec l'atelier avant de construire ces écrans dans l'application
 Next.js (lots 2, 4 et 6).
 
 Écrans : tableau de bord, commandes, planning, atelier, réglages, dans un
-volet de navigation à gauche. Une commande suit les 10 étapes ; à l'étape 2,
+volet de navigation à gauche. L'atelier a deux onglets : le plan interactif
+des machines et la liste des ordres de fabrication. Une commande suit les 10 étapes ; à l'étape 2,
 le coffret est dessiné en 3D à ses dimensions, on y ajoute les pièces
 (dessus, dessous, côtés, fonds, berceaux, tasseaux, cales, charnières…),
 puis on choisit pièce par pièce les opérations et leur nombre de passages.
@@ -33,8 +34,15 @@ Ce qui reste une proposition, à valider :
 - la capacité du planning prend 4 opérateurs à 35 h par semaine tant que
   les opérateurs et les heures ne sont pas saisis.
 
-La 3D utilise three.js r128, chargé depuis cdn.jsdelivr.net. Sans réseau,
-la nomenclature reste utilisable sans le dessin.
+Le plan de l'atelier est une vue de dessus en SVG, à l'échelle, en
+centimètres : zoom, déplacement, clic sur une machine, déplacement des
+machines en mode administration, flux déduits des gammes. Il n'ajoute aux
+données que l'implantation ; tout le reste se déduit des ordres de
+fabrication et des pointages. Voir `docs/plan-atelier.md`.
+
+La 3D utilise three.js r128, chargé depuis cdn.jsdelivr.net. Le plan, lui,
+ne dépend d'aucune bibliothèque. Sans réseau, la nomenclature reste
+utilisable sans le dessin 3D.
 
 Elle a son propre stockage, séparé de la base PostgreSQL. Seules les
 affectations des opérations (centre de travail, catégorie) en ressortent,
