@@ -112,6 +112,11 @@ Planning : chronologie façon Notion (une barre par commande, couleur par
 35 h par semaine, paramètres `nb_operateurs_atelier` et
 `heures_semaine_operateur`.
 
+Planning : une ligne par commande, nom à gauche (client, référence, produit),
+période en couleur d'essence, charge de l'atelier en bas. Pas de symbole.
+Chaque commande a une référence interne (`numero`, saisie ou proposée, unique)
+et un code client (`codeClient`, facultatif).
+
 Indicateurs : volet dédié (commercial, délais, production, qualité,
 rentabilité), chaque carte dit son calcul et son objectif.
 

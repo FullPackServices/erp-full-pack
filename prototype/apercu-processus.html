@@ -665,6 +665,40 @@
 
   @media (max-width: 1100px) { .assistant-page { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 900px) { .volet .bas-volet { margin-top: 0; padding: 0; } .verrou { margin-top: 0; } }
+
+  /* ----------------------------------------------- Planning, lecture simple */
+  .gantt { padding: 0; overflow: hidden; }
+  .gantt-barre { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--bord); }
+  .gantt-mois { font-family: var(--titre); font-weight: 500; font-size: 18px; text-transform: capitalize; }
+  .gantt-defile { overflow-x: auto; position: relative; overscroll-behavior-x: contain; }
+  .gantt-toile { position: relative; }
+  .gantt-tete { position: relative; height: 60px; border-bottom: 1px solid var(--bord); background: var(--carte); }
+  .gantt-coin { position: sticky; left: 0; z-index: 4; width: 232px; height: 100%; display: flex; align-items: flex-end; padding: 0 16px 10px; background: var(--carte); box-shadow: 1px 0 0 var(--bord); font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--doux); }
+  .gantt-mois-tick { position: absolute; top: 8px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .gantt-jour { position: absolute; top: 32px; height: 22px; line-height: 22px; text-align: center; font-size: 12px; color: var(--doux); font-variant-numeric: tabular-nums; }
+  .gantt-jour.we { color: var(--pale); }
+  .gantt-jour.auj { top: 31px; height: 24px; line-height: 24px; background: var(--rouge-auj); color: #fff; font-weight: 700; border-radius: 999px; }
+  .gantt-corps { position: relative; }
+  .gantt-fonds { position: absolute; top: 0; bottom: 0; left: 0; right: 0; pointer-events: none; z-index: 0; }
+  .gantt-fonds > span { position: absolute; top: 0; bottom: 0; background: var(--neutre-pale); opacity: 0.6; }
+  .gantt-aujourdhui { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--rouge-auj); opacity: 0.85; }
+  .gantt-rang { position: relative; height: 48px; border-bottom: 1px solid var(--bord); z-index: 1; }
+  .gantt-nom { position: sticky; left: 0; z-index: 3; width: 232px; height: 100%; display: flex; align-items: center; gap: 10px; padding: 0 14px 0 16px; background: var(--carte); box-shadow: 1px 0 0 var(--bord); text-decoration: none; color: inherit; min-width: 0; }
+  a.gantt-nom:hover .gantt-txt strong { text-decoration: underline; text-underline-offset: 3px; }
+  .gantt-pastille { flex: none; width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.14); }
+  .gantt-txt { min-width: 0; display: grid; line-height: 1.3; }
+  .gantt-txt strong { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gantt-txt small { font-size: 12px; color: var(--doux); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gantt-rang .chrono-barre-cmd { position: absolute; top: 11px; height: 26px; border-radius: 7px; display: flex; align-items: center; padding: 0 9px; font-size: 12.5px; font-weight: 600; color: #262422; text-decoration: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2); cursor: grab; touch-action: pan-y; user-select: none; white-space: nowrap; overflow: hidden; z-index: 2; }
+  .gantt-rang .chrono-barre-cmd:hover { box-shadow: inset 0 0 0 1px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.12); }
+  .gantt-rang .chrono-barre-cmd.glisse { opacity: 0.85; z-index: 5; cursor: grabbing; }
+  .gantt-rang .chrono-barre-cmd.fixe { box-shadow: inset 4px 0 0 #262422; }
+  .gantt-charge-rang { height: 64px; border-bottom: 0; }
+  .gantt-charge-barre { position: absolute; bottom: 8px; background: var(--serie-1); opacity: 0.5; border-radius: 3px 3px 0 0; }
+  .gantt-charge-barre.sature { background: var(--rouge-auj); opacity: 0.8; }
+  .gantt-cap { position: absolute; left: 232px; right: 0; top: 12px; border-top: 1px dashed var(--doux); opacity: 0.6; }
+  .gantt-pied { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 12px 16px; border-top: 1px solid var(--bord); }
+  .gantt-pied .legende { margin: 0; }
 </style>
 
 <div class="appli">
@@ -1943,7 +1977,7 @@
     var ech = echeanceTexte(c.echeance);
     return h("a", { class: "fiche", href: "#commande-" + c.id },
       h("div", null,
-        h("div", { class: "numero" }, c.numero, c.exemple ? pastille("neutre", "Exemple") : null, c.perdue ? pastille("alerte", "Devis refusé") : null),
+        h("div", { class: "numero" }, c.numero, c.codeClient ? pastille("neutre", "Code " + c.codeClient) : null, c.exemple ? pastille("neutre", "Exemple") : null, c.perdue ? pastille("alerte", "Devis refusé") : null),
         h("div", { class: "client" }, c.client || "Client à renseigner"),
         h("div", { class: "produit" }, [c.produit, nbPieces ? nbPieces + " pièces" : null].filter(Boolean).join(" · "))),
       h("div", null, barres, h("div", { class: "ou" }, c.clos ? h("strong", null, "Clôturée") : c.perdue ? h("strong", null, "Devis refusé") : [h("strong", null, "Étape " + c.etape + " · " + etape.nom), detail])),
@@ -1979,12 +2013,15 @@
 
   function vueNouvelle(racine) {
     var n = etat.nouvelle;
+    if (n.numero === undefined) n.numero = prochainNumero();
     racine.appendChild(h("a", { class: "retour", href: "#commandes" }, "← Commandes"));
     racine.appendChild(h("div", { class: "titre-page" }, h("div", null, h("h1", null, "Nouvelle commande"), h("p", { class: "sous-titre" }, "Étape 1 — Demande client"))));
     var carte = h("div", { class: "carte carte-corps" });
     carte.appendChild(h("div", { class: "citation" }, ETAPES[0].doc, h("small", null, "Extrait de « Notre processus de fabrication »")));
     carte.appendChild(h("div", { class: "grille" },
+      champNouvelle("numero", "Numéro de commande (référence interne)", { requis: true, aide: "Pré-rempli ; modifiez-le si vous avez déjà une référence." }),
       champNouvelle("client", "Client", { requis: true, liste: "liste-clients", indice: "Maison de Champagne…" }),
+      champNouvelle("codeClient", "Code client", { indice: "ex. ELL-01" }),
       champNouvelle("produit", "Produit ou cuvée", { requis: true, indice: "Coffret cuvée Prestige 2019" }),
       champNouvelle("quantite", "Quantité commandée", { requis: true, type: "number", indice: "150" }),
       champNouvelle("echeance", "Livraison souhaitée", { type: "date" })));
@@ -2040,8 +2077,10 @@
       if (n.typologie === "charniere") pieces.push(nouvellePiece(PALETTE.filter(function (p) { return p.code === "CHA"; })[0], dims, pieces, n.essence));
     }
     var id = nouvelId("c");
+    var numero = String(n.numero || "").trim() || prochainNumero();
+    if (etat.commandes.some(function (c) { return c.numero === numero; })) { signaler("Le numéro " + numero + " existe déjà : choisissez-en un autre.", true); return; }
     var corps = {
-      numero: prochainNumero(), client: String(n.client).trim(), produit: String(n.produit).trim(), quantite: qte,
+      numero: numero, codeClient: String(n.codeClient || "").trim(), client: String(n.client).trim(), produit: String(n.produit).trim(), quantite: qte,
       echeance: n.echeance || "", typologie: n.typologie || "standard", famille: String(n.famille || "").trim(),
       essence: n.essence || "Chêne", finition: String(n.finition || "").trim(), marquage: n.marquage || "aucun",
       notes: String(n.notes || "").trim(), coffret: coffret, pieces: pieces,
@@ -2077,7 +2116,7 @@
     var d = dimsCoffret(cmd);
     racine.appendChild(h("div", { class: "titre-page" },
       h("div", null,
-        h("div", { class: "aide" }, cmd.numero, " ", cmd.exemple ? pastille("neutre", "Exemple") : null),
+        h("div", { class: "aide" }, cmd.numero, cmd.codeClient ? " · code client " + cmd.codeClient : null, " ", cmd.exemple ? pastille("neutre", "Exemple") : null),
         h("h1", null, cmd.client || "Client à renseigner"),
         h("p", { class: "sous-titre" }, [cmd.produit, grouper(qteCommandee(cmd)) + " coffrets", typo ? typo[1] : null, cmd.essence,
           d ? mm(d.L) + " × " + mm(d.l) + " × " + mm(d.H) + " mm" : null].filter(Boolean).join(" · "))),
@@ -2124,6 +2163,15 @@
     var verrou = !modifiable(cmd);
     if (verrou) p.appendChild(h("p", { class: "aide", style: { marginBottom: "12px" } }, "La commande est lancée ou archivée : la demande ne se modifie plus."));
     p.appendChild(h("div", { class: "grille" },
+      champ(cmd.id + ":numero", "Numéro de commande (référence interne)", function () { return cmd.numero; }, function (saisie) {
+        var v = String(saisie).trim();
+        if (!v) { signaler("Le numéro ne peut pas être vide.", true); return false; }
+        if (v === cmd.numero) return null;
+        if (etat.commandes.some(function (c) { return c.id !== cmd.id && c.numero === v; })) { signaler("Le numéro " + v + " est déjà utilisé.", true); return false; }
+        ecrire("commandes/" + cmd.id, { numero: v }, "Numéro enregistré");
+        return v;
+      }, { id: "f-" + cmd.id + "-numero", desactive: verrou || !peutEcrire }),
+      champCommande(cmd, "codeClient", "Code client", { desactive: verrou, direct: true }),
       champCommande(cmd, "client", "Client", { requis: true, desactive: verrou, direct: true }),
       champCommande(cmd, "produit", "Produit ou cuvée", { requis: true, desactive: verrou, direct: true }),
       champCommande(cmd, "quantite", "Quantité commandée", { requis: true, type: "number", desactive: verrou, direct: true }),
@@ -2903,131 +2951,118 @@
   var fmtMoisAn = new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric" });
   var fmtMois = new Intl.DateTimeFormat("fr-FR", { month: "long" });
 
+  // Planning : une ligne par commande. À gauche, son nom reste visible en
+  // défilant ; à droite, sa période, en couleur d'essence. Rien d'autre à lire.
+  var NOM_LARGEUR = 232;
+  var PAS_JOUR = { semaine: 58, mois: 34, trimestre: 14 };
+
   function vuePlanning(racine) {
     var plan = planning();
     var nbOp = nbOperateursAtelier();
-    var zoom = ZOOMS_PLAN[etat.planZoom] ? etat.planZoom : "mois";
-    var px = ZOOMS_PLAN[zoom];
+    var zoom = PAS_JOUR[etat.planZoom] ? etat.planZoom : "mois";
+    var px = PAS_JOUR[zoom];
     var auj = jourCalendaire(new Date());
 
-    // Fenêtre affichée : deux semaines avant aujourd'hui, trois après la
-    // dernière date utile, et jamais moins de deux mois.
     var debutFenetre = ajouterJours(auj, -14);
-    var finFenetre = ajouterJours(auj, 60);
+    var finFenetre = ajouterJours(auj, 56);
     plan.lignes.forEach(function (l) {
       if (l.debut < debutFenetre) debutFenetre = ajouterJours(l.debut, -7);
-      var bout = l.echeance && l.echeance > l.fin ? l.echeance : l.fin;
-      if (ajouterJours(bout, 21) > finFenetre) finFenetre = ajouterJours(bout, 21);
+      if (ajouterJours(l.fin, 21) > finFenetre) finFenetre = ajouterJours(l.fin, 21);
     });
     while (debutFenetre.getDay() !== 1) debutFenetre = ajouterJours(debutFenetre, -1);
     var nbJours = ecartJours(debutFenetre, finFenetre) + 1;
-    var largeur = nbJours * px;
-    var xJour = function (d) { return ecartJours(debutFenetre, d) * px; };
+    var largeur = NOM_LARGEUR + nbJours * px;
+    var xJour = function (d) { return NOM_LARGEUR + ecartJours(debutFenetre, d) * px; };
+    var nbEnRetard = plan.lignes.filter(function (l) { return l.statut === "retard"; }).length;
 
-    var enRetard = plan.lignes.filter(function (l) { return l.statut === "retard"; }).length;
     racine.appendChild(h("div", { class: "titre-page" },
       h("div", null, h("h1", null, "Planning"),
         h("p", { class: "sous-titre" }, plan.lignes.length + " commande" + (plan.lignes.length > 1 ? "s" : "") + " à produire · " +
-          heuresTexte(plan.total) + " de travail · capacité " + nbOp + " opérateurs × " + formater(heuresSemaine(), 2, 0) + FINE + "h" +
-          (enRetard ? " · " : ""), enRetard ? h("strong", { style: { color: "var(--alerte)" } }, enRetard + " en retard prévu") : null))));
+          heuresTexte(plan.total) + " de travail · " + nbOp + " opérateurs × " + formater(heuresSemaine(), 2, 0) + FINE + "h par semaine" +
+          (nbEnRetard ? " · " : ""), nbEnRetard ? h("strong", { style: { color: "var(--alerte)" } }, nbEnRetard + " en retard") : null))));
 
-    var carte = h("section", { class: "carte chrono", "aria-label": "Chronologie des commandes" });
-    var defile = h("div", { class: "chrono-defile", id: "chrono-defile" });
-    var moisVisible = h("strong", { class: "chrono-mois-courant" }, fmtMoisAn.format(auj));
+    var carte = h("section", { class: "carte gantt", "aria-label": "Planning des commandes" });
+    var mois = h("strong", { class: "gantt-mois" }, fmtMoisAn.format(auj));
+    var defile = h("div", { class: "gantt-defile", id: "gantt-defile" });
     var aller = function (d, doux) {
-      var x = Math.max(0, xJour(d) - defile.clientWidth * 0.18);
+      var visible = Math.max(0, defile.clientWidth - NOM_LARGEUR);
+      var x = Math.max(0, xJour(d) - NOM_LARGEUR - visible * 0.3);
       if (doux && defile.scrollTo) defile.scrollTo({ left: x, behavior: "smooth" }); else defile.scrollLeft = x;
     };
-    carte.appendChild(h("div", { class: "chrono-barre" },
-      moisVisible,
+    var defiler = function (jours) { defile.scrollBy({ left: jours * px, behavior: "smooth" }); };
+    var saut = zoom === "trimestre" ? 28 : 7;
+    carte.appendChild(h("div", { class: "gantt-barre" }, mois,
       h("div", { class: "actions" },
         h("div", { class: "segments", role: "group", "aria-label": "Échelle" }, [["semaine", "Semaine"], ["mois", "Mois"], ["trimestre", "Trimestre"]].map(function (z) {
           return bouton(z[1], function () { etat.planZoom = z[0]; ecrireLocal("fps-plan-zoom", z[0]); etat.chronoX = null; rendre(); }, { presse: zoom === z[0], ecriture: false, classe: "petit", id: "zoom-" + z[0] });
         })),
-        bouton("‹", function () { defile.scrollBy({ left: -7 * px * (zoom === "trimestre" ? 4 : 1), behavior: "smooth" }); }, { aria: "Période précédente", ecriture: false, classe: "petit", id: "chrono-prec" }),
+        bouton("‹", function () { defiler(-saut); }, { aria: "Période précédente", ecriture: false, classe: "petit", id: "chrono-prec" }),
         bouton("Aujourd'hui", function () { aller(auj, true); }, { ecriture: false, classe: "petit", id: "chrono-auj" }),
-        bouton("›", function () { defile.scrollBy({ left: 7 * px * (zoom === "trimestre" ? 4 : 1), behavior: "smooth" }); }, { aria: "Période suivante", ecriture: false, classe: "petit", id: "chrono-suiv" }))));
+        bouton("›", function () { defiler(saut); }, { aria: "Période suivante", ecriture: false, classe: "petit", id: "chrono-suiv" }))));
 
-    var toile = h("div", { class: "chrono-toile", style: { width: largeur + "px" } });
-
-    // En-tête : les mois, puis les jours ; aujourd'hui dans une pastille rouge.
-    var tete = h("div", { class: "chrono-tete" });
-    var ligneMois = h("div", { class: "chrono-ligne-mois" });
-    var ligneJours = h("div", { class: "chrono-ligne-jours" });
-    var fonds = h("div", { class: "chrono-fonds", "aria-hidden": "true" });
-    for (var j = 0; j < nbJours; j++) {
-      var d = ajouterJours(debutFenetre, j);
-      var weekend = d.getDay() === 0 || d.getDay() === 6;
-      if (d.getDate() === 1 || j === 0) ligneMois.appendChild(h("span", { style: { left: j * px + 6 + "px" } }, j === 0 && d.getDate() > 20 ? "" : fmtMois.format(d)));
-      var montrer = zoom !== "trimestre" || d.getDay() === 1 || d.getTime() === auj.getTime();
-      ligneJours.appendChild(h("span", { class: "chrono-jour" + (weekend ? " we" : "") + (d.getTime() === auj.getTime() ? " auj" : ""), style: { left: j * px + "px", width: px + "px" } }, montrer ? String(d.getDate()) : ""));
-      if (weekend) fonds.appendChild(h("span", { style: { left: j * px + "px", width: px + "px" } }));
-    }
-    tete.appendChild(ligneMois);
-    tete.appendChild(ligneJours);
-    toile.appendChild(tete);
-    toile.appendChild(fonds);
-    toile.appendChild(h("div", { class: "chrono-aujourdhui", style: { left: xJour(auj) + px / 2 + "px" }, "aria-hidden": "true" }));
-
-    // Une ligne par commande.
-    var corps = h("div", { class: "chrono-corps" });
-    if (!plan.lignes.length) corps.appendChild(h("p", { class: "vide", style: { position: "sticky", left: "0" } }, "Aucune commande à planifier. Elles apparaissent ici dès l'étape 2."));
-    plan.lignes.forEach(function (l) {
-      var fond = couleurEssence(l.cmd.essence);
-      var x0 = xJour(l.debut), x1 = xJour(l.fin) + px;
-      var ligne = h("div", { class: "chrono-rang" });
-      if (l.echeance) {
-        var xe = xJour(l.echeance) + px / 2;
-        var depasse = l.echeance < l.fin;
-        if (xe > x1) ligne.appendChild(h("span", { class: "chrono-lien", style: { left: x1 + "px", width: Math.max(0, xe - x1 - 5) + "px" } }));
-        ligne.appendChild(h("span", { class: "chrono-echeance" + (depasse ? " depassee" : ""), style: { left: xe - 5 + "px" }, title: "Livraison promise le " + fmtSemaine.format(l.echeance) }));
+    var corps = h("div", { class: "gantt-corps", style: { width: largeur + "px" } });
+    var entete = h("div", { class: "gantt-tete", style: { width: largeur + "px" } }, h("div", { class: "gantt-coin" }, "Commande"));
+    var fonds = h("div", { class: "gantt-fonds", "aria-hidden": "true" });
+    for (var j2 = 0; j2 < nbJours; j2++) {
+      var d = ajouterJours(debutFenetre, j2);
+      var we = d.getDay() === 0 || d.getDay() === 6;
+      var estAuj = d.getTime() === auj.getTime();
+      if (d.getDate() === 1 || j2 === 0) entete.appendChild(h("span", { class: "gantt-mois-tick", style: { left: xJour(d) + 6 + "px" } }, fmtMois.format(d)));
+      if (zoom !== "trimestre" || d.getDay() === 1 || estAuj) {
+        var largeurJour = estAuj ? 24 : px;
+        entete.appendChild(h("span", { class: "gantt-jour" + (we ? " we" : "") + (estAuj ? " auj" : ""), style: { left: xJour(d) + (px - largeurJour) / 2 + "px", width: largeurJour + "px" } }, String(d.getDate())));
       }
-      var priorite = l.statut === "retard" ? "!!" : l.statut === "juste" ? "!" : "";
-      var barre = h("a", {
-        href: "#commande-" + l.cmd.id, class: "chrono-barre-cmd" + (l.fixe ? " fixe" : ""), draggable: "false",
-        style: { left: x0 + 2 + "px", width: Math.max(px - 4, x1 - x0 - 4) + "px", background: fond },
-        title: l.cmd.numero + " · " + (l.cmd.client || "") + " — " + fmtSemaine.format(l.debut) + " → " + fmtSemaine.format(l.fin) +
-          (l.echeance ? " · livraison " + fmtSemaine.format(l.echeance) : "") + " · " + STATUTS_PLAN[l.statut].libelle + (l.fixe ? " · date fixée à la main" : "") +
-          ". Faites glisser pour déplacer.",
-        dataset: { cmd: l.cmd.id, jour: ymd(l.debut) }
-      },
-        h("span", { class: "chrono-texte" },
-          priorite ? h("span", { class: "chrono-prio", "aria-label": STATUTS_PLAN[l.statut].libelle }, priorite) : null,
-          h("strong", null, (l.cmd.client || "Client ?").toUpperCase()),
-          h("span", { class: "chrono-produit" }, (l.cmd.produit || "").toUpperCase()),
-          h("span", { class: "chrono-meta" }, l.jours + FINE + "j"),
-          h("span", { class: "chrono-meta" }, grouper(qteCommandee(l.cmd)) + FINE + "ex")));
-      ligne.appendChild(barre);
+      if (we) fonds.appendChild(h("span", { style: { left: xJour(d) + "px", width: px + "px" } }));
+    }
+    fonds.appendChild(h("div", { class: "gantt-aujourdhui", style: { left: xJour(auj) + px / 2 + "px" } }));
+    corps.appendChild(fonds);
+
+    if (!plan.lignes.length) corps.appendChild(h("div", { class: "gantt-rang", style: { height: "56px" } }, h("p", { class: "vide", style: { position: "sticky", left: "0", margin: "0", padding: "14px 16px" } }, "Aucune commande à planifier. Elles apparaissent ici dès l'étape 2.")));
+    plan.lignes.forEach(function (l) {
+      var c = l.cmd;
+      var couleur = couleurEssence(c.essence);
+      var x0 = xJour(l.debut) + 2;
+      var x1 = xJour(l.fin) + px - 2;
+      var ligne = h("div", { class: "gantt-rang" });
+      ligne.appendChild(h("a", { class: "gantt-nom", href: "#commande-" + c.id },
+        h("span", { class: "gantt-pastille", style: { background: couleur }, "aria-hidden": "true" }),
+        h("span", { class: "gantt-txt" },
+          h("strong", null, c.client || "Client à renseigner"),
+          h("small", null, [c.numero, c.codeClient, c.produit].filter(Boolean).join(" · ")))));
+      ligne.appendChild(h("a", {
+        href: "#commande-" + c.id, class: "chrono-barre-cmd" + (l.fixe ? " fixe" : ""), draggable: "false",
+        style: { left: x0 + "px", width: Math.max(px - 4, x1 - x0) + "px", background: couleur },
+        title: [c.client, c.numero, c.produit].filter(Boolean).join(" · ") + "\n" + fmtSemaine.format(l.debut) + " → " + fmtSemaine.format(l.fin) + " · " + l.jours + " j" +
+          (l.fixe ? "\nDate fixée à la main : glissez pour la changer" : "\nGlissez pour déplacer"),
+        dataset: { cmd: c.id, jour: ymd(l.debut), numero: c.numero }
+      }, (x1 - x0) >= 40 ? h("span", null, l.jours + " j") : null));
       corps.appendChild(ligne);
     });
-    toile.appendChild(corps);
 
-    // Charge de l'atelier jour par jour, contre la capacité.
-    var charge = h("div", { class: "chrono-charge", title: "Charge de l'atelier contre sa capacité de " + heuresTexte(plan.capJour) + " par jour" },
-      h("span", { class: "chrono-charge-titre" }, "Charge de l'atelier · capacité " + heuresTexte(plan.capJour) + " par jour"));
+    // Charge de l'atelier jour par jour, contre la capacité (ligne pointillée).
+    var charge = h("div", { class: "gantt-rang gantt-charge-rang" },
+      h("div", { class: "gantt-nom gantt-charge-titre" },
+        h("span", { class: "gantt-txt" }, h("strong", null, "Charge de l'atelier"), h("small", null, "capacité " + heuresTexte(plan.capJour) + " par jour"))),
+      h("span", { class: "gantt-cap", "aria-hidden": "true" }));
     for (var k = 0; k < nbJours; k++) {
       var dk = ajouterJours(debutFenetre, k);
-      var c = plan.charge[ymd(dk)] || 0;
-      if (!c) continue;
-      var taux = plan.capJour ? c / plan.capJour : 0;
+      var cj = plan.charge[ymd(dk)] || 0;
+      if (!cj) continue;
+      var taux = plan.capJour ? cj / plan.capJour : 0;
       charge.appendChild(h("span", {
-        class: "chrono-charge-jour" + (taux > 1.001 ? " sature" : ""),
-        style: { left: k * px + 2 + "px", width: Math.max(2, px - 4) + "px", height: Math.min(100, Math.round(taux * 100)) + "%" },
-        title: fmtSemaine.format(dk) + " : " + heuresTexte(Math.round(c)) + " pour " + heuresTexte(plan.capJour) + " disponibles (" + Math.round(taux * 100) + " %)"
+        class: "gantt-charge-barre" + (taux > 1.001 ? " sature" : ""),
+        style: { left: xJour(dk) + 3 + "px", width: Math.max(4, px - 6) + "px", height: Math.max(2, Math.min(40, Math.round(taux * 40))) + "px" },
+        title: fmtSemaine.format(dk) + " : " + heuresTexte(Math.round(cj)) + " sur " + heuresTexte(plan.capJour) + " disponibles (" + Math.round(taux * 100) + " %)"
       }));
     }
-    charge.appendChild(h("span", { class: "chrono-charge-cap", "aria-hidden": "true" }));
-    toile.appendChild(charge);
+    corps.appendChild(charge);
 
+    var toile = h("div", { class: "gantt-toile", style: { width: largeur + "px" } }, entete, corps);
     defile.appendChild(toile);
     carte.appendChild(defile);
-    carte.appendChild(h("div", { class: "chrono-pied" },
+    carte.appendChild(h("div", { class: "chrono-pied gantt-pied" },
       legende(ESSENCES.map(function (e) { return { couleur: couleurEssence(e), libelle: e, forme: "carre" }; })),
-      h("div", { class: "legende" },
-        h("span", null, h("b", { class: "chrono-prio" }, "!!"), " retard prévu"),
-        h("span", null, h("b", { class: "chrono-prio" }, "!"), " moins de 2 jours de marge"),
-        h("span", null, h("i", { class: "chrono-echeance-legende" }), " livraison promise"),
-        h("span", null, h("i", { style: { background: "var(--serie-1)", opacity: "0.55" } }), " charge du jour, en rouge au-delà de la capacité"))));
+      h("div", { class: "legende" }, h("span", null, h("i", { style: { background: "var(--serie-1)", opacity: "0.55" } }), " charge du jour, en rouge au-delà de la capacité"))));
     racine.appendChild(carte);
 
     etat.apresRendu.push(function () {
@@ -3036,11 +3071,11 @@
       etat.chronoZoom = zoom;
       var majMois = function () {
         etat.chronoX = defile.scrollLeft;
-        moisVisible.textContent = fmtMoisAn.format(ajouterJours(debutFenetre, Math.floor((defile.scrollLeft + defile.clientWidth * 0.18) / px)));
+        mois.textContent = fmtMoisAn.format(ajouterJours(debutFenetre, Math.floor((defile.scrollLeft + 40) / px)));
       };
       majMois();
       defile.addEventListener("scroll", majMois, { passive: true });
-      brancherGlisser(toile, px);
+      brancherGlisser(corps, px);
     });
 
     var deux = h("div", { class: "grille-graphiques", style: { marginTop: "16px" } });
@@ -4739,7 +4774,7 @@
   // lue comme un coffret dont les opérations portent sur le coffret monté.
   function normaliserCommande(id, d) {
     var c = Object.assign({
-      numero: "", client: "", produit: "", quantite: 0, echeance: "", typologie: "standard", famille: "", essence: "Chêne",
+      numero: "", codeClient: "", client: "", produit: "", quantite: 0, echeance: "", typologie: "standard", famille: "", essence: "Chêne",
       finition: "", marquage: "aucun", notes: "", etape: 1, historique: {}, prixUnitaireHT: "", coutMatiereEstime: "",
       prototypeRequis: true, controles: {}, clos: false, perdue: false
     }, d, { id: id, etape: Math.min(10, Math.max(1, Number(d.etape) || 1)) });
