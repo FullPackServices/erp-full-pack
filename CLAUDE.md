@@ -117,6 +117,23 @@ période en couleur d'essence, charge de l'atelier en bas. Pas de symbole.
 Chaque commande a une référence interne (`numero`, saisie ou proposée, unique)
 et un code client (`codeClient`, facultatif).
 
+Pièces d'une commande : à la création, GCG, GCD, Dessus, Dessous, Fond,
+Tirette, dans cet ordre. Au lancement, cet ordre est figé (`ordonnerPieces`) ;
+le coffret monté vient en dernier. Pièces optionnelles de la palette : guillotine
+haute et basse, berceau haut et bas, cale amovible, tasseaux, charnière, fermoir.
+Chaque pièce porte une essence de bois, des dimensions, un commentaire et une
+photo (`imageUrl`, via la capacité `assets`). Le BAT est joint à la commande
+(`batImageUrl`).
+
+Feuilles de production : une par ordre de fabrication, au format A4 recto. La
+maquette les télécharge en HTML (capacité `downloads`) ; l'impression se fait
+depuis le fichier, car la page de l'artefact ne peut pas ouvrir la boîte
+d'impression. Dans l'application Next.js, l'impression sera directe.
+
+Atelier : bandeau d'indicateurs pour le responsable (opérations en cours, pièces
+faites du jour, productivité, occupation, machines, retards, pointages ouverts
+depuis plus de 8 h, rebut).
+
 Indicateurs : volet dédié (commercial, délais, production, qualité,
 rentabilité), chaque carte dit son calcul et son objectif.
 
@@ -187,6 +204,9 @@ Ce partage est ce qui permet de relancer le seed sans rien perdre :
   laser (aucun laser à l'atelier) et la dégauchisseuse, qui ne reçoit aucune
   opération. La « Cale carton » a été supprimée à la demande du gérant : elle
   reste dans data/operations.csv tant que la ligne n'y est pas retirée.
+- Hébergement du serveur et base de données : pas encore choisi. Les données
+  sont aujourd'hui dans le magasin de l'artefact (privé, sans comptes par
+  personne). Bloquant pour une mise en service.
 - Cotes réelles de l'atelier et implantation des machines : les positions de
   la maquette sont une proposition.
 - Formules de dimensions du coffret à charnière (lot 2).

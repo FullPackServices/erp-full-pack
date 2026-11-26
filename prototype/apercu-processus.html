@@ -315,6 +315,8 @@
     border-top: 4px solid var(--bord-fort);
     background: var(--carte);
   }
+  .etapes button { height: 88px; }
+  .etapes .nom { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em; }
   .etapes .num { font-family: var(--titre); font-size: 19px; font-weight: 500; line-height: 1; color: var(--doux); }
   .etapes .nom { font-size: 12.5px; font-weight: 600; line-height: 1.25; color: var(--texte); }
   .etapes .quand { font-size: 11.5px; color: var(--doux); font-weight: 400; }
@@ -699,6 +701,24 @@
   .gantt-cap { position: absolute; left: 232px; right: 0; top: 12px; border-top: 1px dashed var(--doux); opacity: 0.6; }
   .gantt-pied { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 12px 16px; border-top: 1px solid var(--bord); }
   .gantt-pied .legende { margin: 0; }
+
+  /* ---------------------------------------- Photos, BAT, remarques, atelier */
+  .piece-photo-ligne { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .photo-piece { display: grid; gap: 8px; justify-items: start; }
+  .photo-titre { font-size: 13px; font-weight: 600; color: var(--doux); line-height: 1.5; margin-bottom: -2px; }
+  .photo-piece.bat { width: 100%; }
+  .photo-img { width: 150px; height: 110px; object-fit: contain; border-radius: 8px; border: 1px solid var(--bord); background: var(--carte); }
+  .photo-piece.bat .photo-img { width: 100%; max-width: 340px; height: auto; max-height: 260px; }
+  .photo-vide { width: 150px; height: 110px; border: 1px dashed var(--bord-fort); border-radius: 8px; display: grid; place-items: center; font-size: 12.5px; color: var(--pale); text-align: center; padding: 8px; }
+  .photo-piece.bat .photo-vide { width: 100%; max-width: 340px; height: 120px; }
+  .bat-ligne { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px; align-items: start; margin-bottom: 14px; }
+  .of-note { margin: 0 14px 8px; padding: 8px 12px; border-left: 3px solid var(--orange); background: var(--orange-pale); border-radius: 0 8px 8px 0; font-size: 13.5px; white-space: pre-wrap; }
+  .of-note strong { color: var(--orange-texte); }
+  .bandeau-atelier { margin-bottom: 16px; }
+  .atelier-tuiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .atelier-tuiles .tuile .valeur { font-size: 24px; }
+  @media (max-width: 1100px) { .atelier-tuiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .bat-ligne { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 540px) { .piece-photo-ligne { grid-template-columns: minmax(0, 1fr); } .photo-img, .photo-vide { width: 100%; max-width: 260px; } }
 </style>
 
 <div class="appli">
@@ -950,6 +970,16 @@
   };
 
   var magasin = null;
+  var ASSETS = null;          // capacité « assets » : téléverser une image (photo de pièce, BAT)
+  var TELECHARGEMENT = null;  // capacité « downloads » : enregistrer un fichier (feuilles A4)
+  // Une image se téléverse vers le magasin de l'artefact, puis son adresse est gardée sur la pièce.
+  function televerser(fichier, quand) {
+    if (!ASSETS) { signaler("Le téléversement d'images n'est pas disponible dans cette vue.", true); return; }
+    if (!fichier || fichier.type.indexOf("image/") !== 0) { signaler("Choisissez une image : JPEG, PNG ou WebP.", true); return; }
+    ASSETS.upload(fichier).then(function (r) {
+      if (r && typeof r.url === "string") quand(r.url);
+    }).catch(function () { signaler("L'image n'a pas pu être envoyée.", true); });
+  }
   var peutEcrire = true;
 
   function maintenant() { return new Date().toISOString(); }
@@ -1085,13 +1115,15 @@
 
   // Palette des pièces qu'on ajoute à l'intérieur. Dimensions proposées,
   // à ajuster : elles partent des cotes intérieures du coffret.
+  // Pièces optionnelles, dans l'ordre de la palette. Les dimensions sont
+  // proposées à partir des cotes intérieures du coffret, à ajuster.
   var PALETTE = [
-    { code: "BER", libelle: "Berceau", matiere: "bois", qte: 2, orientation: "travers", d: function (i) { return [i.l, Math.min(60, i.H * 0.4), 15]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; }, ecart: function (i) { return i.L / 2; } },
-    { code: "TAS", libelle: "Tasseau", matiere: "bois", qte: 2, orientation: "long", d: function (i) { return [i.L, 15, 15]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; }, ecart: function (i) { return i.l - 15; } },
-    { code: "CAL", libelle: "Cale", matiere: "bois", qte: 1, orientation: "plat", d: function () { return [40, 30, 20]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; } },
-    { code: "MOU", libelle: "Calage mousse", matiere: "Mousse", qte: 1, orientation: "plat", d: function (i) { return [i.L, i.l, Math.min(30, i.H / 3)]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; } },
-    { code: "SEP", libelle: "Séparateur", matiere: "bois", qte: 1, orientation: "travers", d: function (i) { return [i.l, i.H, 6]; }, pos: function () { return {}; } },
-    { code: "GUI", libelle: "Guillotine", matiere: "bois", qte: 1, orientation: "travers", d: function (i) { return [i.l, i.H * 0.6, 8]; }, pos: function (i, t) { return { x: i.L / 2 - 20, y: i.H / 2 - t.y / 2 }; } },
+    { code: "GUH", libelle: "Guillotine haute", matiere: "bois", qte: 1, orientation: "travers", d: function (i) { return [i.l, i.H * 0.35, 8]; }, pos: function (i, t) { return { y: i.H / 2 - t.y / 2 }; } },
+    { code: "GUB", libelle: "Guillotine basse", matiere: "bois", qte: 1, orientation: "travers", d: function (i) { return [i.l, i.H * 0.35, 8]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; } },
+    { code: "BEH", libelle: "Berceau haut", matiere: "bois", qte: 2, orientation: "travers", d: function (i) { return [i.l, Math.min(60, i.H * 0.4), 15]; }, pos: function (i, t) { return { y: i.H / 2 - t.y / 2 }; }, ecart: function (i) { return i.L / 2; } },
+    { code: "BEB", libelle: "Berceau bas", matiere: "bois", qte: 2, orientation: "travers", d: function (i) { return [i.l, Math.min(60, i.H * 0.4), 15]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; }, ecart: function (i) { return i.L / 2; } },
+    { code: "CAM", libelle: "Cale amovible", matiere: "bois", qte: 1, orientation: "plat", d: function () { return [40, 30, 20]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; } },
+    { code: "TAS", libelle: "Tasseaux", matiere: "bois", qte: 2, orientation: "long", d: function (i) { return [i.L, 15, 15]; }, pos: function (i, t) { return { y: -i.H / 2 + t.y / 2 }; }, ecart: function (i) { return i.l - 15; } },
     { code: "CHA", libelle: "Charnière", matiere: "Métal", qte: 2, orientation: "long", d: function () { return [40, 20, 3]; }, pos: function (i, t, c) { return { y: c.H / 2 - c.e - 10, z: -(i.l / 2 - 2) }; }, ecart: function (i) { return i.L / 2; } },
     { code: "FER", libelle: "Fermoir", matiere: "Métal", qte: 1, orientation: "long", d: function () { return [30, 20, 5]; }, pos: function (i, t, c) { return { y: c.H / 2 - c.e - 10, z: i.l / 2 - 3 }; } },
     { code: "PCE", libelle: "Pièce libre", matiere: "bois", qte: 1, orientation: "plat", d: function () { return [100, 50, 10]; }, pos: function () { return {}; } }
@@ -1173,6 +1205,113 @@
       of.numero = (cmd.numero || "OF") + "-" + of.piece.code;
       return of;
     });
+  }
+
+  // Ordre de fabrication : GCG, GCD, Dessus, Dessous, Fond, Tirette, puis les
+  // pièces optionnelles dans l'ordre où elles ont été ajoutées ; le coffret monté en dernier.
+  function ordonnerPieces(pieces) {
+    var rang = function (p, k) {
+      if (p.genre === "coffret") return 1000 + k;
+      var i = p.genre === "paroi" ? ORDRE_STANDARD.indexOf(p.code) : -1;
+      return i >= 0 ? i : 100 + k;
+    };
+    return pieces.map(function (p, k) { return { p: p, r: rang(p, k) }; })
+      .sort(function (a, b) { return a.r - b.r; }).map(function (x) { return x.p; });
+  }
+
+  // ------------------------------------------------ Feuilles de production A4
+
+  function echappe(v) {
+    return String(v === null || v === undefined ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  // Une adresse d'image n'est reprise que si elle est sûre.
+  function adresseSure(u) { return typeof u === "string" && (u.indexOf("https://") === 0 || u.indexOf("/_blob/") === 0) ? u : ""; }
+
+  var CSS_FEUILLES = "@page{size:A4;margin:10mm}*{box-sizing:border-box}" +
+    "body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#1d1b19;font-size:10pt;background:#fff}" +
+    ".feuille{width:190mm;height:277mm;display:flex;flex-direction:column;gap:3.5mm;page-break-after:always;overflow:hidden}" +
+    ".feuille:last-child{page-break-after:auto}" +
+    ".f-tete{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #e8772e;padding-bottom:2.5mm}" +
+    ".f-tete img{width:40mm;height:auto}.f-titre{text-align:right}" +
+    ".f-titre small{display:block;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:#6f6962}" +
+    ".f-titre strong{font-size:19pt;letter-spacing:.02em}" +
+    ".f-infos{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm}" +
+    ".f-case{border:1px solid #d9d3cb;border-radius:2mm;padding:1.8mm 2.2mm;min-width:0}" +
+    ".f-case small{display:block;font-size:7pt;text-transform:uppercase;letter-spacing:.06em;color:#6f6962}" +
+    ".f-case b{font-size:9.5pt;overflow-wrap:anywhere}" +
+    ".f-piece{display:grid;grid-template-columns:70mm 1fr;gap:4mm}" +
+    ".f-photo{height:62mm;border:1px dashed #b9b1a6;border-radius:2mm;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#8f8880;font-size:9pt}" +
+    ".f-photo img{width:100%;height:100%;object-fit:contain}" +
+    ".f-piece h2{margin:0 0 2mm;font-size:15pt}" +
+    ".f-dims{display:grid;grid-template-columns:1fr 1fr;gap:2mm}" +
+    ".f-note{margin-top:3mm;border-left:3px solid #e8772e;background:#fbf4ee;padding:2mm 3mm;font-size:9.5pt;min-height:18mm;white-space:pre-wrap}" +
+    ".f-note small{display:block;font-size:7.5pt;text-transform:uppercase;letter-spacing:.06em;color:#9a4610;margin-bottom:1mm}" +
+    ".f-ops{width:100%;border-collapse:collapse;font-size:9pt}" +
+    ".f-ops th,.f-ops td{border:1px solid #d9d3cb;padding:1.6mm 1.8mm;text-align:left;vertical-align:middle}" +
+    ".f-ops th{background:#f3efe9;font-size:7.5pt;text-transform:uppercase;letter-spacing:.04em}" +
+    ".f-ops td.vide{height:8.5mm}" +
+    ".f-remarques{flex:1;border:1px solid #d9d3cb;border-radius:2mm;padding:2mm 2.5mm;font-size:8pt;color:#6f6962}" +
+    ".f-controle{display:flex;gap:6mm;margin-top:1.5mm;color:#1d1b19;font-size:9pt}" +
+    ".f-pied{display:flex;justify-content:space-between;font-size:7.5pt;color:#6f6962}";
+
+  function feuilleOF(cmd, of) {
+    var piece = of.piece, coffret = piece.genre === "coffret";
+    var tc = typeCoupe(piece.typeCoupe);
+    var photo = adresseSure(piece.imageUrl), bat = adresseSure(cmd.batImageUrl);
+    var debit = tc ? mm(Number(piece.longueur) + (Number(tc.surcoteLongueurMm) || 0)) + " × " + mm(Number(piece.largeur) + (Number(tc.surcoteDelignageMm) || 0)) + " mm" : "Pas de type de coupe";
+    var lignes = of.lignes.map(function (l) {
+      return "<tr><td>" + echappe(l.op.nom) + "</td><td>" + echappe(l.op.centreTravail || "À affecter") + "</td><td>" + (l.n > 1 ? "× " + l.n : "1") +
+        "</td><td>" + echappe(minutes(l.prevu)) + "</td><td class=\"vide\"></td><td class=\"vide\"></td><td class=\"vide\"></td><td class=\"vide\"></td></tr>";
+    }).join("");
+    var blancs = Math.max(0, 8 - of.lignes.length);
+    for (var b = 0; b < blancs; b++) lignes += "<tr><td class=\"vide\"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+    return "<section class=\"feuille\">" +
+      "<header class=\"f-tete\"><img src=\"" + LOGO_SRC + "\" alt=\"Full Pack Services\">" +
+      "<div class=\"f-titre\"><small>Feuille de production</small><strong>OF " + echappe(of.numero) + "</strong></div></header>" +
+      "<div class=\"f-infos\">" +
+      "<div class=\"f-case\"><small>Commande</small><b>" + echappe(cmd.numero) + "</b></div>" +
+      "<div class=\"f-case\"><small>Client · code</small><b>" + echappe(cmd.client || "—") + (cmd.codeClient ? " · " + echappe(cmd.codeClient) : "") + "</b></div>" +
+      "<div class=\"f-case\"><small>Produit</small><b>" + echappe(cmd.produit || "—") + "</b></div>" +
+      "<div class=\"f-case\"><small>Livraison</small><b>" + echappe(echeanceTexte(cmd.echeance) || "—") + "</b></div>" +
+      "<div class=\"f-case\"><small>À produire</small><b>" + echappe(grouper(of.quantite)) + (coffret ? " coffrets" : " pièces") + "</b></div>" +
+      "<div class=\"f-case\"><small>Coffrets lancés</small><b>" + echappe(grouper(lanceeDe(cmd))) + "</b></div>" +
+      "<div class=\"f-case\"><small>Essence commande</small><b>" + echappe(cmd.essence || "—") + "</b></div>" +
+      "<div class=\"f-case\"><small>BAT</small><b>" + (bat ? "<img src=\"" + bat + "\" alt=\"BAT\" style=\"height:12mm;width:auto;vertical-align:middle\">" : "Non joint") + "</b></div>" +
+      "</div>" +
+      "<div class=\"f-piece\"><div class=\"f-photo\">" + (photo ? "<img src=\"" + photo + "\" alt=\"Photo de la pièce\">" : "Photo à ajouter") + "</div>" +
+      "<div><h2>" + echappe(piece.libelle) + " (" + echappe(piece.code) + ")</h2>" +
+      (coffret ? "<p>Coffret monté : opérations sur l'ensemble.</p>" :
+        "<div class=\"f-dims\"><div class=\"f-case\"><small>Essence de bois</small><b>" + echappe(piece.matiere || "—") + "</b></div>" +
+        "<div class=\"f-case\"><small>Par coffret</small><b>" + echappe(piece.qte) + "</b></div>" +
+        "<div class=\"f-case\"><small>Dimensions finies, L × l × ép.</small><b>" + echappe(mm(piece.longueur)) + " × " + echappe(mm(piece.largeur)) + " × " + echappe(mm(piece.epaisseur)) + " mm</b></div>" +
+        "<div class=\"f-case\"><small>Débit (surcotes)</small><b>" + echappe(debit) + "</b></div>" +
+        "<div class=\"f-case\" style=\"grid-column:1/3\"><small>Type de coupe</small><b>" + echappe(tc ? tc.nom : "—") + "</b></div></div>") +
+      "<div class=\"f-note\"><small>Spécificités de la pièce</small>" + (piece.commentaire ? echappe(piece.commentaire) : "Aucune remarque particulière.") + "</div>" +
+      "</div></div>" +
+      "<table class=\"f-ops\"><thead><tr><th>Opération</th><th>Machine</th><th>Passages</th><th>Temps prévu</th><th>Pièces faites</th><th>Opérateur</th><th>Début</th><th>Fin</th></tr></thead><tbody>" + lignes + "</tbody></table>" +
+      "<div class=\"f-remarques\">Remarques de l'opérateur</div>" +
+      "<div class=\"f-controle\">Contrôle : ☐ après usinage ☐ après assemblage ☐ après finition</div>" +
+      "<footer class=\"f-pied\"><span>" + echappe(cmd.numero) + " · " + echappe(of.numero) + "</span><span>Imprimé le " + echappe(new Date().toLocaleDateString("fr-FR")) + " · Full Pack Services</span></footer>" +
+      "</section>";
+  }
+
+  function feuillesHTML(cmd) {
+    var pages = ordresFabrication(cmd).map(function (of) { return feuilleOF(cmd, of); }).join("");
+    return "<!doctype html><html lang=\"fr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" +
+      "<title>Feuilles de production " + echappe(cmd.numero) + "</title><style>" + CSS_FEUILLES + "</style></head><body>" + pages + "</body></html>";
+  }
+
+  function telechargerFeuilles(cmd) {
+    if (!TELECHARGEMENT) { signaler("Le téléchargement n'est pas disponible dans cette vue.", true); return; }
+    if (!ordresFabrication(cmd).length) { signaler("Aucun ordre de fabrication : choisissez d'abord les opérations.", true); return; }
+    TELECHARGEMENT.save({ filename: "feuilles-production-" + cmd.numero + ".html", data: feuillesHTML(cmd) }).then(function (r) {
+      if (r && r.status === "saved") signaler("Feuilles enregistrées : ouvrez le fichier et imprimez-le en A4, recto.");
+    }).catch(function () { signaler("Les feuilles n'ont pas été enregistrées.", true); });
+  }
+
+  function boutonFeuilles(cmd) {
+    if (!TELECHARGEMENT) return null;
+    return bouton("Feuilles de production A4", function () { telechargerFeuilles(cmd); }, { classe: "petit", ecriture: false, id: "feuilles-" + cmd.id });
   }
 
   function pointagesDe(cmd) { return etat.pointages.filter(function (p) { return p.commandeId === cmd.id; }); }
@@ -2336,7 +2475,7 @@
         v = v.replace(",", ".");
         if (!(Number(v) > 0)) { signaler("« " + saisie + " » n'est pas une valeur valide.", true); return false; }
         if (o.entier) v = String(Math.max(1, Math.floor(Number(v))));
-      } else if (!v) { signaler(libelle + " ne peut pas être vide.", true); return false; }
+      } else if (!v && !o.facultatif) { signaler(libelle + " ne peut pas être vide.", true); return false; }
       if (String(piece[cle]) === v) return null;
       var patch = {}; patch[cle] = o.entier ? Number(v) : v;
       if (o.dimension) patch.auto = false;
@@ -2365,9 +2504,19 @@
         champPiece(cmd, piece, "longueur", "", { nombre: true, dimension: true, nu: true, aria: "Longueur", desactive: verrou }),
         champPiece(cmd, piece, "largeur", "", { nombre: true, dimension: true, nu: true, aria: "Largeur", desactive: verrou }),
         champPiece(cmd, piece, "epaisseur", "", { nombre: true, dimension: true, nu: true, aria: "Épaisseur", desactive: verrou }))));
+    bloc.appendChild(h("div", { class: "piece-photo-ligne" },
+      h("div", { class: "photo-piece" },
+        h("span", { class: "photo-titre" }, "Photo de la pièce"),
+        piece.imageUrl ? h("img", { src: piece.imageUrl, alt: "Photo de " + piece.libelle, class: "photo-img" }) : h("div", { class: "photo-vide" }, "Pas encore de photo"),
+        !verrou && ASSETS ? h("label", { class: "bouton petit", for: "photo-" + piece.id }, piece.imageUrl ? "Changer la photo" : "Ajouter une photo",
+          h("input", { type: "file", id: "photo-" + piece.id, accept: "image/jpeg,image/png,image/webp", class: "visuellement-cache",
+            onchange: function (ev) { televerser(ev.target.files[0], function (url) { modifierPiece(cmd, piece.id, { imageUrl: url }, "Photo enregistrée"); }); } })) : null,
+        !verrou && piece.imageUrl ? bouton("Retirer", function () { modifierPiece(cmd, piece.id, { imageUrl: null }, "Photo retirée"); }, { classe: "discret petit" }) : null),
+      h("div", { class: "pile", style: { gap: "10px", minWidth: "0" } },
+        champPiece(cmd, piece, "commentaire", "Commentaire, spécificités de la pièce", { multiligne: true, facultatif: true, desactive: verrou, indice: "Ex. chant côté visible, bois sans nœud, sens du fil…" }))));
     var tc = typeCoupe(piece.typeCoupe);
     bloc.appendChild(h("div", { class: "grille", style: { gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" } },
-      h("label", { class: "champ", for: "mat-" + piece.id }, "Matière",
+      h("label", { class: "champ", for: "mat-" + piece.id }, "Essence de bois",
         selecteur("mat-" + piece.id, MATIERES.map(function (m) { return [m, m]; }), piece.matiere, function (ev) { modifierPiece(cmd, piece.id, { matiere: ev.target.value }, "Matière enregistrée"); }, verrou || !peutEcrire)),
       h("label", { class: "champ", for: "tc-" + piece.id }, "Type de coupe",
         selecteur("tc-" + piece.id, [["", "— aucun —"]].concat(etat.typesCoupe.map(function (t) { return [t.id, t.nom]; })), piece.typeCoupe || "",
@@ -2512,6 +2661,14 @@
 
   function panneau3(p, cmd, st) {
     var actif = st === "courante" && !cmd.perdue;
+    p.appendChild(h("div", { class: "bat-ligne" },
+      h("div", { class: "photo-piece bat" },
+        cmd.batImageUrl ? h("img", { src: cmd.batImageUrl, alt: "BAT de " + cmd.numero, class: "photo-img" }) : h("div", { class: "photo-vide" }, "BAT non joint"),
+        ASSETS && actif ? h("label", { class: "bouton petit", for: "bat-" + cmd.id }, cmd.batImageUrl ? "Changer le BAT" : "Joindre le BAT (image)",
+          h("input", { type: "file", id: "bat-" + cmd.id, accept: "image/jpeg,image/png,image/webp", class: "visuellement-cache",
+            onchange: function (ev) { televerser(ev.target.files[0], function (url) { ecrire("commandes/" + cmd.id, { batImageUrl: url }, "BAT joint à la commande"); }); } })) : null,
+        ASSETS && actif && cmd.batImageUrl ? bouton("Retirer", function () { ecrire("commandes/" + cmd.id, { batImageUrl: null }, "BAT retiré"); }, { classe: "discret petit" }) : null),
+      h("p", { class: "aide" }, "Le BAT est imprimé en tête des feuilles de production : l'opérateur voit le rendu attendu.")));
     var bat = h("div", { class: "valide-carte" + (cmd.batValideLe ? " ok" : "") }, h("h3", null, "BAT — validation visuelle"),
       cmd.batValideLe ? pastille("ok", "Validé par le client le " + jourDe(cmd.batValideLe)) : pastille("attente", "En attente du client"),
       actif ? (cmd.batValideLe ? bouton("Annuler la validation", function () { ecrire("commandes/" + cmd.id, { batValideLe: null }, "Validation du BAT annulée"); }, { classe: "discret" })
@@ -2607,6 +2764,7 @@
         h("div", { style: { textAlign: "right" } }, h("div", { style: { fontSize: "20px", fontWeight: "600" } }, grouper(of.quantite)),
           h("div", { class: "aide" }, piece.genre === "coffret" ? "coffrets" : piece.qte + " × " + grouper(lanceeDe(cmd)) + " lancés"),
           finies === of.lignes.length ? pastille("ok", "OF terminé") : null)),
+      piece.commentaire ? h("div", { class: "of-note" }, h("strong", null, "Remarque : "), piece.commentaire) : null,
       h("div", { class: "of-corps" }, lignes.map(function (l) { return ligneOperation(cmd, l, pointage); })));
   }
 
@@ -2899,7 +3057,7 @@
     if (n === 4) {
       patch.quantiteLancee = quantiteLancee(qteCommandee(cmd), majoration());
       patch.lanceLe = t;
-      if (etat.piecesLocales[cmd.id]) patch.pieces = etat.piecesLocales[cmd.id];
+      patch.pieces = ordonnerPieces(piecesDe(cmd));
       message = "Fabrication lancée : " + grouper(patch.quantiteLancee) + " coffrets, " + ordresFabrication(cmd).length + " ordres de fabrication";
     }
     if (n === 5 || n === 6) { patch.historique["5"] = t; patch.historique["6"] = t; vers = 7; message = "Fabrication terminée"; }
@@ -3158,6 +3316,61 @@
   // Vue : atelier (tablette)
   // ===================================================================
 
+  // Indicateurs de l'atelier, pour le responsable : ce qui tourne aujourd'hui
+  // et ce qui dérape. Tout est calculé à partir des pointages et des commandes.
+  function indicateursAtelier() {
+    var aujourdhui = ymd(new Date());
+    var pts = etat.pointages;
+    var finis = pts.filter(function (p) { return p.fin && ymd(new Date(p.fin)) === aujourdhui; });
+    var piecesAuj = 0, tempsAuj = 0;
+    finis.forEach(function (p) { piecesAuj += Number(p.quantite) || 0; tempsAuj += dureePointage(p) || 0; });
+    var ouverts = pts.filter(function (p) { return !p.fin; });
+    var longs = ouverts.filter(function (p) { return Date.now() - Date.parse(p.debut) > 8 * 3600000; });
+    var prevu = 0, reel = 0;
+    etat.commandes.forEach(function (c) {
+      if (!active(c) || c.etape < 5) return;
+      lignesTravail(c).forEach(function (l) {
+        var su = suiviLigne(c, l.piece, l.op, l.quantite);
+        if (su.pointages.some(function (p) { return p.fin && ymd(new Date(p.fin)) === aujourdhui; })) { prevu += l.prevu; reel += su.reel; }
+      });
+    });
+    var travaux = travauxAtelier(), charges = {};
+    var occupees = 0, libres = 0, arretees = 0;
+    etat.centres.forEach(function (c) {
+      var m = etatMachine(c, travaux, charges);
+      if (m.statut === "production") occupees++;
+      else if (m.statut === "disponible") libres++;
+      else arretees++;
+    });
+    var enFab = etat.commandes.filter(function (c) { return active(c) && c.etape === 5; });
+    var lancees = 0, rebutees = 0;
+    etat.commandes.forEach(function (c) { if (c.etape >= 5 && !c.perdue) { lancees += lanceeDe(c); rebutees += rebuts(c); } });
+    var capaciteJour = nbOperateursAtelier() * heuresSemaine() / 5 * 60 * 100;
+    return {
+      enCours: ouverts.length, enFab: enFab.length, piecesAuj: piecesAuj, tempsAuj: tempsAuj,
+      productivite: reel ? Math.round((prevu * 1000) / reel) : null,
+      occupation: capaciteJour ? Math.round((tempsAuj * 1000) / capaciteJour) : null,
+      occupees: occupees, libres: libres, arretees: arretees, centres: etat.centres.length,
+      enRetard: enFab.filter(enRetardEcheance).length, longs: longs.length,
+      rebut: lancees ? Math.round((rebutees * 1000) / lancees) : null
+    };
+  }
+
+  function bandeauAtelier() {
+    var k = indicateursAtelier();
+    var tuiles = [
+      tuile(String(k.enCours), "Opérations en cours", null, k.enFab + " ordre" + (k.enFab > 1 ? "s" : "") + " de fabrication lancé" + (k.enFab > 1 ? "s" : "")),
+      tuile(grouper(k.piecesAuj), "Pièces faites aujourd'hui", null, duree(k.tempsAuj) + " pointées"),
+      tuile(k.productivite === null ? "—" : pourMille(k.productivite), "Productivité du jour", k.productivite !== null && k.productivite >= 1000 ? "bon" : k.productivite !== null ? "alerte" : null, "temps prévu ÷ temps réel"),
+      tuile(k.occupation === null ? "—" : pourMille(k.occupation), "Occupation des opérateurs", null, "heures pointées ÷ heures disponibles"),
+      tuile(k.occupees + " / " + k.centres, "Machines occupées", null, k.libres + " libre" + (k.libres > 1 ? "s" : "") + " · " + k.arretees + " à l'arrêt ou en maintenance"),
+      tuile(String(k.enRetard), "Commandes en retard", k.enRetard ? "alerte" : null, "date de livraison dépassée"),
+      tuile(String(k.longs), "Pointages ouverts depuis 8 h", k.longs ? "alerte" : null, k.longs ? "à vérifier avec l'opérateur" : "rien d'anormal"),
+      tuile(k.rebut === null ? "—" : pourMille(k.rebut), "Taux de rebut", k.rebut !== null && k.rebut > 30 ? "alerte" : null, "rebuts ÷ coffrets lancés")
+    ];
+    return h("section", { class: "bandeau-atelier", "aria-label": "Indicateurs de l'atelier" }, h("div", { class: "tuiles atelier-tuiles" }, tuiles));
+  }
+
   function vueAtelier(racine) {
     var sous = etat.sousAtelier === "ofs" ? "ofs" : "plan";
     racine.appendChild(h("div", { class: "titre-page" },
@@ -3165,6 +3378,7 @@
         h("p", { class: "sous-titre" }, sous === "plan"
           ? "Le plan de l'atelier. Touchez une machine pour savoir ce qu'elle produit et où elle en est."
           : "Les ordres de fabrication en cours, pièce par pièce. Touchez votre nom, puis Démarrer et Terminer."))));
+    racine.appendChild(bandeauAtelier());
     racine.appendChild(h("div", { class: "sous-onglets", role: "group", "aria-label": "Vue de l'atelier" },
       bouton("Plan de l'atelier", function () { etat.sousAtelier = "plan"; rendre(); }, { presse: sous === "plan", ecriture: false, id: "onglet-plan" }),
       bouton("Ordres de fabrication", function () { etat.sousAtelier = "ofs"; rendre(); }, { presse: sous === "ofs", ecriture: false, id: "onglet-ofs" })));
@@ -3191,7 +3405,7 @@
         h("div", { class: "carte-tete" },
           h("div", null, h("div", { class: "aide" }, cmd.numero, ech ? " · livraison le " + ech : ""), h("h2", null, (cmd.client || "") + " — " + (cmd.produit || ""))),
           lien("Voir la commande", "#commande-" + cmd.id, "bouton discret")),
-        h("div", { class: "carte-corps" }, infosAtelier(cmd), ofs.length ? ofs : h("p", { class: "aide" }, "Aucune opération pour ce poste sur cette commande."))));
+        h("div", { class: "carte-corps" }, infosAtelier(cmd), h("div", { class: "actions", style: { margin: "0 0 12px" } }, boutonFeuilles(cmd)), ofs.length ? ofs : h("p", { class: "aide" }, "Aucune opération pour ce poste sur cette commande."))));
     });
   }
 
@@ -4793,6 +5007,8 @@
     return;
   }
 
+  window.claude.use("assets").then(function (a) { ASSETS = a || null; planifierRendu(); }).catch(function () { /* sans téléversement */ });
+  window.claude.use("downloads").then(function (d) { TELECHARGEMENT = d || null; planifierRendu(); }).catch(function () { /* sans téléchargement */ });
   window.claude.use("sample").then(function (fn) { etat.sample = typeof fn === "function" ? fn : null; planifierRendu(); }).catch(function () { /* sans assistant */ });
 
   window.claude.use("user").then(function (u) {
